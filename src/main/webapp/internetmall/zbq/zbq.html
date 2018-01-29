@@ -179,17 +179,8 @@
 				pId:'',
 				currentName:'',
 				id:'',
-				name:'',
-				unit:'',
-				norm:'',
-				goodstype:'',
-				image:'/upload/1495694599854.jpg', //默认图片地址
-				price:'',
-				barcode:'',
-				state:'',
 				totalpages:1,
 				pagesArrys:[],
-				searchType:1,
 			},
 			methods:{
                 changePageSize:function (val) {
@@ -203,7 +194,8 @@
 					vm.outClasses.splice(0,vm.outClasses.length);
 					$.ajax({
 						type:"POST",
-						url:getUrl()+"/Api/OrderStyle/findStyle",
+						<!--url:getUrl()+"/Api/OrderStyle/findStyle",-->
+						url:getUrl()+"/Api/OrderStyle/findStyleAndType",
 						dataType:"JSON",
 						success:function(data){
 							for(var i=0;i<data.data.length;i++){
@@ -241,63 +233,54 @@
 					    this.currentId='';
 					}
 					var vmTemp = this;
-					$.ajax({
-						type:"POST",
-						url:getUrl()+'/Api/OrderStyle/findtype',
-						dataType:'json',
-						data:{
-							pk_parentid:this.pId
-						},
-						success:function(data){
-							if(data.success){
-								for(var i=0;i<data.data.length;i++){
-									vm.smallClasses.push(data.data[i]);
-								}
-								console.log(this.pId);
-								this.choice_numbers=0;
-								<!--vm.searchType=1;-->
-								<!--vm.currentPage=1;-->
-								vm.allGoods.splice(0,vm.allGoods.length);
-								vmTemp.getStartTimeAndEndTime();
-								$.ajax({
-									type:"POST",
-									url:getUrl()+'/Api/detailAll/queryOrder',
-									dataType:'json',
-									data:{
-										foodname:vmTemp.foodname,
-										stypeid:this.pId,
-										start_ts:vmTemp.startTime,
-										end_ts:vmTemp.endTime,
-										pageNo:vmTemp.pagination.currentPage,
-										pageSize:vmTemp.pagination.pageSize,
-										id:_id
-									},
-									success:function(data){
-										vm.succ = data.success;
-										if(data.data.list != null && data.data.list != '' && data.data.list != 'null'){
-											data.success ?  ((vm.details = data.data.list) && (vm.pagination.total = data.data.total)) : ((vm.waitInfo = '未找到指定条件的数据') && (vm.details = '')&&(vm.pagination.total=0)) ;
-										}else{
-											vm.waitInfo = '未找到指定条件的数据';
-											vm.details = '';
-											vm.pagination.total=0;
-										}
-									},
-									error:function(msg){
-										}
-								});
-							}else{
-							}
-						},
-						error:function(msg){
-							}
-					});
-					$("#allGoods").children('li').removeClass('active1');
+
+					for(var i=0;i<vm.outClasses.length;i++){
+					    //获取大类
+                        var styleModel = vm.outClasses[i];
+                        //判断大类 和 选中大类  获取大类下小类数据
+                        if(styleModel.id == vmTemp.pId){
+                            for(var z=0;z<styleModel.orderModelVos.length;z++){
+								vm.smallClasses.push(styleModel.orderModelVos[z]);
+                            }
+                        }
+                    }
+
+                    $("#allGoods").children('li').removeClass('active1');
 					e.currentTarget.parentNode.className='active1';
+
+                    this.choice_numbers=0;
+                    vm.currentPage=1;
+                    vm.allGoods.splice(0,vm.allGoods.length);
+                    vmTemp.getStartTimeAndEndTime();
+                    $.ajax({
+                        type:"POST",
+                        url:getUrl()+'/Api/detailAll/queryOrder',
+                        dataType:'json',
+                        data:{
+                            foodname:vmTemp.foodname,
+                            stypeid:vmTemp.pId,
+                            start_ts:vmTemp.startTime,
+                            end_ts:vmTemp.endTime,
+                            pageNo:vmTemp.pagination.currentPage,
+                            pageSize:vmTemp.pagination.pageSize,
+                            id:_id
+                        },
+                        success:function(data){
+                            vm.succ = data.success;
+                            if(data.data.list != null && data.data.list != '' && data.data.list != 'null'){
+                                data.success ?  ((vm.details = data.data.list) && (vm.pagination.total = data.data.total)) : ((vm.waitInfo = '未找到指定条件的数据') && (vm.details = '')&&(vm.pagination.total=0)) ;
+                            }else{
+                                vm.waitInfo = '未找到指定条件的数据';
+                                vm.details = '';
+                                vm.pagination.total=0;
+                            }
+                        },
+                        error:function(msg){}
+                    });
 				},
 				choiceSClass:function(e){
 					this.type=2;
 					this.choice_numbers=0;
-					vm.searchType=1;
 					vm.currentPage=1;
 					vm.allGoods.splice(0,vm.allGoods.length);
 					this.currentId=e.currentTarget.parentNode.querySelector('.my_smallid').outerText;
