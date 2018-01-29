@@ -235,6 +235,7 @@
 						<!--e.currentTarget.querySelector('.glyphicon').className='glyphicon glyphicon-plus menu_title2';-->
 						this.open=false;
 					}
+					var vmTemp = this;
 					$.ajax({
 						type:"POST",
 						url:getUrl()+'/Api/OrderStyle/findtype',
@@ -252,18 +253,18 @@
 								<!--vm.searchType=1;-->
 								<!--vm.currentPage=1;-->
 								vm.allGoods.splice(0,vm.allGoods.length);
-								this.getStartTimeAndEndTime();
+								vmTemp.getStartTimeAndEndTime();
 								$.ajax({
 									type:"POST",
 									url:getUrl()+'/Api/detailAll/queryOrder',
 									dataType:'json',
 									data:{
-										foodname:this.foodname,
+										foodname:vmTemp.foodname,
 										stypeid:parentid,
-										start_ts:this.startTime,
-										end_ts:this.endTime,
-										pageNo:this.pagination.currentPage,
-										pageSize:this.pagination.pageSize,
+										start_ts:vmTemp.startTime,
+										end_ts:vmTemp.endTime,
+										pageNo:vmTemp.pagination.currentPage,
+										pageSize:vmTemp.pagination.pageSize,
 										id:_id
 									},
 									success:function(data){
