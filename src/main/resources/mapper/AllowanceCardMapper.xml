@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.AllowanceCardDao">
+
+     <select id="retrieveAllNormalWithPage" resultType="com.iandtop.model.card.CardModel">
+        select
+        DISTINCT
+        a.pk_card,
+        a.staff_code,
+        a.staff_name,
+        a.card_code,
+        if(a.card_state=10, '正常',if(a.card_state=20,'挂失', if(a.card_state =40, '注销', '未发卡'))) card_state,
+        a.pk_staff,
+        a.card_issue_ts,
+        a.card_ineffectived_ts,
+        a.card_costing/100 card_costing,
+        a.card_deposit/100 card_deposit,
+        a.money_cash/100 money_cash,
+        a.money_allowance/100 money_allowance,
+        a.pk_meal_rule,
+        a.password,
+		a.def1
+        from (
+        select card_card.*,db_staff.staff_code,db_staff.staff_name,db_department.pk_department,db_department.department_code from card_card
+
+        left join db_staff on card_card.pk_staff = db_staff.pk_staff
+        left join db_department on db_department.department_code = db_staff.department_code) a
+
+        <where>
+            <if test="department_code!=null and department_code!=''">
+                and a.department_code like "${department_code}%"
+            </if>
+            <if test="staff_code!=null and staff_code!=''">
+                and a.staff_code like "%${staff_code}%"
+            </if>
+            <if test="staff_name!=null and staff_name!=''">
+                and a.staff_name like "%${staff_name}%"
+            </if>
+            <if test="card_code!=null and card_code!=''">
+                and a.card_code like "%${card_code}%"
+            </if>
+            <if test="card_state!=null and card_state!=''">
+                and a.card_state = "${card_state}"
+            </if>
+        </where>
+        and a.card_state != '40'
+        order by
+        a.staff_code asc
+        limit
+        #{offset},#{limit}
+    </select>
+    <delete id="deleteByAllowanceNumIds">
+    	delete from meal_allowance_num where pk_allowance_num in (${ids})
+    </delete>
+    <delete id="deleteByAllowanceIds">
+    	delete from meal_allowance where pk_allowance_num in (${ids})
+    </delete>
+    <update id="updateByVO">
+        update card_card
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="money_allowance == null">
+				money_allowance=0,
+            </if>
+			<if test="allowance_type == 0">
+				money_allowance= #{money_allowance}*100+money_allowance,
+			</if>
+			<if test="allowance_type == 1">
+				money_allowance=#{money_allowance}*100,
+			</if>
+           serial=serial+1,
+        </trim>
+        where pk_staff=#{pk_staff}
+    </update>
+    
+    <select id="getMaxAllowanceNumCode" parameterType="java.lang.String" resultType="java.lang.String">
+    	SELECT MAX(allowance_num_code) AS allowance_num_code FROM meal_allowance_num WHERE  allowance_num_code LIKE '${value}%'
+    </select>
+	<!-- 获取最大充值表流水号-->
+	<select id="getMaxChargeCardBatchnum"  resultType="java.lang.String">
+		SELECT MAX(card_batchnum) AS card_batchnum FROM card_charge_record
+	</select>
+    
+    <update id="updateMealAllowanceNum">
+        update meal_allowance_num
+        <trim prefix="SET" suffixOverrides=",">
+        	<if test="state != null and state!=''">
+            	state=#{state},
+            </if>
+            <if test="ts != null and ts!=''">
+            	ts=#{ts},
+            </if>
+        </trim>
+        where pk_allowance_num=#{pk_allowance_num}
+    </update>
+    
+    <insert id="insertMealAllowanceNum"  parameterType="com.iandtop.model.meal.MealAllowanceNumModel">
+    	<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="pk_allowance_num">
+		SELECT LAST_INSERT_ID() AS pk_allowance_num
+		</selectKey>
+    	INSERT INTO meal_allowance_num (
+		  allowance_num_code,
+		  state,
+		  ts,
+		  pk_staff
+		) 
+		VALUES
+		  (
+		    #{allowance_num_code},
+		   	#{state},
+		    #{ts},
+		    #{pk_staff}
+		  )
+    </insert>
+	<insert id="insertMealAllowance" parameterType="com.iandtop.model.meal.MealAllowanceModel">
+		INSERT INTO meal_allowance (
+		  pk_allowance_num,
+		  pk_staff,
+		  pk_card,
+		  money_allowance,
+		  allowance_type,
+		  ts
+		)
+		VALUES
+		  (
+		    #{pk_allowance_num},
+		    #{pk_staff},
+		    #{pk_card},
+		    #{money_allowance}*100,
+		    #{allowance_type},
+		    #{ts}
+		  )
+	</insert>
+	<!-- 插入补贴记录表-->
+	<insert id="saveByVO" parameterType="com.iandtop.model.card.CardChargeRecordModel">
+		INSERT INTO card_charge_record(pk_card, pk_staff, card_code, staff_code, charge_money,money_retain, operator, charge_type,charge_ts, card_batchnum,memo, def1, def2 , def3, def4, def5)
+		VALUES (#{pk_card},#{pk_staff},#{card_code},#{staff_code},#{charge_money}*100,#{money_retain},
+		#{operator},#{charge_type},#{charge_ts},#{card_batchnum},#{memo},#{def1},#{def2},#{def3},#{def4},#{def5})
+	</insert>
+
+	<!-- 查询充值记录表 -->
+	<!--
+	<select id="queryCardChargeRecordByPk_staff"  resultType="com.iandtop.model.card.CardChargeRecordModel">
+		SELECT * from card_charge_record WHERE pk_staff=#{pk_staff}
+	</select>
+	-->
+	
+	<select id="queryMealAllowanceNumModelData" resultType="com.iandtop.model.meal.MealAllowanceNumModel">
+		SELECT 
+		  t1.pk_allowance_num,
+		  t1.allowance_num_code,
+		  CASE t1.state
+			WHEN 0 THEN '未发放'
+			WHEN 2 THEN '已发放'
+		  END AS statename,
+		  t1.state,
+		  t1.ts,
+		  t1.memo,
+		  t1.def1,
+		  t1.def2,
+		  t1.def3,
+		  t1.def4,
+		  t1.def5,
+		  t1.pk_staff,
+		  t2.user_name AS staff_name
+		FROM
+		  meal_allowance_num t1
+		  LEFT JOIN sm_user t2 ON t1.pk_staff = t2.pk_user
+		<where>
+            <if test="start_time!=null and start_time!=''">
+                and t1.ts &gt;=  "${start_time}"
+            </if>
+            <if test="end_time!=null and end_time!=''">
+                and t1.ts &lt;=  "${end_time}"
+            </if>
+            <if test="state!=null">
+                and t1.state=#{state}
+            </if>
+      	</where>
+        ORDER BY
+        t1.pk_allowance_num DESC;
+	</select>
+	<select id="queryMealAllowanceModelData" resultType="com.iandtop.model.meal.MealAllowanceModel">
+		SELECT t1.pk_allowance, t1.pk_allowance_num, t1.pk_staff, 
+		t1.pk_card, t1.money_allowance/100 AS money_allowance,
+		t1.allowance_type,
+		t4.money_cash,
+		t4.money_allowance AS wallet_allowance,<!-- 补贴钱包-->
+		CASE t1.allowance_type 
+		WHEN 0 THEN '累加' WHEN 1 THEN '清零' END AS allowanceTypeName, 
+		t1.memo, t1.def1, t1.def2, t1.def3, t1.def4, t1.def5, t1.ts , 
+		t2.staff_code, t2.staff_name, t3.allowance_num_code, t3.state, 
+		t5.user_name as operator,
+		CASE t3.state 
+		WHEN 0 THEN '未发放' WHEN 2 THEN '已发放' END AS statename,
+		t4.pk_card,t4.card_code,d.department_name
+		FROM meal_allowance t1 
+		LEFT JOIN db_staff t2 ON t1.pk_staff=t2.pk_staff
+		LEFT JOIN db_department d on t2.def1 = d.department_code
+		LEFT JOIN meal_allowance_num t3 ON t1.pk_allowance_num = t3.pk_allowance_num 
+		LEFT JOIN card_card t4 ON t1.pk_staff = t4.pk_staff
+		LEFT JOIN sm_user t5 ON t3.pk_staff = t5.pk_user
+	  <where>
+            <if test="pk_allowance_num!=null and pk_allowance_num!=''">
+                and t1.pk_allowance_num = #{pk_allowance_num}
+            </if>
+            <if test="ids!=null and ids!=''">
+                and t1.pk_allowance_num in(${ids})
+            </if>
+           
+      </where>
+        ORDER BY t2.staff_code ASC 
+	</select>
+
+	<select id="queryDeatilDataSum" parameterType="com.iandtop.model.meal.MealAllowanceModel" resultType="com.iandtop.model.meal.MealAllowanceModel">
+		  SELECT SUM(t1.money_allowance/100) AS money_allowance
+		  FROM meal_allowance t1
+		<where>
+			<if test="pk_allowance_num!=null and pk_allowance_num!=''">
+				and t1.pk_allowance_num = #{pk_allowance_num}
+			</if>
+			<if test="ids!=null and ids!=''">
+				and t1.pk_allowance_num in(${ids})
+			</if>
+
+		</where>
+	</select>
+</mapper>

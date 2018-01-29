@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.CardLostDAO">
+
+
+    <insert id="saveByVO" parameterType="com.iandtop.model.card.CardLostRecordModel">
+        INSERT INTO card_lost_record(pk_card, pk_staff,operator, card_code, staff_code, type, lost_ts,memo, def1, def2 , def3, def4, def5)
+        VALUES (#{pk_card},#{pk_staff},#{operator},#{card_code},#{staff_code},#{type},#{lost_ts},#{memo},#{def1},#{def2},#{def3},#{def4},#{def5})
+    </insert>
+
+
+</mapper>

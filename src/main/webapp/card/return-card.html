@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>退卡</title>
+    <style>
+        .dy{border:0;}
+        .mode{margin-left: 2em;}
+        #pl-chargeBtn{margin-left: 1em;}
+        .nr{border: 1px solid #000;
+            width: 100%;
+            height: 300px;
+            overflow: auto;}
+        .arrow-btn{
+            width: 35px;
+            text-align: center;
+            margin-top: 2em;
+            margin-left: -1em;
+        }
+        #plcharge-content{width: 900px;left: 50%;margin-left: -450px;}
+        .selected{
+            background-color: #1E1E1E;
+        }
+
+    </style>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table.js"></script>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table-zh-CN.js"></script>
+    <link rel="stylesheet" href="../js/bootstrap-table/dist/bootstrap-table.min.css">
+    <script src="../js/card/return-card.js"></script>
+</head>
+<body>
+<OBJECT ID="AxRead" CLASSID="CLSID:1B83CB21-E01E-4CA4-B54C-356E31448A86" style="display: none;"></OBJECT>
+<div class="panel-body" style="padding-bottom:0px;">
+
+    <div>
+        <div id="tree"  class="col-md-2 ztree" style="overflow: auto"></div>
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">查询条件</div>
+                <div class="panel-body">
+                    <form id="formSearch" class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-3 no-padding-left-right text-center" for="txt_search_staff_code">编码</label>
+                                <div class=" col-sm-9 no-padding-left-right">
+                                    <input type="text"  id="txt_search_staff_code" class="form-control" >
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-3 no-padding-left-right text-center" for="txt_search_name">姓名</label>
+                                <div class=" col-sm-9 no-padding-left-right">
+                                    <input type="text"  id="txt_search_name"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-3 no-padding-left-right text-center" for="txt_search_card_code">卡号</label>
+                                <div class=" col-sm-9 no-padding-left-right">
+                                    <input type="text"  id="txt_search_card_code"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-3" style="text-align:left;">
+                                <button type="button"   id="btn_query" class="btn btn-info col-sm-5 col-sm-offset-1">查询</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="toolbar" class="btn-group">
+                <button id="btn_return" type="button" class="btn btn-info" disabled="true">
+                    <span class="iconfont icon-huiyuantuiqia"></span><span>退卡</span>
+                </button>
+                <button id="btn_batchreturn" type="button" class="btn btn-info">
+                    <span class="iconfont icon-gongxiangtubiaopiliangtuiqia"></span><span>批量退卡</span>
+                </button>
+                <button id="btn_readcard" type="button" class="btn btn-info">
+                    <span class="iconfont icon-duqia"></span><span>读卡</span>
+                </button>
+            </div>
+            <table id="table"></table>
+
+        </div>
+    </div>
+    <div class="modal fade" id="plcharge" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" id="plcharge-content">
+                <div class="modal-header"><h5>批量退卡</h5></div>
+                <div class="modal-body">
+                    <div class="row text-center">
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="" id="be_return_cash_pl">退还现金钱包</label>
+                            <label><input type="checkbox" value="" id="be_return_allowance_pl">退还补贴钱包</label>
+                            <label><input type="checkbox" value="" id="be_return_deposit_pl">退还押金</label>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 2em;">
+                        <div class="col-md-7">
+                            <div class="col-md-6">
+                                <div class="nr left-tree" id="left-tree"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="nr middle-tree" id="left_psns">
+                                    <ul class="list-group">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1 text-center">
+                            <button class="btn arrow-btn" id="move_right_one">></button>
+                            <button class="btn arrow-btn" id="move_right_all">>></button>
+                            <button class="btn arrow-btn" id="move_left_one"><</button>
+                            <button class="btn arrow-btn" id="move_left_all"><<</button>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="nr right" id="right_psns">
+                                <ul class="list-group"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer text-center">
+                    <button type="button" class="btn btn-default" id="plokBtn">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="pldismiss">关闭</button>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <div class="modal fade modal-info in" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="info-modal-label" aria-hidden="true" style="padding-right: 17px;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background: #2272bb;">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">退卡</h4>
+                </div>
+                <div>
+                    <h4 id="tipinfo"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label><input type="checkbox" value="" id="be_return_cash">退还现金钱包</label>
+                            <label><input type="checkbox" value="" id="be_return_allowance">退还补贴钱包</label>
+                            <label><input type="checkbox" value="" id="be_return_deposit">退还押金</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: 1em;">
+                    <button type="button" class="btn modal-btn btn-default" id="okBtn_One">确定</button>
+                    <button type="button" class="btn modal-btn btn-default" data-dismiss="modal" id="dismiss">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="../js/bootstrap/dist/css/bootstrap.css" />
+<!-- 编辑时 少了上面的引用 BS 不提示    没什么 用   生产前  删除-->
+
+</body>
+</html>

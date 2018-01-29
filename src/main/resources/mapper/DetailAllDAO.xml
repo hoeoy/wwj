@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.DetailAllDAO">
+
+    <select id="queryUserAll" resultType="com.iandtop.model.system.UserModel">
+        select pk_user,user_code,user_name from sm_user where pk_staff is NULL
+    </select>
+
+    <select id="queryDeptAll" resultType="com.iandtop.model.DeptModelVO">
+        select pk_department,parent_code,department_code,department_name,company_code from db_department
+    </select>
+
+    <select id="queryChargeDetail"  parameterType="java.lang.String" resultType="com.iandtop.model.card.CardChargeRecordModel">
+        select c.card_code,c.staff_code,s.staff_name,d.*,c.charge_money/100 charge_money,c.money_retain/100 money_retain,c.card_batchnum serial,c.charge_type,c.charge_ts,u.user_name
+        from card_charge_record c
+        left join db_staff s on c.pk_staff = s.pk_staff
+        left join db_department d on s.department_code = d.department_code
+        left join sm_user u on c.operator = u.pk_user
+        <where>
+            <if test="staff_code!=null and staff_code!=''">
+                and c.staff_code = #{staff_code}
+            </if>
+            <if test="staff_name!=null and staff_name!=''">
+                and s.staff_name = #{staff_name}
+            </if>
+            <if test="user_name!=null and user_name!=''">
+                and u.user_name = #{user_name}
+            </if>
+            <if test="card_code != null and card_code !=''">
+                and c.card_code = #{card_code}
+            </if>
+            <if test="charge_type != null and charge_type !=''">
+                and c.charge_type = #{charge_type}
+            </if>
+            <if test="start_ts != null and start_ts !=''">
+                and c.charge_ts  >=#{start_ts}
+            </if>
+            <if test="end_ts != null and end_ts !=''">
+                and #{end_ts}>= c.charge_ts
+            </if>
+            <if test="dept_code != null and dept_code !=''">
+                and d.department_code like "${dept_code}%"
+            </if>
+        </where>
+        order by c.staff_code ASC
+    </select>
+
+    <select id="queryRefundDetail" resultType="com.iandtop.model.card.CardRefundRecordModel">
+        select c.card_code,c.staff_code,s.staff_name,d.*,c.refund_money/100 refund_money,c.money_retain/100 money_retain,c.card_batchnum serial,c.refund_type,c.refund_ts,u.user_name,c.card_batchnum
+        from card_refund_record c
+        left join db_staff s on c.pk_staff = s.pk_staff
+        left join db_department d on s.department_code = d.department_code
+        left join sm_user u on c.operator = u.pk_user
+        <where>
+            <if test="staff_code!=null and staff_code!=''">
+                and c.staff_code = #{staff_code}
+            </if>
+            <if test="staff_name!=null and staff_name!=''">
+                and s.staff_name = #{staff_name}
+            </if>
+            <if test="user_name!=null and user_name!=''">
+                and u.user_name = #{user_name}
+            </if>
+            <if test="card_code != null and card_code !=''">
+                and c.card_code = #{card_code}
+            </if>
+            <if test="start_ts != null and start_ts !=''">
+                and c.refund_ts  >=#{start_ts}
+            </if>
+            <if test="end_ts != null and end_ts !=''">
+                and #{end_ts}>= c.refund_ts
+            </if>
+            <if test="dept_code != null and dept_code !=''">
+                and d.department_code like "${dept_code}%"
+            </if>
+        </where>
+        order by c.refund_ts
+
+    </select>
+    <select id="queryReturnCardDetail" resultType="com.iandtop.model.card.CardChangeRecordModel">
+        select
+        s.staff_code,
+        s.staff_name,
+        c.card_code,
+        d.department_name,
+        sum(CASE r.refund_type WHEN 0 THEN r.refund_money ELSE 0 END/100) 'cash_money',
+        sum(CASE r.refund_type WHEN 1 THEN r.refund_money ELSE 0 END/100) 'patch_money',
+        sum(CASE r.refund_type WHEN 2 THEN r.refund_money ELSE 0 END/100) 'cost_money',
+        c.operation_ts,
+        u.user_name
+        from card_change_record c
+        left join card_refund_record r on c.pk_card = r.pk_card and c.operation_ts =r.refund_ts
+        left join card_card a on c.pk_card = a.pk_card
+        left join db_staff s on c.pk_staff = s.pk_staff
+        left join db_department d on s.department_code = d.department_code
+        left join sm_user u on c.operator = u.pk_user
+        <where>
+            <if test="staff_code!=null and staff_code!=''">
+                and c.staff_code = #{staff_code}
+            </if>
+            <if test="staff_name!=null and staff_name!=''">
+                and s.staff_name = #{staff_name}
+            </if>
+            <if test="user_name!=null and user_name!=''">
+                and u.user_name = #{user_name}
+            </if>
+            <if test="card_code != null and card_code !=''">
+                and c.card_code = #{card_code}
+            </if>
+            <if test="start_ts != null and start_ts !=''">
+                and c.operation_ts  >=#{start_ts}
+            </if>
+            <if test="end_ts != null and end_ts !=''">
+                and #{end_ts}>= c.operation_ts
+            </if>
+            <if test="dept_code != null and dept_code !=''">
+                and d.department_code like "${dept_code}%"
+            </if>
+        </where>
+        and c.operation_type = '1'
+        GROUP BY c.operation_ts
+    </select>
+
+    <select id="queryPatchCardDetail" resultType="com.iandtop.model.card.CardChangeRecordModel">
+        select c.card_code,c.staff_code,s.staff_name,d.*,c.cardcode_new,c.money_remain/100 money_remain,cc.serial old_serial_number,c.operation_ts,u.user_name
+        from card_change_record c
+        left join card_card cc on cc.pk_card = c.pk_card
+        left join db_staff s on c.pk_staff = s.pk_staff
+        left join db_department d on s.department_code = d.department_code
+        left join sm_user u on c.operator = u.pk_user
+        <where>
+            <if test="staff_code!=null and staff_code!=''">
+                and c.staff_code = #{staff_code}
+            </if>
+            <if test="staff_name!=null and staff_name!=''">
+                and s.staff_name = #{staff_name}
+            </if>
+            <if test="user_name!=null and user_name!=''">
+                and u.user_name = #{user_name}
+            </if>
+            <if test="card_code != null and card_code !=''">
+                and c.card_code = #{card_code}
+            </if>
+            <if test="start_ts != null and start_ts !=''">
+                and c.operation_ts  >=#{start_ts}
+            </if>
+            <if test="end_ts != null and end_ts !=''">
+                and #{end_ts}>= c.operation_ts
+            </if>
+            <if test="dept_code != null and dept_code !=''">
+                and d.department_code like "${dept_code}%"
+            </if>
+        </where>
+        and c.operation_type = '2'
+        order by c.operation_ts
+    </select>
+
+    <select id="queryOrderDetail"  parameterType="java.lang.String" resultType="com.iandtop.model.ZbqModel">
+        SELECT
+            ogtp.typename AS typename,
+            od.foodname AS foodname,
+            of.formpeople AS formpeople,
+            od.count AS count,
+            of.amount AS amount,
+            of.formtime AS formtime,
+            ogtl.stylename AS stylename
+        FROM
+            order_detail od
+        LEFT JOIN order_form of ON od.fk_formcode = of.pk_formcode
+        LEFT JOIN order_goods og ON od.foodname = og.goodsname
+        <if test="styleid!=null and styleid!=''">
+            and og.styleid=#{styleid}
+        </if>
+        LEFT JOIN order_goodstype ogtp ON og.styleid = ogtp.pk_only
+        LEFT JOIN order_goodstyle ogtl ON ogtp.pk_parentid = ogtl.Id
+        <where>
+            <if test="styleid!=null and styleid!=''">
+                and og.styleid=#{styleid}
+            </if>
+            <if test="typename!=null and typename!=''">
+                and ogtp.typename = #{typename}
+            </if>
+            <if test="foodname!=null and foodname!=''">
+                and od.foodname like "%${foodname}%"
+            </if>
+            <if test="start_ts != null and start_ts !=''">
+                and of.formtime  >=#{start_ts}
+            </if>
+            <if test="end_ts != null and end_ts !=''">
+                and #{end_ts}>= of.formtime
+            </if>
+            <if test="stypeid != null and stypeid !=''">
+                and ogtp.pk_parentid = #{stypeid}
+            </if>
+        </where>
+        order by of.formtime DESC
+    </select>
+</mapper>

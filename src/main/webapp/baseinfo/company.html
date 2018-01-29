@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>部门管理</title>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table.js"></script>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table-zh-CN.js"></script>
+    <link rel="stylesheet" href="../js/bootstrap-table/dist/bootstrap-table.min.css">
+    <link rel="stylesheet" href="../css/baseinfo/company.css">
+    <script src="../js/baseinfo/company.js"></script>
+</head>
+<body>
+<div class="panel-body" style="padding-bottom:0px;">
+    <!--查询条件栏-->
+    <div class="panel panel-default">
+        <div class="panel-heading">查询条件</div>
+        <div class="panel-body">
+            <form id="formSearch" class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label class="control-label col-sm-4 no-padding-left-right text-center" for="query_code">公司编码</label>
+                        <div class=" col-sm-8 no-padding-left-right">
+                            <input type="text"  id="query_code" class="form-control" >
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label col-sm-4 no-padding-left-right text-center" for="query_name">公司名称</label>
+                        <div class=" col-sm-8 no-padding-left-right">
+                            <input type="text"  id="query_name"  class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-sm-3" style="text-align:left;">
+                        <button type="button"   id="btn_query" class="btn btn-info col-sm-5 col-sm-offset-1">查询</button>
+                        <button type="button"  id="btn_reset" class="btn btn-info col-sm-5 col-sm-offset-1">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--操作按钮-->
+    <div id="toolbar" class="btn-group">
+        <button  type="button" class="btn btn-info" id="btn_add">
+            <span class="iconfont icon-zengjia"></span><span>新增</span>
+        </button>
+        <button type="button" class="btn btn-info" id="btn_edit" disabled="true">
+            <span class="iconfont icon-xiugai"></span><span>修改</span>
+        </button>
+        <button type="button" class="btn btn-info" id="btn_delete" disabled="true">
+            <span class="iconfont icon-shanchu"></span><span>删除</span>
+        </button>
+    </div>
+
+    <!--列表-->
+    <table id="table"></table>
+
+    <!--新增弹出框-->
+  <!-- <form id="addForm" class="form-horizontal form-verification" method="post">
+       <div class="modal fade modal-default in" id="mymodal-data" tabindex="-1" role="dialog" aria-labelledby="default-modal-label" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title font-weight" id="headTitle"></h4>
+                    </div>
+                    <div class="modal-body modal-body-con">
+                    <div class="col-md-6">
+                        <lebel class="red">*</lebel> 名称:
+                        <input type="text" class="width-150 " name="serviceName" id="addOrEditserviceName">
+                    </div>
+                       <div class="col-md-6">
+                           <lable class="red">*</lable>服务类型:
+                           <div class="width-150">
+                               <div class="form-group">
+                                   <select id="addOrEditServiceType" name="serviceType" class="multiselect form-control"></select>
+                               </div>
+                           </div>
+                       </div>
+
+
+
+                        <div class="col-md-6">
+                            <label class="red">*</label>所属区域:
+                            <div class="width-150">
+                                <div class="form-group">
+                                    <select id="addOrEditareaId" name="areaId" class="multiselect form-control"></select>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="col-md-6">
+                            <i class="red">*</i> 所属机构:
+                            <div class="width-150">
+                                <div class="form-group">
+                                    <select id="addOrEdit_user_org" name="orgId" class="multiselect form-control"></select>
+                                </div>
+                            </div>
+                            </div>
+                                <div class="col-md-6">
+                            <i class="red">*</i>价格:
+                            <div class="width-150">
+                                <div class="form-group">
+                                    <input type="text" class="width-150 form-control" name="price" id="addOrEditprice">
+                                </div>
+                            </div>
+                                </div>
+                                    <div class="col-md-6">
+                            <i class="red">*</i> 状态:
+                            <div class="width-150">
+                                <div class="form-group">
+                                    <select class="form-control width-150" id="addOrEditStatus" name="status">
+                                        <option value="1">启用</option>
+                                        <option value="0">禁用</option>
+                                    </select>
+                                </div>
+                            </div>
+                                    </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button"  id="save" class="btn btn-primary">保存</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>-->
+</div>
+
+
+<form id="addForm" class="form-horizontal form-verification" method="post">
+    <div class="modal fade modal-primary in" id="mymodal-data" tabindex="-1" role="dialog" aria-labelledby="primary-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title" >公司信息</h4>
+                </div>
+
+                <div class="modal-body">
+                    <fieldset class="fieldset">
+                        <div class="row modal_row">
+                            <div class="col-md-6 cd6">
+                                <div class="col-md-5 cd5">
+                                    <span class="isMust">*</span>
+                                    <span class="name">公司编号：</span>
+                                </div>
+                                <div class="col-md-7 cd7">
+                                    <input type="text" class="modal_txt" id="company_code">
+                                </div>
+                            </div>
+                            <div class="col-md-6 cd6">
+                                <div class="col-md-5 cd5">
+                                    <span class="isMust">*</span>
+                                    <span class="name">公司名称：</span>
+                                </div>
+                                <div class="col-md-7 cd7">
+                                    <input type="text" class="modal_txt" id="company_name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row modal_row">
+                            <div class="col-md-6 cd6">
+                                <div class="col-md-5 cd5">
+                                    <span class="isMust">&nbsp;</span>
+                                    <span class="name">负责人：</span>
+                                </div>
+                                <div class="col-md-7 cd7">
+                                    <input type="text" class="modal_txt" id="person_in_charge">
+                                </div>
+                            </div>
+                            <div class="col-md-6 cd6">
+                                <div class="col-md-5 cd5">
+                                    <span class="isMust">&nbsp;</span>
+                                    <span class="name">公司地址：</span>
+                                </div>
+                                <div class="col-md-7 cd7">
+                                    <input type="text" class="modal_txt" id="address">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row modal_row">
+                           <!-- <div class="col-md-6 cd6">
+                                <div class="col-md-5 cd5">
+                                    <span class="isMust">&nbsp;</span>
+                                    <span class="name">公司类型：</span>
+                                </div>
+                                <div class="col-md-7 cd7">
+                                    <select id="company_type" class="modal_txt" readonly="readonly">
+
+                                    </select>
+                                </div>
+                            </div>-->
+                            <div class="col-md-6 cd6">
+                                <div class="col-md-5 cd5">
+                                    <span class="isMust">&nbsp;</span>
+                                    <span class="name">联系方式：</span>
+                                </div>
+                                <div class="col-md-7 cd7">
+                                    <input type="text" class="modal_txt" id="telephone">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row modal_row">
+                            <div class="col-md-12">
+                                <span class="isMust">&nbsp;</span>
+                                <span>公司介绍：</span>
+                                <textarea  class="longtxt" id="memo"></textarea>
+                            </div>
+                        </div>
+                        <div class="row modal_row2 text-center">
+                            <button type="button" class="btn btn-default modal_btn" id="save">保存并创建</button>
+                            <button type="button" class="btn btn-default modal_btn" data-dismiss="modal">关闭</button>
+                        </div>
+                    </fieldset>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+</form>
+
+
+</body>
+</html>

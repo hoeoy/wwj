@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="../js/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../js/bootstrap/dist/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../js/bootstrap-treeview/dist/bootstrap-treeview.min.css">
+     <link rel="stylesheet" href="../js/bootstrap/dist/css/skin-ivt-light.min.css">
+    <link rel="stylesheet" href="../css/AdminLTE.min.css">
+    <title>商城首页</title>
+</head>
+<body>
+<div id="all_content">
+    <div id="nav">
+        <div class="col-md-4 col-xs-12">
+            <h3 class="title">中国外文局网上订购系统 &nbsp;|<a href="#" id="index_a" @click='index'><span class="glyphicon glyphicon-home" id="index_ico">&nbsp;首页</span></a></h3>
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <div class="input-group" style="height: 34px;margin-top: 28px;">
+                <span class="input-group-addon glyphicon glyphicon-search" id="search_span"></span>
+                <input type="text" id="search_text" class="form-control" v-on:keyup.13="submit" placeholder="请输入商品名称">
+                <span class="input-group-addon" id="search_btn" @click='submit'>搜索</span>
+            </div>
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <div class="col-md-4 right_menu">
+                <img class="img" src="img/gwc.png">
+                <a class="gwcmx" @click='toGwc'>购物车<span class="numbers">{{mygwc_number}}</span>件</a>
+            </div>
+            <div class="col-md-4 right_menu">
+                <img class="img" src="img/dd.png">
+                <a class="gwcmx"  @click='history_orders'>历史订单</a>
+            </div>
+            <div class="col-md-4 right_menu">
+                <div class="btn-group mb-10">
+                    <button type="button" class="btn btn-primary dropdown-toggle" id="index_menu_btn" data-toggle="dropdown">{{username}} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" id="index_menu_btn_list" role="menu">
+                        <li><a class="list_menu" href="#" @click='update'>修改登录密码</a></li>
+                        <li><a class="list_menu" href="#" @click='updateCharge'>修改支付密码</a></li>
+                        <li><a class="list_menu" href="mall_login.html">注销登录</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="content">
+        <div class="row">
+            <div class="col-md-2 spsy_right_menu row-eq-height" id="spsy_left_menu">
+                <aside class="main-sidebar col-md-12 col-lg-12" id="main-sidebar">
+                    <section class="sidebar" style="height: auto;">
+                        <!--sidebar-menu-->
+                            <ul class="sidebar-menu">
+                            <li class="treeview">
+                                <a href="javascript:;" @click="init"> <h4 class="left_tree_list_title">&nbsp;&nbsp;所有分类</h4>
+                                 <!--   <span class="pull-right-container">
+                                        <i class="fa fa-angle-down pull-down"></i>
+                                    </span>-->
+                                </a>
+                              
+                            </li>
+
+                        </ul>
+                        <ul class="sidebar-menu">
+                            <li class="treeview" v-for='outClass in outClasses'>
+                                <a href="javascript:;" @click="showClass($event)" v-bind:id='outClass.id'> <span class="left_tree_list_title">&nbsp;&nbsp;{{outClass.stylename}}</span>
+                                    <span class="hide my_id">{{outClass.id}}</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-down pull-down"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu smallClasstree"   style="display: none;">
+                                    <li v-for='smallClass in smallClasses' @click="showSmallClass($event)"  v-bind:class="{'active':index==status}" >
+                                    	<a href="#">&nbsp;&nbsp; {{smallClass.typename}}</a>
+                                    	<span class="hide my_smallid">{{smallClass.pk_only}}</span>
+                                    </li>
+                                    
+                                </ul>
+                            </li>
+
+                        </ul>
+                        <!--/sidebar-menu-->
+                    </section>
+                </aside>
+
+            </div>
+            <div class="col-md-10 row-eq-height" id="spsy_right_menu">
+            	<div class="text-center noSearchData" v-show='noSearchData'>
+            		暂无商品
+            	</div>
+            	<div class="row">
+                <div class="col-md-3 sp_menu" v-for="allGood in allGoods" >
+                    <div class="sp_choice" @click='spxq($event)'>
+                        <img class="img good_image_index"  v-bind:src="conurl+''+allGood.image" style="width: 100%;">
+                        <h4 class="text-center">{{allGood.goodsname}}<label class="text-red">￥ {{allGood.price}}</label></h4>
+                        <span class="hide sp_id">{{allGood.id}}</span>
+                    </div>
+                </div>
+            </div>
+                <div class="row text-center" style="margin-bottom: 2em;margin-top: 4em;"  >
+                    <!--<div id="paginator">						
+                    </div>-->
+                    <div class="bs-example" data-example-id="disabled-active-pagination">
+                        <nav aria-label="...">
+                            <ul class="pagination" id="fydh" style="margin-top: 2em;">
+                                <li class="toPage"  v-for='(index,pages_total) in pages_totals' v-bind:class="{active_ :index==1}" v-bind:id="index" @click='toPage($event)'><a href="#">{{index}}</a></li>
+                            	<li class="toPage"  v-for='(index,pages_search_total) in pages_search_totals' v-bind:class="{active_ :index==1}" v-bind:id="index" @click='tosearchPage($event)'><a href="#">{{index}}</a></li>
+                            	<li class="toPage"  v-for='(index,pages_class_total) in pages_class_totals' v-bind:class="{active_ :index==1}" v-bind:id="index" @click='toclassPage($event)'><a href="#">{{index}}</a></li>
+
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row" id="content2" style="display: none;">
+        <div class="col-md-6" style="margin-left: 1em;">
+            <div class="col-md-6" style="border:1px solid #39cbe1;">
+                <img class="img" id="mychoicegoodimg" v-bind:src="conurl+''+Goods_img" style="width: 100%; height: 100%;">
+            </div>
+            <div class="col-md-6">
+                <h3 class="content2_title xq" id="content2_title">{{Goods_name}}</h3>
+                <label class="content2_peize text-red xq" id="content2_peice">￥ {{Goods_price}}</label>
+                <div class="input-group xq" style="height: 34px;margin-top: 28px;width: 50%;">
+                    <span class="input-group-addon glyphicon glyphicon-minus" id="jian_btn" @click="jian_number()"></span>
+                    <input type="text" id="sp_number" class="form-control text-center" value="1">
+                    <span class="input-group-addon glyphicon glyphicon-plus" id="add_btn" @click="add_number()"></span>
+                </div>
+                <button class="btn btn-default" id="buy_now" @click='addGw'>立即购买</button>
+                <button class="btn btn-default" id="add_gwc" @click='addGwc'>加入购物车</button>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="content3" style="display: none;">
+        <div class="gwc_title text-center">
+            我的购物车
+        </div>
+		<div class="row text-center" v-show='mygwc_number==0' style="padding-bottom: 15px;padding-top: 15px;">暂无数据</div>
+            
+        <div class="row content3_gwc_list" v-for='(my_gwc,index) in my_gwcs'> 
+        	<div class="col-md-1"></div>
+            <div class="col-md-1 text-right">
+                <img class="img img-responsive" v-bind:src="my_gwc.goodsimg" style="height: 50px;">
+            </div>
+            <div class="col-md-2" style="line-height: 50px;"><span>{{my_gwc.Foodname}}</span></div>
+            <div class="col-md-1" style="line-height: 50px;"><span class="dj">￥ {{my_gwc.Price}}</span></div>
+            <div class="col-md-3">
+                <div class="input-group" style="height: 34px;width: 50%;top: 8px;">
+                   <!-- <span class="input-group-addon glyphicon glyphicon-minus" id="gwc_jian_btn" @click='jian_goods($event)'></span>-->
+                    <input type="text" id="gwc_sp_number1" class="form-control text-center buy_numbers" readonly="readonly" v-model='my_gwc.Count'>
+                    <!--<span class="input-group-addon glyphicon glyphicon-plus" id="gwc_add_btn" @click='add_goods($event)'></span>-->
+                </div>
+            </div>
+            <div class="col-md-2">
+                <span class="content3_total_prize text-red">￥ {{my_gwc.goodstotals}}</span>
+            </div>
+            <div class="col-md-1 text-right">
+                <a href="#" class="content3_delete" @click='delete_gwc_list(index)'>删除<span class="hide"></span></a>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+
+    </div>
+    <div id="gwc_total" style="display: none;">
+        <div class="col-md-2 center-block">
+            <button id="clear_gwc" class="btn btn-default" @click='clear_gwc'>清空购物车</button>
+        </div>
+        <div class="col-md-10 text-right" >
+            <label class="gwc_total_all">共计{{mygwc_number}}件</label>
+            <label class="gwc_total_all_prize text-red">￥ {{price_total_all}}</label>
+            <button id="charge_online" class="btn btn-default" @click='chargepwd()'>在线支付</button>
+            <button id="charge_outline" class="btn btn-default" @click='inlineCharge(0)'>线下支付</button>
+        </div>
+    </div>
+    <div id="charge_pwd" style="display: none;z-index: 99999;">
+        <h4 class="charge_title text-center">在线支付</h4>
+        <div class="row"><input type="password"  id="charge_pwd_text" v-on:keyup.13='chargeOnline' placeholder="请输入支付密码"/>
+        </div>
+        <div class="row text-center" style="margin-top: 1em;">
+        	<span class="text-warn text-center" id="charge_tips"></span>
+        
+        </div>
+        <div class="row">
+        <button class="btn btn-default" id="charge_pwd_sure" @click='chargeOnline'>确认</button>
+        <button class="btn btn-default" id="charge_pwd_cancel" @click="chargemiss">取消</button>
+   
+        </div>
+        </div>
+	<div class="row" id="content4" style="display: none;">
+        <div class="content4_gwc_title text-center">我的购物</div>       
+		  <div class="row content4_gwc_list"> 
+        	<div class="col-md-1"></div>
+            <div class="col-md-1 text-right">
+                <img class="img img-responsive" v-bind:src="mygw.imgurl" style="height: 50px;">
+            </div>
+            <div class="col-md-2" style="line-height: 50px;"><span>{{mygw.Goods_name}}</span></div>
+            <div class="col-md-1" style="line-height: 50px;"><span class="dj">￥ {{mygw.Goods_price}}</span></div>
+            <div class="col-md-3">
+                <div class="input-group" style="height: 34px;width: 50%;top: 8px;">
+                   <!-- <span class="input-group-addon glyphicon glyphicon-minus" id="gwc_jian_btn" @click='jian_goods($event)'></span>-->
+                    <input type="text" id="gwc_sp_number" class="form-control text-center buy_numbers" readonly="readonly" v-model='mygw.Goods_numbers'>
+                    <!--<span class="input-group-addon glyphicon glyphicon-plus" id="gwc_add_btn" @click='add_goods($event)'></span>-->
+                </div>
+            </div>
+            <div class="col-md-1">
+                <span class="content4_total_prize text-red">￥ {{mygw.Goods_totals}}</span>
+            </div>
+            <!--<div class="col-md-1 text-right">-->
+                <!--<a href="#" class="content4_charge btn btn-primary" id="lkzf" @click='chargepwd2'>确认支付</a>-->
+            <!--</div>-->
+            <div class="col-md-1">
+                <a href="#" class="content4_charge btn btn-primary" id="xxzf" @click='inlineCharge(1)'>线下支付</a>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+
+    </div>
+    <div class="row" id="content5" style="display: none;">
+    	<!--<div class="checkbox">
+    		<label>
+      		<input type="checkbox"> 查看待支付订单
+    		</label>
+  		</div>-->
+
+    	<table class="table table-hover">
+			<thead>
+				<tr>
+				<th class="text-center">订单编号</th>
+				<th class="text-center">下单日期</th>
+				<th class="text-center">下单人</th>
+				<th class="text-center">订单状态</th>
+				<th class="text-center">订单金额</th>
+				<th class="text-center">取货时间</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td colspan="6" class="text-center" style="padding-bottom: 15px;padding-top: 15px;" v-show='historyorders.length==0'>暂无数据</td>
+				</tr>
+				<tr v-for='historyorder in historyorders'>
+					<td class="text-center"><a href="#" @click='checkOrder($event)'>{{historyorder.pk_formcode}}</a></td>
+					<td class="text-center">{{historyorder.formtime}}</td>
+					<td class="text-center">{{historyorder.formpeople}}</td>
+					<td class="text-center">{{historyorder.formstatus | statu}}</td>
+					<td class="text-center">{{historyorder.amount}}</td>
+					<td class="text-center">{{historyorder.operationtime}}</td>
+				</tr>
+									
+			</tbody>
+		</table>
+        <div class="row text-center" style="margin-top: 30px;">
+            <div class="bs-example" data-example-id="disabled-active-pagination">
+                <nav aria-label="...">
+                    <ul class="pagination" id="fydh2" style="margin-top: 2em;">
+                        <li class="toPage"  v-for='(index,pages_search_total2) in pages_search_totals2' v-bind:class="{active_ :index==1}" v-bind:id="index" @click="toHistory($event)"><a href="#">{{index}}</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="nologin text-center">
+        您还没有登录，<a class="tologin" href="mall_login.html">去登陆</a>
+    </div>
+    <div id="zz"></div>
+   	<div class="modal fade modal-primary in" id="updatePasswordModal" tabindex="-1" role="dialog" aria-labelledby="primary-modal-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="myModalLabel1">修改登录密码</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row row_update">
+					<div class="col-md-7 text-right">
+						原密码：<input type="password" class="text" id="oldpwd" />
+					</div>
+					<div class="col-md-5 text-left">
+						<span class="text-warn hide" id="dl_error"></span>
+					</div>
+				</div>
+				<div class="row row_update">
+					<div class="col-md-7 text-right">
+						新密码：<input type="password" class="text" id="newpwd" />
+					</div>
+					<div class="col-md-5 text-left">
+						<span class="text-warn hide" id="dl_error2"></span>
+					</div>
+				</div>
+				<div class="row row_update">
+					<div class="col-md-7 text-right">
+						新密码：<input type="password" class="text" v-on:keyup.13="updateNewPwd" id="newpwd2" />
+					</div>
+					<div class="col-md-5 text-left">
+						<span class="text-warn" id="dl_error3"></span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+                <button type="button" class="btn btn-info" id="sure" @click='updateNewPwd'>确定</button>
+				<button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+
+			</div>
+		</div>
+	</div>
+</div>
+ 	<div class="modal fade modal-primary in" id="updateChargePasswordModal" tabindex="-1" role="dialog" aria-labelledby="primary-modal-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="myModalLabel111">修改支付密码</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row row_update">
+					<div class="col-md-7 text-right">
+						新密码：<input type="password" class="text" v-on:keyup.13="updateChargePwd" id="newchargepwd" />
+					</div>
+					<div class="col-md-5 text-left">
+						<span class="text-warn" id="dl_error4"></span>
+					</div>
+				</div>
+
+			</div>
+			<div class="modal-footer">
+                <button type="button" class="btn btn-info"  @click='updateChargePwd'>确定</button>
+				<button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+
+			</div>
+		</div>
+	</div>
+</div>
+	<div class="modal fade modal-primary in" id="OrderContentModal" tabindex="-1" role="dialog" aria-labelledby="primary-modal-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header" style="border: none;background-color:#00c0ef ;">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="myModalLabel11" style="color: #ffffff;">订单详情</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row row_update">
+					<table class="table">
+			<thead>
+				<tr>
+				<th class="text-center">商品名称</th>
+				<th class="text-center">商品单价</th>
+				<th class="text-center">数量</th>
+							
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td colspan="4" class="text-center" style="padding-bottom: 15px;padding-top: 15px;" v-show='check_Orders.length==0'>暂无数据</td>
+				</tr>
+				<tr v-for='check_Order in check_Orders'>
+					<td class="text-center">{{check_Order.foodname}}</td>
+					<td class="text-center">{{check_Order.price}}</td>
+					<td class="text-center">{{check_Order.count}}</td>
+								
+				</tr>
+									
+			</tbody>
+			</table>
+			<div class="row">
+				<span>订单状态：{{Order_statu | statu}}</span>
+			</div>
+				</div>
+
+			</div>
+			<div class="modal-footer text-center">
+				<button type="button" class="btn btn-info" data-dismiss="modal">返回</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+</div>
+<div id="tips"></div>
+<script type="text/javascript" src="../js/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap-treeview/dist/bootstrap-treeview.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap/dist/js/ivt.js"></script>
+<script type="text/javascript" src="../js/bootstrap/dist/js/toastr.js"></script>
+<script type="text/javascript" src="../js/bootstrap/dist/js/app.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-paginator.js"></script>
+<script type="text/javascript" src="../js/vue.js"></script>
+<script type="text/javascript" src="../js/bootstrap/dist/js/jquery.slimscroll.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap/dist/js/dropdowns-enhancement.min.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+<script type="text/javascript" src="../js/public.js"></script>
+</body>
+</html>

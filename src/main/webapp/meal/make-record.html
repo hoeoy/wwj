@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="css/subsidies.css">
+    <link rel="stylesheet" href="js/bootstrap-table/dist/bootstrap-table.min.css">
+    <link rel="stylesheet" href="js/bootstrap/dist/css/bootstrap.css" />
+    <link href="css/report.css" rel="stylesheet">
+    <link href="css/make-record.css" rel="stylesheet">
+    <style>
+        .el-autocomplete.inline-input{
+            width: 100%;
+        }
+        .my-form .el-table__body tr.current-row>td {
+            background-color: #33b4ff;
+        }
+        .dy{border:0;}
+        .mode{margin-left: 2em;}
+        #pl-chargeBtn{margin-left: 1em;}
+        .nr{border: 1px solid #000;
+            width: 100%;
+            height: 300px;
+            overflow: auto;}
+        .arrow-btn{
+            width: 35px;
+            text-align: center;
+            margin-top: 2em;
+            margin-left: -1em;
+        }
+        #plcharge-content{width: 900px;left: 50%;margin-left: -450px;}
+        .selected{
+            background-color: #1E1E1E;
+        }
+
+        .no-padding-left-right, .tip-modal .modal-content, .tip-modal .modal-content .modal-body {
+            padding-left: 0 !important;
+            padding-right: 0 !important; }
+
+        .tip-modal .modal-content {
+            width: 400px;
+            height: 160px;
+            margin-top: 120px;
+            position: absolute;
+            left: 300px;
+        }
+        .tip-modal .modal-content .modal-header {
+            padding: 10px 15px;
+            height: 40px;
+            background-color: #33b4ff;
+            border: 0;
+            color: #fff; }
+        .tip-modal .modal-content .modal-header .close {
+            position: absolute;
+            right: 10px;
+            top: 7px; }
+        .tip-modal .modal-content .modal-header .modal-title {
+            font-size: 16px; }
+        .tip-modal .modal-content .modal-body {
+            padding: 10px;
+            border-color: #33b4ff; }
+        .tip-modal .modal-content .modal-body .alertIcon {
+            font-size: 35px;
+            color: #F4BD00; }
+        .tip-modal .modal-content .modal-body .tip-msg {
+            padding-right: 0;
+            font-size: 14px;
+            margin-top: 12px; }
+        .tip-modal .modal-content .modal-body .loading-container {
+            display: none;
+            position: absolute;
+            top: 20px;
+            left: 130px; }
+        .tip-modal .modal-content .modal-body .loading-container.active {
+            display: block; }
+
+    </style>
+</head>
+<body>
+<div id="all_content">
+    <div   class="col-md-2 " style="overflow: auto;padding:0;padding-top: 15px;">
+        <div id="tree" class="ztree"  style="overflow: auto"></div>
+    </div>
+    <div class="col-md-10">
+        <div class="row" id="search_row">
+            <div class="panel panel-default">
+                <div class="panel-heading">查询条件</div>
+                <div class="panel-body">
+                    <form id="formSearch" class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center" for="start_time">编码：</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text"  id="start_time" class="form-control " v-model="staff_code">
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center" for="end_time">姓名：</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text"  id="end_time"  class="form-control " v-model="staff_name">
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center" for="card_num">卡号：</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text"  id="card_num"  class="form-control " v-model="card_code">
+                                </div>
+                            </div>
+                            <div class="col-sm-3" style="text-align:left;">
+                                <button type="button"   id="btn_query" class=" btn btn-info col-sm-5 col-sm-offset-1" @click="query">查询</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row table_row table1">
+            <div class="pull-left" id="toolbar1">
+                <div  class="btn-group">
+                    <button  type="button" class="btn btn-info" id="subsidyRegister"
+                             :disabled="currentRow == '' > 0 ? true : false" @click='makeRecord'>
+                        <span class="iconfont icon-dengji" ></span><span>手工录补</span>
+                    </button>
+                </div>
+
+            </div>
+            <div style="margin-top: 50px;margin-bottom: 15px;" class="my-form">
+                <el-table
+                        ref="multipleTable" highlight-current-row
+                        :data="tableData"  @current-change="handleCurrentChange"
+                        tooltip-effect="dark" border
+                        style="width: 100%" height="300"
+                >
+                   <!-- <el-table-column
+                            type="selection"
+                            width="43">
+                    </el-table-column>-->
+                    <el-table-column
+                            prop="staff_code"
+                            label="编号"
+                            width="120"
+                            show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column
+                            prop="staff_name"
+                            label="姓名"
+                            width="120"
+                            show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column
+                            prop="card_code"
+                            label="卡号"  width="120"
+                            show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column
+                            prop="department_name"
+                            label="部门"
+                            width="120"
+                            show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column
+                            prop="money_cash"
+                            label="现金钱包"
+                            width="100"
+                            show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column
+                            prop="money_allowance"
+                            label="补贴钱包"
+                            width="120"
+                            show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column
+                            prop="card_ineffectived_ts"
+                            label="有效期"
+                            width="180"
+                            show-overflow-tooltip>
+                    </el-table-column>
+                </el-table>
+
+            </div>
+            <el-pagination
+                    @size-change="changePageSize"
+                    @current-change="changeCurrtentPage"
+                    :current-page="pagination.currentPage"
+                    :page-sizes="pagination.pageSizes"
+                    :page-size="pagination.pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="pagination.total">
+            </el-pagination>
+        </div>
+    </div>
+
+
+    <el-dialog
+            title="提示"
+            :visible.sync="isShow"
+            width="525px"
+            :before-close="handleClose">
+        <el-form ref="form" :rules="rules" :model="form" label-width="80px" class="my-form">
+            <el-row>
+                <el-col :span="12">
+                    <el-form-item label="编码">
+                        <el-input v-model="form.staff_code" disabled></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="姓名">
+                        <el-input v-model="form.staff_name" disabled></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col >
+                    <el-form-item label="餐别" prop="dining_code">
+                        <el-radio-group v-model="form.dining_code">
+                            <el-radio label="0">早餐</el-radio>
+                            <el-radio label="1">午餐</el-radio>
+                            <el-radio label="2">外卖</el-radio>
+                            <el-radio label="3">晚餐</el-radio>
+                            <el-radio label="4">其它</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+
+            </el-row>
+            <el-row>
+                <el-col :span="12">
+                    <el-form-item label="现金钱包">
+                        <el-input v-model="form.cash_retain" disabled></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="补贴钱包">
+                        <el-input v-model="form.allowance_retain" disabled></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="12">
+                    <el-form-item label="机器号" >
+                        <el-autocomplete
+                                class="inline-input"
+                                v-model="form.device_name"
+                                :fetch-suggestions="querySearch"
+                                placeholder="请输入内容"
+                                @select="handleSelect"
+                        ></el-autocomplete>
+                       <!-- <el-select  placeholder="" v-model="form.pk_device">
+                            <el-option :label="item.device_name" :value="item.pk_device" v-for="item in posList"></el-option>
+                        </el-select>-->
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="消费金额" prop="meal_money">
+                        <el-input v-model="form.meal_money"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="12">
+                    <el-form-item label="消费日期" prop="meal_ts">
+                        <el-date-picker
+                                v-model="form.meal_ts"
+                                type="datetime"
+                                placeholder="选择日期时间">
+                        </el-date-picker>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="isShow = false">取 消</el-button>
+    <el-button type="primary" @click="save">确 定</el-button>
+  </span>
+    </el-dialog>
+</div>
+<script>
+    var vm = new Vue({
+        el:'#all_content',
+        data: {
+            selected:'',
+            status: [
+                { text: '全部', value: '' },
+                { text: '已发放', value: 2 },
+                { text: '未发放', value: 0 }
+            ],
+            errMsg:'',
+            errMsgContent:'',
+            isShow:false,
+            pagination:{currentPage:1,pageSizes:[20,30,40],pageSize:20,total:0},currentRow:'',
+            tableData:[],
+            form:{
+                pk_staff:'',
+                pk_card:'',
+                staff_name:'',
+                card_code:'',
+                staff_code:'',
+                device_name:'',
+                pk_device:'',
+                meal_money:'',
+                cash_retain:'',
+                allowance_retain:'',
+                dining_code:'',
+                meal_ts:'',
+            },
+            rules: {
+                device_name: [
+                    { required: true, message: '请选择机器号', trigger: 'blur' },
+                ],
+                meal_money: [
+                    { required: true, message: '请输入消费金额', trigger: 'blur' }
+                ],
+                dining_code: [
+                    { type: 'date', required: true, message: '请选择餐别', trigger: 'blur' }
+                ],
+                meal_ts: [
+                    { type: 'date', required: true, message: '请选择时间', trigger: 'blur' }
+                ],
+            },
+            department_code:'',
+            card_code:'',
+            staff_code:'',
+            staff_name:'',posList:[],
+        },
+        mounted:function () {
+          this.$nextTick(function () {
+              document.getElementById("tree").style.maxHeight=$(window).height()+'px';
+              this.loadTree();this.loadDevice();
+          })
+        },
+        methods:{
+            querySearch:function(queryString, cb) {
+                var restaurants = this.posList.map(function (item) {
+                    item.value = item.device_name;return item;
+                });
+                var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+                // 调用 callback 返回建议列表的数据
+                cb(results);
+
+            },
+            createFilter:function(queryString) {
+                return function(restaurant) {
+                    return (restaurant.pk_device.indexOf(queryString) === 0);
+                };
+            },
+            handleSelect:function(item) {
+                this.form.pk_device = item.pk_device;
+            },
+            loadDevice:function () {
+                var _this = this;
+                $.ajax({
+                    type: 'get',
+                    data: {},
+                    dataType: "json",
+                    url:getUrl() + '/Api/tenantPos/queryDevice',
+                    contentType: "application/json;charset=UTF-8",
+                    success: function (data) {
+                        data.success && (_this.posList = data.data);
+                    }
+                });
+            },
+            loadTree:function () {
+                var _this = this;
+                $.ajax({
+                    type: 'get',
+                    data: {company_code: "1"},
+                    dataType: "json",
+                    url:getUrl()+ '/Api/dept/retrieveTree',
+                    contentType: "application/json;charset=UTF-8",
+                    success: function (data) {
+                        if (data.success) {
+                            var nodes = JSON.stringify(listToTree(data.data));
+                            $('#tree').treeview({
+                                data: nodes,
+                                onhoverColor:'#5bc0de',
+                                onNodeSelected: function (event, node) {
+                                    _this.department_code = node.id;
+                                    _this.query();
+                                },
+                                onNodeUnselected: function (event, node){
+                                    _this.department_code = '';
+                                }
+                            });
+                        } else {
+                            alert("初始化部门树失败!:" + data.msg);
+                        }
+
+                    },
+                    error: function (data) {
+                        alert("初始化部门树失败!");
+                        onError();
+                    }
+                });
+            },
+            handleClose:function(done) {
+                this.isShow = false;
+            },
+            indexMethod:function(index){
+                return index + 1;
+            },
+            query:function () {
+                var data = {
+                    department_code:this.department_code,
+                    staff_code:this.staff_code,
+                    staff_name:this.staff_name,
+                    card_code:this.card_code,
+                    pageNo:this.pagination.currentPage,
+                    pageSize:this.pagination.pageSize,
+                };
+                var _this = this;_this.tableData = [];
+                $.ajax({
+                    url:getUrl()+ '/Api/MealSupplement/findCardByPage',
+                    type:'get',
+                    dataType: "json",
+                    data:data,
+                    success: function (data) {
+                        data.success ?  ((_this.tableData = data.data.list) && (_this.pagination.total = data.data.total)) : ( (_this.tableData = '')&&(_this.pagination.total=0)) ;
+                        if(data.data.length == 0){
+                            _this.pagination.total=0
+                        }
+                    },
+                    error:function(){
+
+                    }
+                });
+
+            },
+            changePageSize:function (val) {
+                this.pagination.pageSize = val;this.query();
+            },
+            changeCurrtentPage:function (val) {
+                this.pagination.currentPage = val;this.query();
+            },
+            handleCurrentChange:function(val) {
+                this.currentRow = val;
+            },
+            makeRecord:function () {
+                this.isShow = true;
+                this.form = {
+                    pk_staff:this.currentRow.pk_staff,
+                    pk_card:this.currentRow.pk_card,
+                    card_code:this.currentRow.card_code,
+                    staff_code:this.currentRow.staff_code,
+                    staff_name:this.currentRow.staff_name,
+                    device_name:'',
+                    pk_device:'',
+                    meal_money:'',
+                    cash_retain:this.currentRow.money_cash,
+                    allowance_retain:this.currentRow.money_allowance,
+                    dining_code:'',
+                    meal_ts:'',
+                }
+            },
+            save:function(){
+                this.form.meal_ts = new Date(this.form.meal_ts).Format("yyyy-MM-dd hh:mm:ss");
+                if( this.form.pk_device != '' &&  this.form.meal_money != '' &&
+                    this.form.dining_code != '' &&  this.form.meal_ts != ''
+                ){
+                    $.ajax({
+                        url:getUrl()+ '/Api/MealSupplement/supplement',
+                        type:'get',
+                        dataType: "json",
+                        data:vm.form,
+                        success: function (data) {
+                            vm.isShow = false;
+                            Notify(data.message, 'top-right', '5000', 'primary', 'fa-times-circle', true);
+                            vm.query();
+                        },
+                        error:function(){
+                            Notify('补录失败', 'top-right', '5000', 'primary', 'fa-times-circle', true);
+                        }
+                    });
+                }else{
+                    Notify('请输入完整信息', 'top-right', '5000', 'primary', 'fa-times-circle', true);
+                }
+            }
+        },
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link href="internetmall/css/goods.css" rel="stylesheet"/>
+	</head>
+	<body>
+		<div id="all_content_style">
+			<div class="row menu_row">
+				<div class="panel panel-default">
+					<div class="panel-heading">查询条件</div>
+					<div class="panel-body">
+						<form id="formSearch" class="form-horizontal">
+							<div class="form-group">
+								<div class="col-sm-3">
+									<label class="control-label col-sm-4 goods_code no-padding-left-right text-center" for="goods_code">商品编码</label>
+									<div class=" col-sm-8 no-padding-left-right">
+										<input type="text"  id="goods_code" class="form-control"  v-on:keyup.13="toSearch">
+									</div>
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label col-sm-4 goods_name no-padding-left-right text-center" for="goods_name">商品名称</label>
+									<div class=" col-sm-8 no-padding-left-right">
+										<input type="text"  id="goods_name"  class="form-control" v-on:keyup.13="toSearch">
+									</div>
+								</div>
+								<div class="col-sm-3" style="text-align:left;">
+									<button type="button"   id="search_btn" class="btn btn-info col-sm-5 col-sm-offset-1"  @click='toSearch'>查询</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+
+			</div>
+			<div class="row">
+			<div class="col-md-2" style="padding-right: 0;padding-left: 0;">
+			   <aside class="main-sidebar2 col-md-12 col-lg-12" id="main-sidebar2" style="padding-right: 0;padding-left: 0;">
+                    <section class="sidebar" style="height: auto;">
+                        <!--sidebar-menu-->
+                        <ul class="sidebar-menu sidebar-menu2" id="allGoods">
+                            <li class="treeview" v-for='outClass in outClasses' >
+                                <a href="javascript:;" @click='choiceBClass($event)'> <span class=" glyphicon glyphicon-plus menu_title2">{{outClass.stylename}}</span>
+                                <span class="hide my_bigid">{{outClass.id}}</span>
+                                <!--   <span class="pull-right-container">
+                                        <i class="fa fa-angle-down pull-down"></i>
+                                    </span>-->
+                                </a>
+                               <ul class="treeview-menu treeview-menu2" id="treeview-menu2"  style="display: none;padding-left: 0;">                             
+                                    <li v-for='smallClass in smallClasses' class="treeview-menu_li" >
+                                    	<a href="#"  class="menu_title2" @click='choiceSClass($event)'>{{smallClass.typename}}</a>
+                                    	<span class="hide my_smallid">{{smallClass.pk_only}}</span>
+                                    </li>
+                                    
+                                </ul>
+                            </li>
+
+                        </ul>
+                       
+                    </section>
+                </aside>
+			</div>
+			<div class="col-md-10">
+				<div id="toolbar" class="btn-group">
+					<button  type="button" class="btn btn-info" id="add" @click='addGoodshow'>
+						<span class="iconfont icon-zengjia"></span><span>新增</span>
+					</button>
+					<button type="button" class="btn btn-info" id="update" disabled="true" @click='updateGoodshow'>
+						<span class="iconfont icon-xiugai"></span><span>修改</span>
+					</button>
+					<button type="button" class="btn btn-info" id="delete" disabled="true" @click='deleteGoods'>
+						<span class="iconfont icon-shanchu"></span><span>删除</span>
+					</button>
+				</div>
+				<table class="table row" id="table">
+								<thead>
+									<tr>			
+										<th bgcolor="#e0ebf0" class="text-center"><input type="checkbox" name="checkAll" id="checkAll"></th>
+										<th bgcolor="#e0ebf0" class="text-center">商品名称</th>
+										<th bgcolor="#e0ebf0" class="text-center">规格</th>
+										<th bgcolor="#e0ebf0" class="text-center">单位</th>
+										<th bgcolor="#e0ebf0" class="text-center">价格(元)</th>
+										<th bgcolor="#e0ebf0" class="text-center">类别</th>
+										<th bgcolor="#e0ebf0" class="text-center">条码</th>
+										<th bgcolor="#e0ebf0" class="text-center">状态</th>
+										<th bgcolor="#e0ebf0" class="text-center">上架时间</th>
+										<th bgcolor="#e0ebf0" class="text-center">图片</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td bgcolor="#ffffff" class="text-center" style="padding-top: 15px; padding-bottom: 15px;" v-show='allGoods.length==0'  colspan="10">暂无数据</td>
+									</tr>
+									<tr v-for='(allGood,index) in allGoods'>					
+										<td bgcolor="#ffffff" class="text-center choice_box"><input type="checkbox" name="checked" class="checked" @click='checked($event)'></td>
+										<td bgcolor="#ffffff" class="text-center goodsname">{{allGood.goodsname}}</td>
+										<td bgcolor="#ffffff" class="text-center norm">{{allGood.norm}}</td>
+										<td bgcolor="#ffffff" class="text-center unit">{{allGood.unit}}</td>
+										<td bgcolor="#ffffff" class="text-center price">{{allGood.price}}</td>
+										<td bgcolor="#ffffff" class="text-center goodstype">{{allGood.typename}}</td>
+										<td bgcolor="#ffffff" class="text-center barcode">{{allGood.barcode}}</td>
+										<td bgcolor="#ffffff" class="text-center state">{{allGood.state}}</td>
+										<td bgcolor="#ffffff" class="text-center ">{{allGood.addedtime}}</td>
+										<td bgcolor="#ffffff" class="text-center image"><a v-bind:href="allGood.image" target="_blank">{{allGood.image}}</a></td>
+										<td bgcolor="#ffffff" class="text-center hide id">{{allGood.id}}</td>
+									</tr>
+								
+								</tbody>
+							</table>
+				   <div class="row text-center" style="margin-bottom: 2em;"  >
+                    <div class="bs-example" data-example-id="disabled-active-pagination">
+                        <nav aria-label="...">
+                            <ul class="pagination" id="fydh" style="margin-top: 2em;display: none;">
+                                <li class="toPage"  v-for='(index,pagesArry) in pagesArrys' v-bind:class="{active_ :index==1}" v-bind:id="index" @click='toPage($event)'><a href="#">{{index}}</a></li>
+                            	</ul>
+                        </nav>
+                    </div>
+                </div>
+			</div>
+		</div>
+	<form action="/Api/Goods/uploadImg"  id="uploadform" method="post" enctype="multipart/form-data">
+	<div class="modal fade modal-primary in" id="addGoodsModal" tabindex="-1" role="dialog" aria-labelledby="primary-modal-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="myModalLabel2">新增商品</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row text-center row_class" style="margin-top: 2em;margin-bottom: 2em;">
+					<fieldset style="border: 1px solid #199ed8;">
+						<div class="row" style="margin-top: 2em;">
+							<div class="col-md-6">
+								<span class="fieldset_span">商品编码</span>
+								<input type="text" readonly="readonly" class="fieldset_text" placeholder="自动生成无需填写" id="good_code" />
+							</div>
+							<div class="col-md-6">
+								<span class="fieldset_span">商品名称</span>
+								<input type="text" class="fieldset_text" id="good_name" />
+							</div>
+							
+						</div>
+						<div class="row" style="margin-top: 2em;">
+							<div class="col-md-6">
+								<span class="fieldset_span">商品规格</span>
+								<input type="text" class="fieldset_text" id="good_spec" />
+							</div>
+							<div class="col-md-6">
+								<span class="fieldset_span">商品单位</span>
+								<input type="text" class="fieldset_text" id="good_unit" />
+							</div>
+							
+						</div>
+						<div class="row" style="margin-top: 2em;">
+							<div class="col-md-6 text-center">
+								<span class="fieldset_span">所属类别</span>
+								<input type="text" class="fieldset_text" readonly="readonly" v-model='currentName' id="good_type"  />
+							</div>
+							<div class="col-md-6">
+								<span class="fieldset_span">商品单价</span>
+								<input type="text" class="fieldset_text" id="good_price" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" />
+							</div>
+							
+						</div>
+						<div class="row" style="margin-top: 2em;">
+							<div class="col-md-6">
+								<span class="fieldset_span">商品条码</span>
+								<input type="text" class="fieldset_text" id="good_unicode" />
+							</div>
+							
+							
+						</div>
+						<div class="row" style="margin-top: 2em;">
+						<div class="col-md-2">
+								<span class="fieldset_span">商品图片</span>							
+							</div>
+							<div class="col-md-7">
+								<input type="file" name="file" id="good_img22" v-on:change='changefile'/>							
+							</div>
+							<div class="col-md-3">
+								<button class="btn btn-default" type="submit" id="uploda_img" disabled="disabled" >上传图片</button>
+							</div>
+							<div class="col-md-12  text-center">
+								<span class="text-warn text-center" id="warn-tips"></span>
+							</div>
+						</div>	
+						<div class="row" style="margin-top: 2em;">
+							<div class="col-md-6 text-left" style="margin-left: 15px;">							
+								<input type="checkbox" class="fieldset_checkbox" id="isUp" checked="checked" />
+								<span class="fieldset_span">是否上架</span>
+							</div>
+							
+							
+						</div>
+						<div class="row" style="margin-top: 25px;margin-bottom: 15px">
+							<button type="button" class="btn btn-info" style="width: 100px;" @click='addGoods' id="small_sure">保存并创建</button>
+							<button type="button" class="btn btn-info" style="width: 100px;" data-dismiss="modal">关闭</button>
+				
+						</div>
+					</fieldset>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</div>
+	</form>
+	<form action="/Api/Goods/uploadImg"  id="updateG" method="post" enctype="multipart/form-data">
+	<div class="modal fade modal-primary in" id="updateGoodsModal" tabindex="-1" role="dialog" aria-labelledby="primary-modal-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="myModalLabel22">修改商品信息</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row text-center row_class" style="margin-top: 2em;margin-bottom: 2em;">
+					<fieldset style="border: 1px solid #199ed8;">
+						<div class="row" style="margin-top: 2em;">
+							<div class="col-md-6">
+								<span class="fieldset_span">商品编码</span>
+								<input type="text" readonly="readonly" class="fieldset_text" id="good_code2" v-model='id'  />
+							</div>
+							<div class="col-md-6">
+								<span class="fieldset_span">商品名称</span>
+								<input type="text" class="fieldset_text" id="good_name2" v-model='name'/>
+							</div>
+							
+						</div>
+						<div class="row" style="margin-top: 2em;">
+							<div class="col-md-6">
+								<span class="fieldset_span">商品规格</span>
+								<input type="text" class="fieldset_text" id="good_spec2" v-model='norm'/>
+							</div>
+							<div class="col-md-6">
+								<span class="fieldset_span">商品单位</span>
+								<input type="text" class="fieldset_text" id="good_unit2" v-model='unit'/>
+							</div>
+							
+						</div>
+						<div class="row" style="margin-top: 2em;">
+							<div class="col-md-6 text-center">
+								<span class="fieldset_span">所属类别</span>
+								<input type="text" class="fieldset_text" readonly="readonly" v-model='currentName' id="good_type2" />
+							</div>
+							<div class="col-md-6">
+								<span class="fieldset_span">商品单价</span>
+								<input type="text" class="fieldset_text" id="good_price2" v-model='price'/>
+							</div>
+							
+						</div>
+						<div class="row" style="margin-top: 2em;">
+							<div class="col-md-6">
+								<span class="fieldset_span">商品条码</span>
+								<input type="text" class="fieldset_text" id="good_unicode2" v-model='barcode'/>
+							</div>
+							<div class="row" style="margin-top: 5em;">
+						<div class="col-md-2" style="clear: left; margin-top: 7px;">
+								<span class="fieldset_span">商品图片</span>							
+							</div>
+							<div class="col-md-7">
+								<input type="file" name="file" id="good_img23" v-on:change='changefile2'/>							
+							</div>
+							<div class="col-md-3">
+								<button class="btn btn-primary" type="submit" id="uploda_img2" disabled="disabled" >上传图片</button>
+							</div>
+							<div class="col-md-12  text-center">
+								<span class="text-warn text-center" id="warn-tips2"></span>
+							</div>
+						</div>	
+							
+						</div>
+						<div class="row" style="margin-top: 2em;">
+							<div class="col-md-6 text-left" style="margin-left: 15px;">							
+								<input type="checkbox" class="fieldset_checkbox" id="state" checked="checked" />
+								<span class="fieldset_span">是否上架</span>
+							</div>
+							
+							
+						</div>
+						<div class="row" style="margin-top: 2em;">
+							<button type="button" class="btn btn-info" style="width: 100px;" @click='updateGoods' id="update_sure">保存并创建</button>
+							<button type="button" class="btn btn-info" style="width: 100px;" data-dismiss="modal">关闭</button>
+				
+						</div>
+					</fieldset>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</div>
+	</form>
+</div>
+		
+	
+	<script type="text/javascript" src="internetmall/js/goods.js"></script>
+	<script type="text/javascript" src="internetmall/js/jquery-form.js"></script>
+	<script>
+		 
+	</script>
+	</body>
+</html>

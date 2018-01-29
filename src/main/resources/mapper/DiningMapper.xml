@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.DiningDAO">
+
+    <select id="retrieveAll" resultType="com.iandtop.model.meal.DiningModel">
+        select * from meal_dining
+    </select>
+
+    <sql id="RefundColume">
+        <trim suffix="" suffixOverrides=",">
+            <if test="dining_code != null">dining_code,</if>
+            <if test="dining_name != null">dining_name,</if>
+            <if test="begin_time != null">begin_time,</if>
+            <if test="end_time != null">end_time,</if>
+            <if test="price != null">price,</if>
+            <if test="be_valid != null">be_valid,</if>
+            <if test="memo != null">memo,</if>
+            <if test="def1 != null">def1,</if>
+            <if test="def2 != null">def2,</if>
+            <if test="def3 != null">def3,</if>
+            <if test="def4 != null">def4,</if>
+            <if test="def5 != null">def5,</if>
+        </trim>
+    </sql>
+
+
+    <sql id="RefundValue">
+        <trim suffix="" suffixOverrides=",">
+            <if test="dining_code != null">#{dining_code},</if>
+            <if test="dining_name != null">#{dining_name},</if>
+            <if test="begin_time != null">#{begin_time},</if>
+            <if test="end_time != null">#{end_time},</if>
+            <if test="price != null">#{price},</if>
+            <if test="be_valid != null">#{be_valid},</if>
+            <if test="memo != null">#{memo},</if>
+            <if test="def1 != null">#{def1},</if>
+            <if test="def2 != null">#{def2},</if>
+            <if test="def3 != null">#{def3},</if>
+            <if test="def4 != null">#{def4},</if>
+            <if test="def5 != null">#{def5},</if>
+        </trim>
+    </sql>
+
+    <insert id="insertByMo"  parameterType="com.iandtop.model.meal.DiningModel">
+        insert into meal_dining (
+        <include refid="RefundColume"/>
+        ) values (
+        <include refid="RefundValue"/>
+        )
+    </insert>
+
+    <update id="updateByPk">
+        UPDATE meal_dining
+        <trim prefix="SET" suffixOverrides=",">
+        <if test="dining_code !=null and dining_code!=''">dining_code=#{dining_code},</if>
+        <if test="dining_name !=null and dining_name!=''">dining_name=#{dining_name},</if>
+        <if test="begin_time !=null and begin_time!=''">begin_time=#{begin_time},</if>
+        <if test="end_time !=null and end_time!=''">end_time=#{end_time},</if>
+        <if test="be_valid !=null and be_valid!=''">be_valid=#{be_valid},</if>
+        <if test="memo !=null and memo!=''">memo=#{memo},</if>
+        <if test="def1 !=null and def1!=''">def1=#{def1},</if>
+        <if test="def2 !=null and def2!=''">def2=#{def2},</if>
+        <if test="def3 !=null and def3!=''">def3=#{def3},</if>
+        <if test="def4 !=null and def4!=''">def4=#{def4},</if>
+        <if test="def5 !=null and def5!=''">def5=#{def5},</if>
+        </trim>
+        WHERE
+        pk_dining=#{pk_dining}
+    </update>
+
+    <select id="retrieveAllWithPage" parameterType="com.iandtop.model.meal.DiningModel" resultType="com.iandtop.model.meal.DiningModel">
+        select * from meal_dining
+        order by
+        pk_dining asc
+        limit
+        #{offset},#{limit}
+    </select>
+
+    <delete id="deleteByPks" parameterType="java.util.List">
+        delete from meal_dining where
+        <foreach collection="list" item="item" index="index"
+                 open="(" separator="or" close=")">
+            pk_dining = #{item}
+        </foreach>
+    </delete>
+
+    <select id="retrieveByCode" parameterType="java.lang.String" resultType="com.iandtop.model.meal.DiningModel">
+        select * from meal_dining where dining_code=#{dining_code}
+    </select>
+
+    <select id="retrieveByPk" parameterType="java.lang.String" resultType="com.iandtop.model.meal.MerchantModel">
+        select * from meal_dining where pk_dining=#{pk_dining}
+    </select>
+
+</mapper>

@@ -1,0 +1,201 @@
+	<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link href="internetmall/css/style.css" rel="stylesheet"/>
+	</head>
+	<body>
+		<div id="all_content_style">
+		<div class="row menu_row">
+			<div class="col-md-2">
+
+			</div>
+			<div class="col-md-5 col-lg-5">
+				<div id="toolbar" class="btn-group">
+					<button  type="button" class="btn btn-info" id="add" @click='addClass'>
+						<span class="iconfont icon-zengjia"></span><span>新增</span>
+					</button>
+					<button type="button" class="btn btn-info" id="update" disabled="true" @click='updateClass'>
+						<span class="iconfont icon-xiugai"></span><span>修改</span>
+					</button>
+					<button type="button" class="btn btn-info" id="delete" disabled="true" @click='deleteClass'>
+						<span class="iconfont icon-shanchu"></span><span>删除</span>
+					</button>
+				</div>
+
+			</div>
+			<div class="input-group col-md-5 col-lg-5" style="margin-left: 2em;">
+
+            </div>
+		</div>
+		<div class="row">
+			<div class="col-md-2 left_tree_small">
+			   <aside class="main-sidebar2 col-md-12 col-lg-12" id="main-sidebar2">
+                    <section class="sidebar" style="height: auto;">
+                        <!--sidebar-menu-->
+                        <ul class="sidebar-menu">
+                            <li class="treeview" id="allGoods">
+                                <a href="javascript:;" id="allGoods_a" style="display: none;">
+                                </a>
+                               <ul class="treeview-menu treeview-menu2" id="treeview-menu2"  style="display: block;padding-left: 0;">
+                                    <li class="text-left"  @click='choiceClass($event)'>
+                                    	<a href="#"  class="menu_title"> <span class="glyphicon glyphicon-minus">所有大类</span></a>
+                                    	<span class="hide my_smallid">0</span>
+                                    </li>
+                                    <li v-for='outClass in outClasses' @click='choiceClass($event)'>
+                                    	<a href="#"  class="menu_title">&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;{{outClass.stylename}}</a>
+                                    	<span class="hide my_smallid">{{outClass.id}}</span>
+                                    </li>
+                                    
+                                </ul>
+                            </li>
+
+                        </ul>
+                       
+                    </section>
+                </aside>
+</div>
+			<div class="col-md-10">
+				<table class="table" id="table">
+								<thead>
+									<tr>			
+										<th bgcolor="#e0ebf0" class="text-center"><input type="checkbox" name="checkAll" id="checkAll"></th>
+										<th bgcolor="#e0ebf0" class="text-center">上级类别</th>
+										<th bgcolor="#e0ebf0" class="text-center">类别编码</th>
+										<th bgcolor="#e0ebf0" class="text-center">类别名称</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td bgcolor="#ffffff" class="text-center" style="padding-top: 15px; padding-bottom: 15px;" v-show='smallClasses.length==0'  colspan="4">暂无数据</td>
+									</tr>
+									<tr v-for='(smallClass,index) in smallClasses'>					
+										<td bgcolor="#ffffff" class="text-center choice_box"><input type="checkbox" name="checked" class="checked" @click='checked($event)'></td>
+										<td bgcolor="#ffffff" class="text-center">{{parentClass}}</td>
+										<td bgcolor="#ffffff" class="text-center pk_only">{{smallClass.pk_only}}</td>
+										<td bgcolor="#ffffff" class="text-center typename">{{smallClass.typename}}</td>
+									</tr>
+								
+								</tbody>
+							</table>
+			</div>
+		</div>
+	<div class="modal fade modal-primary in" id="addbigClassmodal" tabindex="-1" role="dialog" aria-labelledby="primary-modal-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="myModalLabel1">大类添加</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-7 text-right">
+						添加大类名称：<input type="text" class="text" id="bigclassname" />
+					</div>
+					<div class="col-md-5 text-left">
+						<span class="text-warn" id="dl_error"></span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-info" @click='addClassName(1)'>确定</button>
+				<button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+
+			</div>
+		</div>
+	</div>
+</div>
+	<div class="modal fade modal-primary in" id="addsmallClassmodal" tabindex="-1" role="dialog" aria-labelledby="primary-modal-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="myModalLabel2">小类添加</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row text-center row_class">
+					<div class="col-md-7 text-right">
+						 上级类目：<input type="text" class="text" id="parentclassname" readonly="readonly" v-model='parentClass' />				
+					</div>
+						
+				</div>
+				<div class="row text-center row_class">
+					<div class="col-md-7 text-right">
+						小类名称：<input type="text" class="text" id="smallclassname" />			
+					</div>
+					<div class="col-md-5 text-left">
+						<span class="text-warn" id="error"></span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-info"  @click='addClassName(2)'>确定</button>
+				<button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+
+			</div>
+		</div>
+	</div>
+</div>
+	<div class="modal fade modal-primary in" id="updatesmallClassmodal" tabindex="-1" role="dialog" aria-labelledby="primary-modal-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="myModalLabel3">小类修改</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row text-center row_class">
+					<div class="col-md-7 text-right">
+						 上级类目：<input type="text" class="text" id="parentclassname2" readonly="readonly" v-model='parentClass' />				
+					</div>
+						
+				</div>
+				<div class="row text-center row_class">
+					<div class="col-md-7 text-right">
+						小类名称：<input type="text" class="text" id="smallclassname2" />			
+					</div>
+					<div class="col-md-5 text-left">
+						<span class="text-warn" id="error2"></span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-info" id="small_sure" @click='updateClassname'>修改</button>			
+				<button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+				</div>
+		</div>
+	</div>
+</div>
+	<div class="modal fade modal-primary in" id="updatebigClassmodal" tabindex="-1" role="dialog" aria-labelledby="primary-modal-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="myModalLabel4">大类修改</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-7 text-right">
+						大类名称：<input type="text" class="text" id="bigclassname2" />
+					</div>
+					<div class="col-md-5 text-left">
+						<span class="text-warn" id="dl_error2"></span>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-info" id="big_sure" @click='updateClassname'>修改</button>
+				<button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+				
+			</div>
+		</div>
+	</div>
+</div>
+	
+</div>
+		
+	
+	<script type="text/javascript" src="internetmall/js/style.js"></script>
+	</body>
+</html>

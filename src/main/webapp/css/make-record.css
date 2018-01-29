@@ -1,0 +1,68 @@
+.my-form .btn-form:first-child {
+  background-color: #999; }
+.my-form .btn-form:last-child {
+  background-color: #1fb5ac; }
+.my-form .btn-form:hover {
+  opacity: .7; }
+.my-form .input-icon .el-input__inner {
+  padding-left: 35px; }
+.my-form .input-icon .el-input__prefix {
+  left: 15px; }
+.my-form .input-icon .el-input__suffix {
+  display: none; }
+.my-form .input-icon:hover .el-input__suffix {
+  display: block; }
+.my-form .el-textarea__inner {
+  resize: none; }
+.my-form .el-radio + .el-radio {
+  margin-left: 15px; }
+.my-form .el-radio-group {
+  position: relative;
+  top: -2px; }
+.my-form .input-day {
+  position: relative; }
+  .my-form .input-day .el-input__inner {
+    position: relative;
+    top: 5px;
+    border-color: #ccc; }
+.my-form .el-input--suffix.datetime-picker .el-input__inner {
+  padding-right: 0px !important; }
+.my-form .el-form-item {
+  margin-bottom: 15px;
+  height: 30px; }
+.my-form .el-form-item__label {
+  height: 30px; }
+.my-form .el-form-item__content {
+  height: 30px; }
+.my-form .el-form-item .el-form-item__label {
+  position: relative;
+  top: -2px; }
+.my-form .el-select {
+  width: 100% !important; }
+  .my-form .el-select .el-input {
+    width: 100% !important; }
+.my-form .el-input {
+  height: 30px;
+  top: -2px; }
+  .my-form .el-input .el-input__inner {
+    height: 30px; }
+.my-form .el-date-editor {
+  width: 100%; }
+.my-form .el-button {
+  height: 30px;
+  padding-top: 0;
+  padding-bottom: 0; }
+
+.el-dialog__header {
+  background-color: #47b4e8;
+  padding: 10px 15px; }
+  .el-dialog__header .el-dialog__title {
+    color: #fff; }
+
+.el-dialog__body {
+  padding: 15px 20px 0; }
+
+.el-dialog__footer {
+  padding: 0 20px 15px; }
+
+/*# sourceMappingURL=make-record.css.map */

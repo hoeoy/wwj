@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.MealrecordUpDao">
+    <insert id="updateMealrecord" parameterType="com.iandtop.model.meal.MealRecordModel">
+        INSERT INTO ${table_name} (
+        pk_staff,pk_card,pk_device,
+        card_code,staff_code,device_code,
+        meal_money,meal_cash_money,meal_allowance,
+        cash_retain,allowance_retain,money_retain,
+        meal_type,meal_way,device_meal_type,
+        meal_ts,dining_name,dining_code)
+        VALUES(
+        #{pk_staff},#{pk_card},#{pk_device},
+        #{card_code},#{staff_code},#{device_code},
+        #{meal_money}*100,#{meal_cash_money}*100,#{meal_allowance}*100,
+        #{cash_retain}*100,#{allowance_retain}*100,#{money_retain}*100,
+        #{meal_type},#{meal_way},#{device_meal_type},
+        #{meal_ts},#{dining_name},#{dining_code})
+    </insert>
+    <update id="updatecard" parameterType="com.iandtop.model.card.CardModel">
+         UPDATE card_card
+            SET money_cash=#{money_cash},
+            money_allowance=#{money_allowance}
+            WHERE pk_card=#{pk_card}
+    </update>
+    <select id="findcard" parameterType="java.lang.String" resultType="com.iandtop.model.card.CardModel">
+        select money_cash,money_allowance from card_card WHERE pk_card=#{pk_card}
+    </select>
+
+</mapper>

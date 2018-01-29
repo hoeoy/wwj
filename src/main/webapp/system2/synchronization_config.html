@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/system2/synchronization_config.css">
+    <title>日志配置</title>
+    <style>
+        .fixed-table-toolbar .columns{
+            margin-right: 15px!important;
+        }
+    </style>
+</head>
+<body>
+<div id="allcontent">
+    <div id="toolbar" class="btn-group">
+        <button  type="button" class="btn btn-info" id="btn_add" data-toggle="modal" data-target="#addSynModal" >
+            <span class="iconfont icon-zengjia"></span><span>新增</span>
+        </button>
+        <button type="button" class="btn btn-info" id="btn_edit" disabled="true" data-toggle="modal" data-target="#addSynModal" >
+            <span class="iconfont icon-xiugai"></span><span>修改</span>
+        </button>
+        <button type="button" class="btn btn-info" id="btn_delete" disabled="true" >
+            <span class="iconfont icon-shanchu"></span><span>删除</span>
+        </button>
+        <button type="button" class="btn btn-info" id="btn_refresh">
+            <span class="iconfont icon-refresh"></span><span>刷新</span>
+        </button>
+    </div>
+    <div class="row table_row">
+        <table class="table" id="table">
+
+        </table>
+    </div>
+
+    <div class="modal fade modal-primary in" id="addSynModal" tabindex="-1" role="dialog" aria-labelledby="primary-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title" id="addRoleModal_title">新增同步参数</h4>
+                </div>
+                <div class="modal-body">
+                    <fieldset class="fieldset">
+                        <div class="row modal_row">
+                            <div class="col-md-12">
+                                <span class="isMust">*</span>
+                                <span>数据库地址：</span>
+                                <input type="text" class="longtxt" id="url">
+                            </div>
+                        </div>
+                        <div class="row modal_row">
+                            <div class="col-md-6 cd6">
+                                <div class="col-md-5 cd5">
+                                    <span class="isMust">*</span>
+                                    <span class="name">同步间隔：</span>
+                                </div>
+                                <div class="col-md-7 cd7">
+                                    <input type="text" class="modal_txt" id="frequency" style="margin-left: 15px">
+
+                                </div>
+                            </div>
+                            <div class="col-md-6 cd6">
+                                <div class="col-md-5 cd5">
+                                    <span class="isMust">*</span>
+                                    <span class="name">公司编码：</span>
+                                </div>
+                                <div class="col-md-7 cd7">
+                                    <input type="text" class="modal_txt" id="company_code">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row modal_row">
+                            <div class="col-md-6 cd6">
+                                <div class="col-md-5 cd5">
+                                    <span class="isMust">*</span>
+                                    <span class="name">用户名：</span>
+                                </div>
+                                <div class="col-md-7 cd7">
+                                    <input type="text" class="modal_txt" id="user" style="margin-left: 15px">
+
+                                </div>
+                            </div>
+                            <div class="col-md-6 cd6">
+                                <div class="col-md-5 cd5">
+                                    <span class="isMust">*</span>
+                                    <span class="name">密码：</span>
+                                </div>
+                                <div class="col-md-7 cd7">
+                                    <input type="text" class="modal_txt" id="password">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row modal_row2 text-center">
+                            <button type="button" class="btn btn-default modal_btn"id="save" >保存并创建</button>
+                            <button type="button" class="btn btn-default modal_btn" data-dismiss="modal">关闭</button>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="confirm-modal" class="modal fade role= in" dialog="" tabindex="-1" style="padding-right: 17px;">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content" style="position: absolute;width: 600px;height: 182px;left:50%;margin-left: -300px;top: 100px;">
+                <div class="modal-header">
+                    <h4 id="modal-title" class="modal-title">删除确认</h4>
+                </div>
+                <div id="modal-body" class="modal-body">确定删除选中项吗？</div>
+                <div id="modal-footer" class="modal-footer">
+                    <button id="button-save" type="button" class="btn btn-default modal_btn" @click="deleteLists">确定</button>
+                    <button id="modal-close" type="button" class="btn btn-default modal_btn" data-dismiss="modal">取消</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../js/system2/synchronization_config.js"></script>
+</body>
+</html>

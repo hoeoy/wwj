@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.MealAllowanceNumDAO">
+    <select id="retrieve" resultType="com.iandtop.model.meal.MealAllowanceNumModel">
+      select pk_allowance_num as pkallowancenum,allowance_num_code as allowancenumcode,state as state from foreignoffice.meal_allowance_num WHERE 1=1;
+    </select>
+
+    <insert id="save" parameterType="com.iandtop.model.meal.MealAllowanceNumModel">
+      INSERT into meal_allowance_num(pk_allowance_num, allowance_num_code, state, ts) VALUES (#{pkallowancenum},#{allowancenumcode},#{state},#{ts})
+    </insert>
+
+</mapper>

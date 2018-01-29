@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<link rel="stylesheet" href="css/subsidies.css">
+	<link rel="stylesheet" href="js/bootstrap-table/dist/bootstrap-table.min.css">
+	<link rel="stylesheet" href="js/bootstrap/dist/css/bootstrap.css" />
+	<link href="css/report.css" rel="stylesheet">
+	<script type="text/javascript" src="js/bootstrap-table/dist/bootstrap-table.js"></script>
+	<script type="text/javascript" src="js/bootstrap-table/dist/bootstrap-table-zh-CN.js"></script>
+	<style>
+		.dy{border:0;}
+		.mode{margin-left: 2em;}
+		#pl-chargeBtn{margin-left: 1em;}
+		.nr{border: 1px solid #000;
+			width: 100%;
+			height: 300px;
+			overflow: auto;}
+		.arrow-btn{
+			width: 35px;
+			text-align: center;
+			margin-top: 2em;
+			margin-left: -1em;
+		}
+		#plcharge-content{width: 900px;left: 50%;margin-left: -450px;}
+		.selected{
+			background-color: #1E1E1E;
+		}
+
+		.no-padding-left-right, .tip-modal .modal-content, .tip-modal .modal-content .modal-body {
+			padding-left: 0 !important;
+			padding-right: 0 !important; }
+
+		.tip-modal .modal-content {
+			width: 400px;
+			height: 160px;
+			margin-top: 120px;
+			position: absolute;
+			left: 300px;
+		}
+		.tip-modal .modal-content .modal-header {
+			padding: 10px 15px;
+			height: 40px;
+			background-color: #33b4ff;
+			border: 0;
+			color: #fff; }
+		.tip-modal .modal-content .modal-header .close {
+			position: absolute;
+			right: 10px;
+			top: 7px; }
+		.tip-modal .modal-content .modal-header .modal-title {
+			font-size: 16px; }
+		.tip-modal .modal-content .modal-body {
+			padding: 10px;
+			border-color: #33b4ff; }
+		.tip-modal .modal-content .modal-body .alertIcon {
+			font-size: 35px;
+			color: #F4BD00; }
+		.tip-modal .modal-content .modal-body .tip-msg {
+			padding-right: 0;
+			font-size: 14px;
+			margin-top: 12px; }
+		.tip-modal .modal-content .modal-body .loading-container {
+			display: none;
+			position: absolute;
+			top: 20px;
+			left: 130px; }
+		.tip-modal .modal-content .modal-body .loading-container.active {
+			display: block; }
+
+	</style>
+</head>
+<body>
+<div id="all_content">
+	<div class="row" id="search_row">
+		<div class="panel panel-default">
+			<div class="panel-heading">查询条件</div>
+			<div class="panel-body">
+				<form id="formSearch" class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-3">
+							<label class="control-label col-sm-4 no-padding-left-right text-center" for="start_time">开始时间：</label>
+							<div class=" col-sm-8 no-padding-left-right">
+								<input type="text"  id="start_time" class="form-control laydate-icon" onclick="laydate()"  v-model="startTime" >
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<label class="control-label col-sm-4 no-padding-left-right text-center" for="end_time">结束时间：</label>
+							<div class=" col-sm-8 no-padding-left-right">
+								<input type="text"  id="end_time"  class="form-control laydate-icon"  onclick="laydate()" v-model="endTime">
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<label class="control-label col-sm-4 no-padding-left-right text-center" for="status">状态：</label>
+							<div class="col-md-8">
+								<select class=" form-control no-padding-left-right"  id="status" v-model="selected">
+									<option v-for="option in status"  v-bind:value="option.value">
+										{{option.text}}
+									</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-sm-3" style="text-align:left;">
+							<button type="button"   id="btn_query" class=" btn btn-info col-sm-5 col-sm-offset-1" >查询</button>
+						</div>
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+
+	<div class="row table_row table1">
+		<div class="pull-left" id="toolbar1">
+			<div  class="btn-group">
+				<button  type="button" class="btn btn-info" id="subsidyRegister"  @click='subsidyRegister'>
+					<span class="iconfont icon-dengji"></span><span>补贴登记</span>
+				</button>
+				<button type="button" class="btn btn-info" id="inputExcel_btn" @click='inputExcel'>
+					<span class="iconfont icon-daochuexcel"></span><span>导入excel</span>
+				</button>
+				<button type="button" class="btn btn-info" id="subsidyProvide" disabled="true">
+					<span class="iconfont icon-fafang"></span><span>补贴发放</span>
+				</button>
+				<button type="button" class="btn btn-info" id="subsidyDelete" disabled="true">
+					<span class="iconfont icon-shanchu" aria-hidden="true" ></span>删除补贴
+				</button>
+
+			</div>
+
+		</div>
+		<table class="table table-bordered" id="maintable">
+		</table>
+	</div>
+
+	<div class="modal fade" id="subsidyRModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content" id="plcharge-content">
+				<div class="modal-header"><h5>补贴登记</h5></div>
+				<div class="modal-body">
+					<div class="row text-center">
+						充值金额:<input type="number" id="plchargemoney"/><span style="margin-left: 15px;">清零补贴</span><input type="checkbox" id="clear_subdify" value = "s"/>
+					</div>
+					<div class="row" style="margin-top: 2em;">
+						<div class="col-md-7">
+							<div class="col-md-6">
+								<div class="nr left-tree" id="left-tree"></div>
+							</div>
+							<div class="col-md-6">
+								<div class="nr middle-tree" id="left_psns">
+									<ul class="list-group">
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-1 text-center">
+							<button class="btn arrow-btn" id="move_right_one">></button>
+							<button class="btn arrow-btn" id="move_right_all">>></button>
+							<button class="btn arrow-btn" id="move_left_one"><</button>
+							<button class="btn arrow-btn" id="move_left_all"><<</button>
+						</div>
+						<div class="col-md-4">
+							<div class="nr right" id="right_psns">
+								<ul class="list-group"></ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer text-center">
+					<button type="button" class="btn btn-primary" id="plokBtn">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="pldismiss">关闭</button>
+
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal -->
+	</div>
+	<div class="modal fade" id="uploadExcelModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content" id="plcharge-content1">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+				<div class="modal-header"><h4>导入Excel</h4></div>
+				<div class="modal-body">
+					<div class="row text-center">
+						<form  id="commentForm" entype="multipart/form-data">
+							<input type="hidden" name="operator" id="operator"/>
+							excel文件导入:<input type="file" id="excelfile" name="file" style="margin-left: 200px;margin-top: 15px;margin-bottom: 15px;"/>
+						</form>
+						<p class="upload_tips">
+							1.Excel导入内容顺序必须是：工号、补贴金额、补类型；
+						</p>
+						<p class="upload_tips">
+							2.导入工号必须与人员档案资料一致
+						</p>
+					</div>
+				</div>
+				<div class="modal-footer text-center">
+					<button type="button" class="btn btn-info" id="upload">导入</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade tip-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">提示</h4>
+				</div>
+				<div class="modal-body">
+					<div class="col-md-12 ">
+						<div class="col-md-2 no-padding-left-right">
+							<i class="iconfont icon-help alertIcon"></i>
+						</div>
+						<span class="col-md-10 tip-msg">{{errMsg}}<a class=""  @click="showExcelErrMsg">是否查看详情</a></span>
+					</div>
+					<div class="col-md-12 form-group">
+						<div class="col-md-6 form-group">
+							<button type="button" class="col-sm-offset-4 col-sm-8 btn btn-info" @click="showExcelErrMsg">查看</button>
+						</div>
+						<div class="col-md-6 form-group">
+							<button type="button" class="col-sm-offset-1 col-sm-8  btn btn-info" data-dismiss="modal">确认</button>
+						</div>
+					</div>
+					<!--<div class="loading-container" :class="{'active':!saveFinish}">
+						<img :src='loadingIMG'  alt="">
+					</div>-->
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div>
+	<div class="modal fade" id="confirmModal">
+		<div class="modal-dialog">
+			<div class="modal-content" style="margin-top: 100px;width: 500px;margin-left: 400px" >
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">提示</h4>
+				</div>
+				<div class="modal-body">
+					<p id="info"></p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" id="confirm">确定</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	<div class="modal fade details-modal" v-show="isShow">
+		<div class="modal-dialog">
+			<div class="modal-content" style="min-width: 800px;max-width: 900px;margin-top: 60px;margin-left: 240px;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">详细信息</h4>
+				</div>
+				<div class="modal-body" style="min-height:260px;max-height: 400px;">
+					<!--<div class="row table_row table2" >
+						<table class="table table-bordered" id="detailtable">
+						</table>
+					</div>-->
+					<div class="row" style="margin: 0 0 15px 0;">
+						<span>共登记补贴 : </span><span style="font-size: 20px;color: red;margin-right: 30px;">{{pagination.total}} 笔</span>
+						<span>汇总金额 : </span><span style="font-size: 20px;color: red">&yen;{{money_allowance}}</span>
+					</div>
+					<el-table
+							ref="multipleTable"
+							:data="tableData"
+							tooltip-effect="dark" border
+							style="width: 100%" height="300">
+						<el-table-column
+								type="index"
+								:index="indexMethod"
+								width="53">
+						</el-table-column>
+						<el-table-column
+								prop="allowance_num_code"
+								label="批次补贴号"
+								width="140"
+								show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column
+								prop="staff_code"
+								label="人员编码"
+								width="120"
+								show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column
+								prop="staff_name"
+								label="姓名"
+								show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column
+								prop="department_name"
+								label="所属单位"
+								width="210"
+								show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column
+								prop="money_allowance"
+								label="补贴金额"
+								width="100"
+								show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column
+								prop="allowanceTypeName"
+								label="补贴类型"
+								width="110"
+								show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column
+								prop="statename"
+								label="是否发放"
+								width="110"
+								show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column
+								prop="operator"
+								label="操作员"
+								width="90"
+								show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column
+								prop="ts"
+								label="操作时间"
+								width="180"
+								show-overflow-tooltip>
+						</el-table-column>
+					</el-table>
+				</div>
+				<div class="modal-footer table2-footer">
+					<el-row>
+						<el-col :span="12" :offset="12" style="float: right">
+							<el-pagination
+									@current-change="changeCurrtentPage"
+									:current-page="pagination.currentPage"
+									:page-sizes="pagination.pageSizes"
+									:page-size="pagination.pageSize"
+									layout="prev, pager, next"
+									:total="pagination.total">
+							</el-pagination>
+							<!--<el-pagination
+									@size-change="changePageSize"
+									@current-change="changeCurrtentPage"
+									:current-page="pagination.currentPage"
+									:page-sizes="pagination.pageSizes"
+									:page-size="pagination.pageSize"
+									layout="total, sizes, prev, pager, next, jumper"
+									:total="pagination.total">
+							</el-pagination>-->
+						</el-col>
+					</el-row>
+				</div>
+
+
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div>
+</div>
+
+<script type="text/javascript" src="js/card/allowance-card.js"></script>
+</body>
+</html>

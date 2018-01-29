@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.MealRuleDAO">
+
+    <select id="retrieveAll" resultType="com.iandtop.model.meal.MealRuleModel">
+        select
+        pk_meal_rule,
+        meal_rule_code,
+        meal_rule_name,
+        frequency_day,
+        money_day/100 money_day,
+        frequency_time,
+        money_time/100 money_time,
+        memo,
+        def1,
+        def2,
+        def3,
+        def4,
+        def5,
+        ts
+        from meal_rule
+    </select>
+
+    <sql id="RefundColume">
+        <trim suffix="" suffixOverrides=",">
+            <if test="meal_rule_code != null">meal_rule_code,</if>
+            <if test="meal_rule_name != null">meal_rule_name,</if>
+            <if test="frequency_day != null">frequency_day,</if>
+            <if test="money_day != null">money_day,</if>
+            <if test="frequency_time != null">frequency_time,</if>
+            <if test="money_time != null">money_time,</if>
+            <if test="memo != null">memo,</if>
+            <if test="def1 != null">def1,</if>
+            <if test="def2 != null">def2,</if>
+            <if test="def3 != null">def3,</if>
+            <if test="def4 != null">def4,</if>
+            <if test="def5 != null">def5,</if>
+        </trim>
+    </sql>
+
+
+    <sql id="RefundValue">
+        <trim suffix="" suffixOverrides=",">
+            <if test="meal_rule_code != null">#{meal_rule_code},</if>
+            <if test="meal_rule_name != null">#{meal_rule_name},</if>
+            <if test="frequency_day != null">#{frequency_day},</if>
+            <if test="money_day != null">#{money_day},</if>
+            <if test="frequency_time != null">#{frequency_time},</if>
+            <if test="money_time != null">#{money_time},</if>
+            <if test="memo != null">#{memo},</if>
+            <if test="def1 != null">#{def1},</if>
+            <if test="def2 != null">#{def2},</if>
+            <if test="def3 != null">#{def3},</if>
+            <if test="def4 != null">#{def4},</if>
+            <if test="def5 != null">#{def5},</if>
+        </trim>
+    </sql>
+
+    <insert id="insertByMo" parameterType="com.iandtop.model.meal.MealRuleModel">
+        insert into meal_rule (
+        <include refid="RefundColume"/>
+        ) values (
+        <include refid="RefundValue"/>
+        )
+    </insert>
+
+    <update id="updateByPk">
+        UPDATE meal_rule
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="meal_rule_code !=null and meal_rule_code!=''">meal_rule_code=#{meal_rule_code},</if>
+            <if test="meal_rule_name !=null and meal_rule_name!=''">meal_rule_name=#{meal_rule_name},</if>
+            <if test="frequency_day !=null and frequency_day!=''">frequency_day=#{frequency_day},</if>
+            <if test="money_day !=null and money_day!=''">money_day=#{money_day},</if>
+            <if test="frequency_time !=null and frequency_time!=''">frequency_time=#{frequency_time},</if>
+            <if test="money_time !=null and money_time!=''">money_time=#{money_time},</if>
+            <if test="memo !=null and memo!=''">memo=#{memo},</if>
+            <if test="def1 !=null and def1!=''">def1=#{def1},</if>
+            <if test="def2 !=null and def2!=''">def2=#{def2},</if>
+            <if test="def3 !=null and def3!=''">def3=#{def3},</if>
+            <if test="def4 !=null and def4!=''">def4=#{def4},</if>
+            <if test="def5 !=null and def5!=''">def5=#{def5},</if>
+        </trim>
+        WHERE
+        pk_meal_rule=#{pk_meal_rule}
+    </update>
+
+    <select id="retrieveAllWithPage" parameterType="com.iandtop.model.meal.MealRuleModel"
+            resultType="com.iandtop.model.meal.MealRuleModel">
+        select
+        pk_meal_rule,
+        meal_rule_code,
+        meal_rule_name,
+        frequency_day,
+        money_day/100 money_day,
+        frequency_time,
+        money_time/100 money_time,
+        memo,
+        def1,
+        def2,
+        def3,
+        def4,
+        def5,
+        ts
+        from meal_rule
+        order by
+        pk_meal_rule asc
+        limit
+        #{offset},#{limit}
+    </select>
+
+    <delete id="deleteByPks" parameterType="java.util.List">
+        delete from meal_rule where
+        <foreach collection="list" item="item" index="index"
+                 open="(" separator="or" close=")">
+            pk_meal_rule = #{item}
+        </foreach>
+    </delete>
+
+    <select id="retrieveByCode" parameterType="java.lang.String" resultType="com.iandtop.model.meal.MealRuleModel">
+        select
+        pk_meal_rule,
+        meal_rule_code,
+        meal_rule_name,
+        frequency_day,
+        money_day/100 money_day,
+        frequency_time,
+        money_time/100 money_time,
+        memo,
+        def1,
+        def2,
+        def3,
+        def4,
+        def5,
+        ts
+        from meal_rule where meal_rule_code=#{meal_rule_code}
+    </select>
+
+    <select id="retrieveByPk" parameterType="java.lang.String" resultType="com.iandtop.model.meal.MealRuleModel">
+        select
+        pk_meal_rule,
+        meal_rule_code,
+        meal_rule_name,
+        frequency_day,
+        money_day/100 money_day,
+        frequency_time,
+        money_time/100 money_time,
+        memo,
+        def1,
+        def2,
+        def3,
+        def4,
+        def5,
+        ts
+        from meal_rule where pk_meal_rule=#{pk_meal_rule}
+    </select>
+
+</mapper>

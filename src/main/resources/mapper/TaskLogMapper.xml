@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.TaskLogDAO">
+
+    <select id="retrieveAll" resultType="com.iandtop.model.task.TaskLogModel">
+        select * from task_log
+    </select>
+
+    <sql id="Colume">
+        <trim suffix="" suffixOverrides=",">
+            <if test="log_ts != null">log_ts,</if>
+            <if test="result != null">result,</if>
+            <if test="memo != null">memo,</if>
+            <if test="def1 != null">def1,</if>
+            <if test="def2 != null">def2,</if>
+            <if test="def3 != null">def3,</if>
+            <if test="def4 != null">def4,</if>
+            <if test="def5 != null">def5,</if>
+        </trim>
+    </sql>
+
+
+    <sql id="Value">
+        <trim suffix="" suffixOverrides=",">
+            <if test="log_ts != null">#{log_ts},</if>
+            <if test="result != null">#{result},</if>
+            <if test="memo != null">#{memo},</if>
+            <if test="def1 != null">#{def1},</if>
+            <if test="def2 != null">#{def2},</if>
+            <if test="def3 != null">#{def3},</if>
+            <if test="def4 != null">#{def4},</if>
+            <if test="def5 != null">#{def5},</if>
+        </trim>
+    </sql>
+
+    <insert id="insertByMo"  parameterType="com.iandtop.model.task.TaskConfigModel">
+        insert into task_log (
+        <include refid="Colume"/>
+        ) values (
+        <include refid="Value"/>
+        )
+    </insert>
+
+    <update id="updateByPk">
+        UPDATE task_log
+        <trim prefix="SET" suffixOverrides=",">
+        <if test="log_ts !=null and log_ts!=''">log_ts=#{log_ts},</if>
+        <if test="result !=null and result!=''">result=#{result},</if>
+        <if test="memo !=null and memo!=''">memo=#{memo},</if>
+        <if test="def1 !=null and def1!=''">def1=#{def1},</if>
+        <if test="def2 !=null and def2!=''">def2=#{def2},</if>
+        <if test="def3 !=null and def3!=''">def3=#{def3},</if>
+        <if test="def4 !=null and def4!=''">def4=#{def4},</if>
+        <if test="def5 !=null and def5!=''">def5=#{def5},</if>
+        </trim>
+        WHERE
+        pk_task_log=#{pk_task_log}
+    </update>
+
+
+    <delete id="deleteByPks" parameterType="java.util.List">
+        delete from task_log where
+        <foreach collection="list" item="item" index="index"
+                 open="(" separator="or" close=")">
+            pk_task_log = #{item}
+        </foreach>
+    </delete>
+
+    <select id="retrieveAllWithPage" parameterType="com.iandtop.model.task.TaskLogModel" resultType="com.iandtop.model.task.TaskLogModel">
+        select * from task_log
+        <where>
+            <if test="start_ts != null and start_ts != ''">
+                and log_ts >= #{start_ts}
+            </if>
+
+            <if test="end_ts != null and end_ts != ''">
+                and log_ts  &lt;= #{end_ts}
+            </if>
+        </where>
+        order by
+        pk_task_log asc
+        limit
+        #{offset},#{limit}
+    </select>
+
+</mapper>

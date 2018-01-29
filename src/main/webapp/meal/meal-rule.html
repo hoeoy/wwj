@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>角色管理</title>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table.js"></script>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table-zh-CN.js"></script>
+    <link rel="stylesheet" href="../js/bootstrap-table/dist/bootstrap-table.min.css">
+    <script src="../js/meal/meal-rule.js"></script>
+</head>
+<body>
+<div class="panel-body" style="padding-bottom:0px;">
+
+
+    <!--操作按钮-->
+    <div id="toolbar" class="btn-group">
+        <button  type="button" class="btn btn-info" id="btn_add">
+            <span class="iconfont icon-zengjia"></span><span>新增</span>
+        </button>
+        <button type="button" class="btn btn-info" id="btn_edit" disabled="true">
+            <span class="iconfont icon-xiugai"></span><span>修改</span>
+        </button>
+        <button type="button" class="btn btn-info" id="btn_delete" disabled="true">
+            <span class="iconfont icon-shanchu"></span><span>删除</span>
+        </button>
+    </div>
+
+    <table id="table"></table>
+
+</div>
+
+<form id="addForm" class="form-horizontal form-verification" method="post">
+<div class="modal fade modal-default in" id="mymodal-data" tabindex="-1" role="dialog" aria-labelledby="default-modal-label" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title font-weight" id="headTitle">规则</h4>
+            </div>
+            <div class="modal-body">
+
+                    <div class="row add_menu">
+                        <div class="col-md-6">
+                            <div class="col-md-5 text-right">
+                                <label class="text-red">*</label>编码:
+                            </div>
+                            <div class="col-md-7">
+                                <input type="text" class="form-control" id="meal_rule_code">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-5 text-right">
+                                <label class="text-red">*</label>名称:
+                            </div>
+                            <div class="col-md-7">
+                                <input type="text" id="meal_rule_name" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                <div class="row add_menu">
+                    <div class="col-md-6">
+                        <div class="col-md-5 text-right">
+                            <label class="text-red">*</label>日限次:
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" class="form-control" id="frequency_day">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="col-md-5 text-right">
+                            <label class="text-red">*</label>日限额:
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" id="money_day" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="row add_menu">
+                    <div class="col-md-6">
+                        <div class="col-md-5 text-right">
+                            <label class="text-red">*</label>段限次:
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" class="form-control" id="frequency_time">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="col-md-5 text-right">
+                            <label class="text-red">*</label>段限额:
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" id="money_time" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                    <div class="row add_menu text-center" style="margin-bottom: 2em">
+                        <button type="button" class="btn btn-primary footer_btn" id="save">保存并创建</button>
+                        <button type="button" class="btn btn-primary footer_btn" data-dismiss="modal" id="close">关闭</button>
+                    </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+<link rel="stylesheet" href="../js/bootstrap/dist/css/bootstrap.css" />
+<!-- 编辑时 少了上面的引用 BS 不提示    没什么 用   生产前  删除-->
+
+</body>
+</html>

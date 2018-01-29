@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>部门管理</title>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table.js"></script>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table-zh-CN.js"></script>
+    <link rel="stylesheet" href="../js/bootstrap-table/dist/bootstrap-table.min.css">
+    <script src="../js/baseinfo/dept.js"></script>
+</head>
+<body>
+<div class="panel-body" style="padding-bottom:0px;">
+    <div>
+        <div id="tree"  class="col-md-2 ztree" style="overflow: auto"></div>
+        <div class="col-md-10">
+
+            <!--操作按钮-->
+            <div id="toolbar" class="btn-group">
+                <button  type="button" class="btn btn-info" id="btn_add"  disabled="true">
+                    <span class="iconfont icon-zengjia"></span><span>新增</span>
+                </button>
+                <button type="button" class="btn btn-info" id="btn_edit"  disabled="true">
+                    <span class="iconfont icon-xiugai"></span><span>修改</span>
+                </button>
+                <button type="button" class="btn btn-info" id="btn_save"   disabled="true">
+                    <span class="iconfont icon-baocun"></span><span>保存</span>
+                </button>
+                <button type="button" class="btn btn-info" id="btn_cancel"   disabled="true">
+                    <span class="iconfont icon-fangqi"></span><span>取消</span>
+                </button>
+                <button type="button" class="btn btn-info" id="btn_delete"  disabled="true">
+                    <span class="iconfont icon-shanchu"></span><span>删除</span>
+                </button>
+            </div>
+            <div class="panel-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="department_code" class="col-sm-2 text-left control-label">部门编码</label>
+                        <div class="col-sm-4">
+                            <input type="text" name="department_info" class="form-control pageStateCreate pageStateUpdate" id="department_code" placeholder="部门编码" readonly="true" style="margin-left:-70px">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="department_name" class="col-sm-2 text-left control-label">部门名称</label>
+                        <div class="col-sm-4">
+                            <input type="text" name="department_info" class="form-control pageStateCreate pageStateUpdate" id="department_name" placeholder="部门名称" readonly="true" style="margin-left:-70px">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="memo" class="col-sm-2 text-left control-label">备注</label>
+                        <div class="col-sm-4">
+                            <input type="text" name="department_info" class="col-sm-12  form-control pageStateCreate pageStateUpdate" id="memo" data-pk="" placeholder="备注" readonly="true" style="margin-left:-70px">
+                            <input type="text" id="pk_department" style="display:none">
+                            <input type="text" id="parent_code" style="display:none">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="../js/bootstrap/dist/css/bootstrap.css" />
+</body>
+</html>

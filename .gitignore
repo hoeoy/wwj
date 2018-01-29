@@ -1,0 +1,20 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+/target/
+/logs/
+*.log
+*.idea
+*.iml
+*.prefs
+*.zip
+*.stackdump
+.idea/
+*.idea
+
+
+src/main/webapp/补贴登记模板.xlsx
+src/main/webapp/华教社11月用餐表1.xls

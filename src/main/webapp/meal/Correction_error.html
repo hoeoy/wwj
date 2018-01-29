@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="/css/Correction_error.css">
+	</head>
+	<body>
+	<OBJECT ID="AxRead" CLASSID="CLSID:1B83CB21-E01E-4CA4-B54C-356E31448A86" style="display: none;"></OBJECT>
+		<div id="all_content">
+			<div class="row" id="search_row">
+				<div class="panel panel-default">
+					<div class="panel-heading">查询条件</div>
+					<div class="panel-body">
+						<form id="formSearch" class="form-horizontal">
+							<div class="form-group">
+								<div class="col-sm-10">
+									<div class="col-sm-4">
+										<label class="control-label col-sm-3 no-padding-left-right text-center" for="codeId">卡号:</label>
+										<div class=" col-sm-9 no-padding-left-right">
+											<input type="text"  id="codeId" class="form-control" v-model="codeId">
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label col-sm-3 no-padding-left-right text-center" for="start_time">开始时间:</label>
+										<div class=" col-sm-9 no-padding-left-right">
+											<input type="text"  id="start_time"  class="form-control laydate-icon">
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<label class="control-label col-sm-3 no-padding-left-right text-center" for="end_time">结束时间:</label>
+										<div class=" col-sm-9 no-padding-left-right">
+											<input type="text"  id="end_time"  class="form-control laydate-icon">
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-2" style="text-align:left;">
+									<button type="button"   id="btn_query" class="btn btn-info col-sm-10 col-sm-offset-1" @click="search">查询</button>
+								</div>
+
+							</div>
+
+						</form>
+					</div>
+				</div>
+
+
+			</div>
+			<div class="row" style="margin-bottom: 15px;margin-top: 15px">
+				<div id="toolbar" class="btn-group">
+					<button id="btn_readcard" type="button"  class="btn btn-info btn_gz_cor" @click="readCard">
+						<span class="iconfont icon-duqia"></span><span>读卡</span>
+					</button>
+					<button id="btn_gz_cor" type="button" data-toggle="modal" data-target="#changeModal" class="btn btn-info btn_gz_cor" disabled>
+						<span class="iconfont icon-shangbiaogengzheng"></span><span>更正</span>
+					</button>
+				</div>
+			</div>
+			<div class="row table_row table1" >
+				<table class="table table-bordered mytable">
+					<thead>
+						<tr>
+						<th class="text-center" ></th>
+						<th class="text-center" >人员编码</th>
+						<th class="text-center">姓名</th>
+						<th class="text-center">卡号</th>
+						<th class="text-center">消费地点</th>
+						<th class="text-center">扣费总金额</th>
+						<th class="text-center">补贴扣款</th>
+						<th class="text-center">现金扣款</th>
+						<th class="text-center">补贴余额</th>
+						<th class="text-center">现金余额</th>
+						<th class="text-center">消费时间</th>
+						<th class="text-center">总余额</th>
+						</tr>
+					</thead>
+					<tbody>
+					<tr>
+						<td colspan="12" bgcolor="#ffffff" class="text-center" style="padding-bottom: 15px;padding-top: 15px;" v-show='contents.length==0'>暂无数据</td>
+					</tr>
+						<tr v-for="content in contents">
+							<td class="text-center" bgcolor="#ffffff"><input type="checkbox" class="checked" name="checked" @click="checked($event)"></td>
+							<td class="text-center staff_code" bgcolor="#ffffff">{{content.staff_code}}</td>
+							<td class="text-center staff_name" bgcolor="#ffffff">{{content.staff_name}}</td>
+							<td class="text-center card_code" bgcolor="#ffffff">{{content.card_code}}</td>
+							<td class="text-center device_name" bgcolor="#ffffff">{{content.device_name}}</td>
+							<td class="text-center meal_money" bgcolor="#ffffff">{{content.meal_money}}</td>
+							<td class="text-center meal_allowance" bgcolor="#ffffff">{{content.meal_allowance}}</td>
+							<td class="text-center meal_cash_money" bgcolor="#ffffff">{{content.meal_cash_money}}</td>
+							<td class="text-center allowance_retain" bgcolor="#ffffff">{{content.allowance_retain}}</td>
+							<td class="text-center cash_retain" bgcolor="#ffffff">{{content.cash_retain}}</td>
+							<td class="text-center meal_ts" bgcolor="#ffffff">{{content.meal_ts}}</td>
+							<td class="text-center money_retain" bgcolor="#ffffff">{{content.money_retain}}</td>
+							<td class="text-center pk_meal_record hide" bgcolor="#ffffff">{{content.pk_meal_record}}</td>
+							<td class="text-center pk_device hide" bgcolor="#ffffff">{{content.pk_device}}</td>
+							<td class="text-center pk_card hide" bgcolor="#ffffff">{{content.pk_card}}</td>
+							<td class="text-center pk_staff hide" bgcolor="#ffffff">{{content.pk_staff}}</td>
+							<td class="text-center device_code hide" bgcolor="#ffffff">{{content.device_code}}</td>
+							<td class="text-center meal_type hide" bgcolor="#ffffff">{{content.meal_type}}</td>
+							<td class="text-center device_meal_type hide" bgcolor="#ffffff">{{content.device_meal_type}}</td>
+							<td class="text-center dining_name hide" bgcolor="#ffffff">{{content.dining_name}}</td>
+							<td class="text-center dining_code hide" bgcolor="#ffffff">{{content.dining_code}}</td>
+							<td class="text-center meal_way hide" bgcolor="#ffffff">{{content.meal_way}}</td>
+						</tr>
+										
+					</tbody>
+				</table>
+			</div>
+			<div class="modal fade modal-primary in" id="changeModal" tabindex="-1" role="dialog" aria-labelledby="primary-modal-label" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="myModalLabel">更正收款失误</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-3 text-right" style="line-height: 34px">更正金额：</div>
+								<div class="col-md-4"><input type="text"  id="money"> </div>
+								<div class="col-md-3"><span class="corr_tips" style="color: red;"></span> </div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" id="gengzheng" @click="changeMoney">更正</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<script type="text/javascript" src="/js/meal/Correction_error.js"></script>
+	</body>
+</html>

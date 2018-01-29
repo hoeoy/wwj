@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/company.css" />
+    <link rel="stylesheet" href="js/bootstrap-table/dist/bootstrap-table.min.css">
+</head>
+<body>
+<div class="row park_archives" style="margin-top: 1em">
+    <div class="col-md-10 park_top">
+        <div class="col-md-3" style="line-height: 50px;">
+            <span>快速检索</span>
+            <select id="park_select">
+                <option>学生编号</option>
+                <option>班级名称</option>
+            </select>
+        </div>
+
+        <div class="col-md-4" style="line-height: 50px;">
+            <span>快速检索</span>
+            <input type="text" id="mhcx">
+            <img class="img" src="img/search.png" style="margin-left: -23px">
+        </div>
+    </div>
+    <div class="col-md-1 c1">
+        <button class="btn btn-default" data-toggle="modal" data-target="#park-add-modal" id="add"></button>
+    </div>
+    <div class="col-md-1 c1">
+        <button class="btn btn-default" id="delete"></button>
+    </div>
+    <div class="row"  style="margin-top:6em;">
+        <!--表格-->
+      <div id="table"></div>
+       <!-- <table class="table  table-hover">
+            <thead>
+            <tr>
+                <th class="text-center" bgcolor="#e0ebf0">园区编码</th>
+                <th class="text-center" bgcolor="#e0ebf0">园区名称</th>
+                <th class="text-center" bgcolor="#e0ebf0">园区类型</th>
+                <th class="text-center" bgcolor="#e0ebf0">占地面积</th>
+                <th class="text-center" bgcolor="#e0ebf0" >建筑面积</th>
+                <th class="text-center" bgcolor="#e0ebf0">楼宇数量</th>
+                <th class="text-center" bgcolor="#e0ebf0">车位数</th>
+                <th class="text-center" bgcolor="#e0ebf0">负责人</th>
+                <th class="text-center" bgcolor="#e0ebf0">联系电话</th>
+                <th class="text-center" bgcolor="#e0ebf0">园区地址</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="text-center">4100000</td>
+                <td class="text-center">延农创业大厦</td>
+                <td class="text-center">写字楼</td>
+                <td class="text-center">100</td>
+                <td class="text-center">80</td>
+                <td class="text-center">100</td>
+                <td class="text-center">Bill</td>
+                <td class="text-center">asd</td>
+                <td class="text-center">10086</td>
+                <td class="text-center">百度</td>
+
+            </tr>
+            <tr>
+                <td class="text-center">4100000</td>
+                <td class="text-center">延农创业大厦</td>
+                <td class="text-center">写字楼</td>
+                <td class="text-center">100</td>
+                <td class="text-center">80</td>
+                <td class="text-center">100</td>
+                <td class="text-center">Bill</td>
+                <td class="text-center">asd</td>
+                <td class="text-center">10086</td>
+                <td class="text-center">百度</td>
+            </tr>
+
+            </tbody>
+        </table>
+        <div class="dht">
+            <div class="col-md-6 c6">
+                <label class="label">
+                    当前第1/10页,每页10条，共100条记录
+                </label>
+            </div>
+            <div class="col-md-6 text-right c6">
+                <button class="btn b1">首页</button>
+                <button class="btn b1">上一页</button>
+                <button class="btn b1">下一页</button>
+                <button class="btn b1">尾页</button>
+                <input type="text" id="table_index">
+                <button class="btn btn-info">跳转</button>
+            </div>
+        </div>
+   -->
+    </div>
+</div>
+<!--增加modal-->
+<div class="modal fade modal-default in" id="park-add-modal" tabindex="-1" role="dialog" aria-labelledby="default-modal-label" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">新增园区资料</h4>
+            </div>
+            <div class="modal-body">
+              <fieldset id="my_fieldset">
+                  <div class="row add_menu">
+                      <div class="col-md-6">
+                          <div class="col-md-5 text-right">
+                              <label class="text-red">*</label>园区编号:
+                          </div>
+                          <div class="col-md-7">
+                              <input type="text" id="park_id" required>
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="col-md-5 text-right">
+                            <label class="text-red">*</label>园区名称:
+                          </div>
+                          <div class="col-md-7">
+                             <input type="text" id="park_name" required>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row add_menu">
+                      <div class="col-md-6">
+                          <div class="col-md-5 text-right">
+                              <label class="text-red">*</label>园区类型:
+                          </div>
+                          <div class="col-md-7">
+                              <select id="park_type" >
+                                  <option>1</option>
+                              </select>
+                          </div>
+
+                      </div>
+                      <div class="col-md-6">
+                          <div class="col-md-5 text-right">
+                                <label class="text-red">&nbsp</label>建筑面积:
+                          </div>
+                          <div class="col-md-7">
+                                <input type="text" id="built_area">
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row add_menu">
+                      <div class="col-md-6">
+                          <div class="col-md-5 text-right">
+                              <label class="text-red">&nbsp;</label>占地面积:
+                          </div>
+                          <div class="col-md-7">
+                            <input type="text" id="area_covered">
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="col-md-5 text-right">
+                                <label class="text-red">*</label>楼宇数量:
+                          </div>
+                          <div class="col-md-7">
+                                <input type="text" id="building_quantity" required>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row add_menu">
+                      <div class="col-md-6">
+                          <div class="col-md-5 text-right">
+                                <label class="text-red">&nbsp;</label>车位数量:
+                          </div>
+                          <div class="col-md-7">
+                                <input type="text" id="parking_numbers">
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="col-md-5 text-right">
+                                <label class="text-red">&nbsp;</label>&nbsp;&nbsp;&nbsp;&nbsp;负责人:
+                           </div>
+                          <div class="col-md-7">
+                                <input type="text" id="charge">
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row add_menu">
+                      <div class="col-md-6">
+                          <div class="col-md-5 text-right">
+                                <label class="text-red">&nbsp;</label>联系人:
+                          </div>
+                          <div class="col-md-7">
+                                <input type="text" id="contacts">
+                          </div>
+                      </div>
+
+                  </div>
+                  <div class="row add_menu">
+                      <div class="col-md-6">
+                          <div class="col-md-5 text-right">
+                                <label class="text-red">&nbsp;</label>园区介绍:
+                          </div>
+                      </div>
+                      <div class="row">
+                          <textarea id="park_intrduce">
+
+                          </textarea>
+                      </div>
+
+                  </div>
+                  <div class="row add_menu text-center" style="margin-bottom: 2em">
+                      <button type="button" class="btn btn-primary footer_btn" id="save">保存并创建</button>
+                      <button type="button" class="btn btn-primary footer_btn" data-dismiss="modal" id="close">关闭</button>
+                  </div>
+              </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/Park_archives.js" ></script>
+<script type="text/javascript" src="js/bootstrap-table/dist/bootstrap-table.js"></script>
+<script>
+    //初始化Table
+    $('#table').bootstrapTable({
+        url: '/TableStyle/GetOrder',         //请求后台的URL（*）
+        method: 'get',                      //请求方式（*）
+        //toolbar: '#toolbar',                //工具按钮用哪个容器
+        striped: true,                      //是否显示行间隔色
+        cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+        pagination: true,                   //是否显示分页（*）
+        sortable: false,                     //是否启用排序
+        sortOrder: "asc",                   //排序方式
+        queryParams: oTableInit.queryParams,//传递参数（*）
+        sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+        pageNumber: 1,                       //初始化加载第一页，默认第一页
+        pageSize: 10,                       //每页的记录行数（*）
+        pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+        search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+        strictSearch: true,
+        showColumns: true,                  //是否显示所有的列
+        showRefresh: true,                  //是否显示刷新按钮
+        minimumCountColumns: 2,             //最少允许的列数
+        clickToSelect: true,                //是否启用点击选中行
+        height: 500,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+        uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+        showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
+        cardView: false,                    //是否显示详细视图
+        detailView: false,                   //是否显示父子表
+        rowStyle: function (row, index) {
+            //这里有5个取值代表5中颜色['active', 'success', 'info', 'warning', 'danger'];
+            var strclass = "";
+            if (row.ORDER_STATUS == "待排产") {
+                strclass = 'success';//还有一个active
+            }
+            else if (row.ORDER_STATUS == "已删除") {
+                strclass = 'danger';
+            }
+            else {
+                return {};
+            }
+            return { classes: strclass }
+        },
+        columns: [{
+            checkbox: true
+        }, {
+            field: 'ORDER_NO',
+            title: '订单编号'
+        }, {
+            field: 'ORDER_TYPE',
+            title: '订单类型'
+        }, {
+            field: 'ORDER_STATUS',
+            title: '订单状态'
+        }, {
+            field: 'REMARK',
+            title: '备注'
+        }, ]
+    });
+</script>
+</body>
+</html>

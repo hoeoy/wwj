@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.RoleDAO">
+
+    <select id="retrieveAll" resultType="com.iandtop.model.system.RoleModel">
+        select * from sm_role
+    </select>
+
+    <sql id="RefundColume">
+        <trim suffix="" suffixOverrides=",">
+            <if test="role_code != null">role_code,</if>
+            <if test="role_name != null">role_name,</if>
+            <if test="memo != null">memo,</if>
+            <if test="def1 != null">def1,</if>
+            <if test="def2 != null">def2,</if>
+            <if test="def3 != null">def3,</if>
+            <if test="def4 != null">def4,</if>
+            <if test="def5 != null">def5,</if>
+        </trim>
+    </sql>
+
+
+    <sql id="RefundValue">
+        <trim suffix="" suffixOverrides=",">
+            <if test="role_code != null">#{role_code},</if>
+            <if test="role_name != null">#{role_name},</if>
+            <if test="memo != null">#{memo},</if>
+            <if test="def1 != null">#{def1},</if>
+            <if test="def2 != null">#{def2},</if>
+            <if test="def3 != null">#{def3},</if>
+            <if test="def4 != null">#{def4},</if>
+            <if test="def5 != null">#{def5},</if>
+        </trim>
+    </sql>
+
+    <insert id="insertByMo"  parameterType="com.iandtop.model.system.RoleModel">
+        insert into sm_role (
+        <include refid="RefundColume"/>
+        ) values (
+        <include refid="RefundValue"/>
+        )
+    </insert>
+
+    <update id="updateByPk">
+        UPDATE sm_role
+        <trim prefix="SET" suffixOverrides=",">
+        <if test="role_code !=null and role_code!=''">role_code=#{role_code},</if>
+        <if test="role_name !=null and role_name!=''">role_name=#{role_name},</if>
+        <if test="memo !=null and memo!=''">memo=#{memo},</if>
+        <if test="def1 !=null and def1!=''">def1=#{def1},</if>
+        <if test="def2 !=null and def2!=''">def2=#{def2},</if>
+        <if test="def3 !=null and def3!=''">def3=#{def3},</if>
+        <if test="def4 !=null and def4!=''">def4=#{def4},</if>
+        <if test="def5 !=null and def5!=''">def5=#{def5},</if>
+        </trim>
+        WHERE
+        pk_role=#{pk_role}
+    </update>
+
+    <select id="retrieveAllWithPage" parameterType="com.iandtop.model.system.RoleModel" resultType="com.iandtop.model.system.RoleModel">
+        select * from sm_role
+        <where>
+            <if test="role_code != null and role_code != ''">
+                and role_code like "%${role_code}%"
+            </if>
+            <if test="role_name != null and role_name != ''">
+                and role_name like "%${role_name}%"
+            </if>
+        </where>
+        order by
+        pk_role asc
+        limit
+        #{offset},#{limit}
+    </select>
+
+    <delete id="deleteByPks" parameterType="java.util.List">
+        delete from sm_role where
+        <foreach collection="list" item="item" index="index"
+                 open="(" separator="or" close=")">
+            pk_role = #{item}
+        </foreach>
+    </delete>
+
+    <select id="retrieveByCode" parameterType="java.lang.String" resultType="com.iandtop.model.system.RoleModel">
+        select * from sm_role where role_code=#{role_code}
+    </select>
+
+    <select id="retrieveByPk" parameterType="java.lang.String" resultType="com.iandtop.model.system.RoleModel">
+        select * from sm_role where pk_role=#{pk_role}
+    </select>
+
+</mapper>

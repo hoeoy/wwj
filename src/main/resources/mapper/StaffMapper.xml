@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.StaffDAO">
+
+    <select id="retrieveAll" resultType="com.iandtop.model.StaffModel">
+        select * from db_staff
+    </select>
+
+    <select id="retrieveAllWithPage" parameterType="com.iandtop.model.StaffModel" resultType="com.iandtop.model.StaffModel">
+        select
+        a.pk_staff,
+        a.staff_code,
+        a.staff_name,
+        a.company_code,
+        a.department_code,
+        b.department_name,
+        if(a.staff_type='0', '离职',if(a.staff_type='1','在职','未知')) staff_type,
+        a.sex,
+        a.id_card,
+        a.job_code,
+        a.edu_code,
+        a.nation_code,
+        a.birth_date,
+        a.hire_date,
+        a.leave_date,
+        a.email,
+        a.company_card,
+        a.update_date,
+        a.phone,
+        a.pk_merchant
+        from db_staff a
+        left join db_department b on a.department_code = b.department_code
+        <where>
+            <if test="staff_code != null and staff_code != ''">
+                and a.staff_code like "%${staff_code}%"
+            </if>
+            <if test="staff_name != null and staff_name != ''">
+                and a.staff_name like "%${staff_name}%"
+            </if>
+            <if test="sex != null and sex != ''">
+                and a.sex = #{sex}
+            </if>
+            <if test="department_code != null and department_code != ''">
+                and a.department_code like "${department_code}%"
+            </if>
+            <if test="staff_type != null and staff_type != ''">
+                and a.staff_type = #{staff_type}
+            </if>
+        </where>
+        order by
+        a.staff_code asc
+        limit
+        #{offset},#{limit}
+    </select>
+
+    <select id="retrieveAllWithPageCount" parameterType="com.iandtop.model.StaffModel" resultType="com.iandtop.model.StaffModel">
+        select
+        a.pk_staff,
+        a.staff_code,
+        a.staff_name,
+        a.company_code,
+        a.department_code,
+        b.department_name,
+        if(a.staff_type='0', '离职',if(a.staff_type='1','在职','未知')) staff_type,
+        a.sex,
+        a.id_card,
+        a.job_code,
+        a.edu_code,
+        a.nation_code,
+        a.birth_date,
+        a.hire_date,
+        a.leave_date,
+        a.email,
+        a.company_card,
+        a.update_date,
+        a.phone,
+        a.pk_merchant
+        from db_staff a
+        left join db_department b on a.department_code = b.department_code
+        <where>
+            <if test="staff_code != null and staff_code != ''">
+                and a.staff_code like "%${staff_code}%"
+            </if>
+            <if test="staff_name != null and staff_name != ''">
+                and a.staff_name like "%${staff_name}%"
+            </if>
+            <if test="sex != null and sex != ''">
+                and a.sex = #{sex}
+            </if>
+            <if test="department_code != null and department_code != ''">
+                and a.department_code like "${department_code}%"
+            </if>
+            <if test="staff_type != null and staff_type != ''">
+                and a.staff_type = #{staff_type}
+            </if>
+        </where>
+        order by
+        a.staff_code asc
+    </select>
+
+    <insert id="insertByMo" parameterType="com.iandtop.model.StaffModel">
+        INSERT INTO db_staff(
+        staff_code,
+        staff_name,
+        company_code,
+        department_code,
+        staff_type,
+        sex,
+        id_card,
+        job_code,
+        edu_code,
+        nation_code ,
+        birth_date,
+        hire_date,
+        leave_date,
+        email,
+        company_card,
+        memo,wwjid,def2,def3,def4,def5,pk_merchant)
+        VALUES (
+        #{staff_code},
+        #{staff_name},
+        #{company_code},
+        #{department_code},
+        #{staff_type},
+        #{sex},
+        #{id_card},
+        #{job_code},
+        #{edu_code},
+        #{nation_code},
+        #{birth_date},
+        #{hire_date},
+        #{leave_date},
+        #{email},
+        #{company_card},
+        #{memo},#{wwjid},#{def2},#{def3},#{def4},#{def5},#{pk_merchant})
+    </insert>
+
+    <delete id="deleteByPks" parameterType="java.util.List">
+        delete from db_staff where
+        <foreach collection="list" item="item" index="index"
+                 open="(" separator="or" close=")">
+            pk_staff = #{item}
+        </foreach>
+    </delete>
+
+    <update id="updateByPk" parameterType="com.iandtop.model.StaffModel">
+        update db_staff
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="staff_code != null">staff_code=#{staff_code},</if>
+            <if test="staff_name != null">staff_name=#{staff_name},</if>
+            <if test="company_code != null">company_code=#{company_code},</if>
+            <if test="department_code != null">department_code=#{department_code},</if>
+            <if test="staff_type != null">staff_type=#{staff_type},</if>
+            <if test="sex != null">sex=#{sex},</if>
+            <if test="id_card != null">id_card=#{id_card},</if>
+            <if test="job_code != null">job_code=#{job_code},</if>
+            <if test="edu_code != null">edu_code=#{edu_code},</if>
+            <if test="nation_code != null">nation_code=#{nation_code},</if>
+            <if test="birth_date != null">birth_date=#{birth_date},</if>
+            <if test="hire_date != null">hire_date=#{hire_date},</if>
+            <if test="leave_date != null">leave_date=#{leave_date},</if>
+            <if test="email != null">email=#{email},</if>
+            <if test="company_card != null">company_card=#{company_card},</if>
+            <if test="memo != null">memo=#{memo},</if>
+            <if test="wwjid != null">wwjid=#{wwjid},</if>
+            <if test="def1 != null">def1=#{def1},</if>
+            <if test="def2 != null">def2=#{def2},</if>
+            <if test="def3 != null">def3=#{def3},</if>
+            <if test="def4 != null">def4=#{def4},</if>
+            <if test="def5 != null">def5=#{def5},</if>
+            <if test="pk_merchant != null">pk_merchant=#{pk_merchant},</if>
+        </trim>
+        where pk_staff=#{pk_staff}
+    </update>
+
+    <select id="retrieveByCode" parameterType="java.lang.String" resultType="com.iandtop.model.StaffModel">
+        select * from db_staff where staff_code=#{staff_code}
+    </select>
+
+    <select id="retrieveByPkstaff" parameterType="java.lang.String" resultType="com.iandtop.model.StaffModel">
+        select * from db_staff where pk_staff=#{pk_staff}
+    </select>
+
+    <insert id="insertbyexcel" parameterType="com.iandtop.model.StaffModel">
+        INSERT INTO db_staff(
+        staff_code,
+        staff_name,
+        company_code,
+        department_code,
+        staff_type,
+        sex,
+        id_card,
+        job_code,
+        edu_code,
+        nation_code ,
+        birth_date,
+        hire_date,
+        leave_date,
+        email,
+        phone)
+        VALUES (
+        #{staff_code},
+        #{staff_name},
+        #{company_code},
+        #{department_code},
+        #{staff_type},
+        #{sex},
+        #{id_card},
+        #{job_code},
+        #{edu_code},
+        #{nation_code},
+        #{birth_date},
+        #{hire_date},
+        #{leave_date},
+        #{email},
+        #{phone})
+    </insert>
+
+    <select id="retrieveByIDCard" parameterType="java.lang.String" resultType="com.iandtop.model.StaffModel">
+        select * from db_staff where wwjid="${wwjid}"
+    </select>
+
+    <insert id="addBatch" useGeneratedKeys="true" parameterType="java.util.List">
+        <selectKey resultType="long" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        insert into db_staff (
+        staff_code,
+        staff_name,
+        company_code,
+        department_code,
+        staff_type,
+        sex,
+        id_card,
+        job_code,
+        edu_code,
+        nation_code ,
+        birth_date,
+        hire_date,
+        leave_date,
+        email,
+        company_card,wwjid,
+        memo,def1,def2,def3,def4,def5)
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+            (
+            #{item.staff_code},
+            #{item.staff_name},
+            #{item.company_code},
+            #{item.department_code},
+            #{item.staff_type},
+            #{item.sex},
+            #{item.id_card},
+            #{item.job_code},
+            #{item.edu_code},
+            #{item.nation_code},
+            #{item.birth_date},
+            #{item.hire_date},
+            #{item.leave_date},
+            #{item.email},
+            #{item.company_card},
+            #{item.wwjid},
+            #{item.memo},#{item.def1},#{item.def2},#{item.def3},#{item.def4},#{item.def5})
+        </foreach>
+    </insert>
+
+    <update id="batchupdate" parameterType="com.iandtop.model.StaffModel" >
+        update db_staff SET
+            pk_merchant=#{pk_merchant}
+        where pk_staff=#{pk_staff}
+    </update>
+
+    <select id="findAllForupd" parameterType="com.iandtop.model.StaffModel" resultType="com.iandtop.model.StaffModel">
+        select
+        a.pk_staff,
+        a.staff_code,
+        a.staff_name
+        from db_staff a
+        left join db_department b on a.department_code = b.department_code
+        <where>
+            <if test="department_code != null and department_code != ''">
+                and a.department_code like "${department_code}%"
+            </if>
+                and a.staff_type = 1
+        </where>
+        order by
+        a.staff_code asc
+    </select>
+
+</mapper>

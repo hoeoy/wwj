@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <title>补卡</title>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table.js"></script>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table-zh-CN.js"></script>
+    <link rel="stylesheet" href="../js/bootstrap-table/dist/bootstrap-table.min.css">
+    <script src="../js/card/change-card.js"></script>
+    <style>
+        #fieldset1 input[type='text']{
+            border:1px solid #cccccc;
+            border-radius: 5px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+<OBJECT ID="AxRead" CLASSID="CLSID:1B83CB21-E01E-4CA4-B54C-356E31448A86" style="display: none;"></OBJECT>
+<div class="panel-body" style="padding-bottom:0px;">
+
+    <div>
+        <div id="tree"  class="col-md-2 ztree" style="overflow: auto"></div>
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">查询条件</div>
+                <div class="panel-body">
+                    <form id="formSearch" class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-3 no-padding-left-right text-center" for="txt_search_staff_code">编码</label>
+                                <div class=" col-sm-9 no-padding-left-right">
+                                    <input type="text"  id="txt_search_staff_code" class="form-control" >
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-3 no-padding-left-right text-center" for="txt_search_name">姓名</label>
+                                <div class=" col-sm-9 no-padding-left-right">
+                                    <input type="text"  id="txt_search_name"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-3 no-padding-left-right text-center" for="txt_search_card_code">卡号</label>
+                                <div class=" col-sm-9 no-padding-left-right">
+                                    <input type="text"  id="txt_search_card_code"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-3" style="text-align:left;">
+                                <button type="button"   id="btn_query" class="btn btn-info col-sm-5 col-sm-offset-1">查询</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="toolbar" class="btn-group">
+                <button id="btn_change" type="button" class="btn btn-info">
+                    <span class="iconfont icon-buqia"></span><span>补卡</span>
+                </button>
+            </div>
+            <table id="table"></table>
+
+        </div>
+    </div>
+    <div class="modal fade modal-info in" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="info-modal-label" aria-hidden="true" style="padding-right: 17px;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background: #2272bb;border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">补卡</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <fieldset id="fieldset1" style="border: 1px solid #cccccc; border-radius: 5px;padding-bottom: 15px;">
+                            <legend>卡信息</legend>
+                            <div class="row" style="margin-top: 1em;">
+                                <div class="col-md-2 text-right"><p class="modal_p">编码</p></div>
+                                <div class="col-md-4"><input type="text" class="col-md-12 center-block" name="staff_code" id="staff_code" readonly="true"></div>
+                                <div class="col-md-2 text-right"><p class="modal_p">姓名</p></div>
+                                <div class="col-md-4"><input type="text" class="col-md-12 center-block" name="staff_name" id="staff_name" readonly="true"></div>
+                            </div>
+                            <div class="row" style="margin-top: 0.5em;">
+                                <div class="col-md-2 text-right"><p class="modal_p">旧卡号</p></div>
+                                <div class="col-md-4"><input type="text" class="col-md-12 center-block" name="card_code" id="card_code" readonly="true"></div>
+                                <div class="col-md-2 text-right"><p class="modal_p">新卡号</p></div>
+                                <div class="col-md-4"><input type="text" class="col-md-12 center-block" name="card_code_new" id="card_code_new" readonly="true"></div>
+                            </div>
+                            <div class="row" style="margin-top: 0.5em;">
+                                <div class="col-md-2 text-right"><p class="modal_p">卡押金</p></div>
+                                <div class="col-md-4"><input type="text" class="col-md-12 center-block" name="card_deposit" id="card_deposit"></div>
+                                <div class="col-md-2 text-right"><p class="modal_p">卡成本</p></div>
+                                <div class="col-md-4"><input type="text" class="col-md-12 center-block" name="card_costing" id="card_costing" ></div>
+                            </div>
+                            <div class="row" style="margin-top: 0.5em;">
+                                <div class="col-md-2 text-right"><p class="modal_p">失效日期</p></div>
+                                <div class="col-md-4"><input type="text" class="col-md-12 center-block" name="card_ineffectived_ts" id="card_ineffectived_ts" readonly="true"></div>
+                            </div>
+
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: 1em;">
+                    <button type="button" class="btn modal-btn btn-default" id="readCardBtn">读卡</button>
+                    <button type="button" class="btn modal-btn btn-default" id="okBtn">确定</button>
+                    <button type="button" class="btn modal-btn btn-default" id="dismiss" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="../js/bootstrap/dist/css/bootstrap.css" />
+<!-- 编辑时 少了上面的引用 BS 不提示    没什么 用   生产前  删除-->
+</body>
+</html>

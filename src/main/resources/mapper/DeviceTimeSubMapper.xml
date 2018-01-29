@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.DeviceTimeSubDAO">
+
+    <select id="findTime" resultType="com.iandtop.model.device.DeviceTimeSubModel">
+        SELECT * from device_time_sub where 1=1
+        <if test="_parameter != null and _parameter!=''">
+            AND pk_device_time=#{_parameter}
+        </if>
+    </select>
+
+
+    <insert id="saveTime" parameterType="com.iandtop.model.device.DeviceTimeSubModel">
+        INSERT INTO device_time_sub (pk_device_time, sub_name, start_time, end_time,frequency_time)
+        VALUES (#{pk_device_time},#{sub_name},#{start_time},#{end_time},#{frequency_time})
+    </insert>
+
+    <delete id="delTime" parameterType="java.lang.String">
+      delete from device_time_sub WHERE pk_device_time_sub=#{pk_device_time_sub}
+    </delete>
+
+    <update id="updateTime" parameterType="com.iandtop.model.device.DeviceTimeSubModel">
+
+        update device_time_sub
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sub_name != null">sub_name=#{sub_name},</if>
+            <if test="start_time != null">start_time=#{start_time},</if>
+            <if test="end_time != null">end_time=#{end_time},</if>
+            <if test="frequency_time != null">frequency_time=#{frequency_time},</if>
+            <if test="memo != null">memo=#{memo},</if>
+            <if test="def1 != null">def1=#{def1},</if>
+            <if test="def2 != null">def2=#{def2},</if>
+            <if test="def3 != null">def3=#{def3},</if>
+            <if test="def4 != null">def4=#{def4},</if>
+            <if test="def5 != null">def5=#{def5},</if>
+        </trim>
+        where pk_device_time_sub=#{pk_device_time_sub}
+
+    </update>
+
+    <delete id="deleteByTimePk" parameterType="java.lang.String">
+        delete from device_time_sub where pk_device_time=#{pk_device_time}
+    </delete>
+
+</mapper>

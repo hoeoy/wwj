@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>退款</title>
+
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table.js"></script>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table-zh-CN.js"></script>
+    <link rel="stylesheet" href="../js/bootstrap-table/dist/bootstrap-table.min.css">
+    <script src="../js/card/refund-card.js"></script>
+</head>
+<body>
+<OBJECT ID="AxRead" CLASSID="CLSID:1B83CB21-E01E-4CA4-B54C-356E31448A86" style="display: none;"></OBJECT>
+<div class="panel-body" style="padding-bottom:0px;">
+
+    <div>
+        <div id="tree"  class="col-md-2 ztree" style="overflow: auto"></div>
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">查询条件</div>
+                <div class="panel-body">
+                    <form id="formSearch" class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-3 no-padding-left-right text-center" for="txt_search_staff_code">编码</label>
+                                <div class=" col-sm-9 no-padding-left-right">
+                                    <input type="text"  id="txt_search_staff_code" class="form-control" >
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-3 no-padding-left-right text-center" for="txt_search_name">姓名</label>
+                                <div class=" col-sm-9 no-padding-left-right">
+                                    <input type="text"  id="txt_search_name"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-3 no-padding-left-right text-center" for="txt_search_card_code">卡号</label>
+                                <div class=" col-sm-9 no-padding-left-right">
+                                    <input type="text"  id="txt_search_card_code"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-3" style="text-align:left;">
+                                <button type="button"   id="btn_query" class="btn btn-info col-sm-5 col-sm-offset-1">查询</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="toolbar" class="btn-group">
+                <button id="btn_refund" type="button" class="btn btn-info" disabled="true">
+                    <span class="iconfont icon-cshy-rmb2"></span><span>退款</span>
+                </button>
+                <button id="btn_readcard" type="button" class="btn btn-info">
+                    <span class="iconfont icon-duqia"></span><span>读卡</span>
+                </button>
+            </div>
+            <table id="table"></table>
+
+        </div>
+    </div>
+
+    <div class="modal fade modal-info in" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="info-modal-label" aria-hidden="true" style="padding-right: 17px;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background: #2272bb;">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">退款</h4>
+                </div>
+                <div>
+                    <h4 id="tipinfo"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <fieldset id="fieldset1">
+                            <legend>退款信息</legend>
+                            <div class="row" style="margin: 1em 0;">
+                                <div class="col-md-2 control-label text-right"><p class="modal_p">退款金额</p></div>
+                                <div class="col-md-4"><input type="text" class="form-control center-block" name="cardid" id="refund_money" ></div><!--onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"-->
+
+                                <!--<button type="button" class="btn modal-btn btn-primary col-md-2 col-md-offset-1" id="okBtn_One">确定</button>-->
+                                <!--<button type="button" class="btn modal-btn btn-default col-md-2 col-md-offset-1" data-dismiss="modal" id="dismiss">取消</button>-->
+
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn modal-btn btn-default" id="okBtn_One">确定</button>
+                    <button type="button" class="btn modal-btn btn-default" data-dismiss="modal" id="dismiss">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="../js/bootstrap/dist/css/bootstrap.css" />
+<!-- 编辑时 少了上面的引用 BS 不提示    没什么 用   生产前  删除-->
+
+</body>
+</html>

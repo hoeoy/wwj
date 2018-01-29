@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.OrderDao">
+    <select id="findgoods" resultType="com.iandtop.model.OrderModel" >
+select g.*,gg.typename from order_goods g
+left join order_goodstype gg on g.styleid=gg.pk_only
+where g.styleid=#{goodstype} and g.state=1
+</select>
+    <!--
+    <select id="findgoods" resultType="com.iandtop.model.OrderModel" >
+   SELECT Id,goodsname,price,image FROM order_goods WHERE goodstype=#{goodstype} AND state = 1
+    </select>
+    -->
+    <select id="findgood" resultType="com.iandtop.model.OrderModel">
+    select g.*,gg.typename from order_goods g
+    left join order_goodstype gg on g.styleid=gg.pk_only
+    WHERE 1=1
+    <if test="goodsname != '' and goodsname!=null">
+        AND g.goodsname LIKE '%${goodsname}%'
+    </if>
+    <if test="barcode != '' and barcode!=null">
+            AND g.barcode=#{barcode}
+    </if>
+        AND state = 1
+    </select>
+    <select id="gooddetails" resultType="com.iandtop.model.OrderModel" >
+        SELECT Id,goodsname,price,image FROM order_goods WHERE ID=#{id}
+    </select>
+    <select id="find" resultType="com.iandtop.model.OrderModel" >
+        SELECT * FROM order_goods WHERE state = 1
+    </select>
+    <select id="findstylegoods" resultType="com.iandtop.model.OrderModel">
+        SELECT Id,goodsname,price,image
+        FROM order_goods
+        WHERE styleid IN (SELECT a.pk_only FROM order_goodstype AS a, order_goodstyle b
+        WHERE  b.Id = pk_parentid  AND b.Id=#{goodstype})AND order_goods.state=1
+    </select>
+    <delete id="delgood" parameterType="com.iandtop.model.OrderModel">
+        DELETE FROM order_goods WHERE Id=#{id}
+
+    </delete>
+    <update id="updategood" parameterType="com.iandtop.model.OrderModel">
+      UPDATE order_goods
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodsname !=null and goodsname!=''">goodsname=#{goodsname},</if>
+            <if test="norm !=null and norm!=''">norm=#{norm},</if>
+            <if test="unit !=null and unit!=''">unit=#{unit},</if>
+            <if test="price !=null and price!=''">price=#{price},</if>
+            <if test="state !=null and state!=''">state=#{state},</if>
+            <if test="image !=null and image!=''">image=#{image},</if>
+            <if test="barcode !=null and barcode!=''">barcode=#{barcode},</if>
+            <if test="styleid !=null and styleid!=''">styleid=#{styleid},</if>
+        </trim>
+        where Id=#{id}
+    </update>
+    <select id="mealRecordModel" resultType="com.iandtop.model.meal.MealRecordModel" parameterType="java.lang.String">
+      select device_meal_type,device_code,pk_device from meal_device where device_code=#{device_code}
+    </select>
+
+    <select id="findDeviceCode" parameterType="java.lang.String" resultType="com.iandtop.model.meal.MealRecordModel">
+        select device_meal_type,device_code,pk_device from meal_device where pk_device=#{pk_device}
+    </select>
+
+</mapper>

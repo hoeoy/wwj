@@ -1,0 +1,22 @@
+#start_time,#end_time{
+	height: 34px;
+}
+#search_row{
+	margin-top: 15px;
+}
+.table_row{
+	margin-top: 20px;
+	overflow: auto;
+	height: 500px;
+}
+
+.mytable>thead>tr>th{
+	font-weight: normal;
+	font-size: 14px;
+	color:#333;
+}
+#money{
+	height: 34px;
+	border: 1px solid #cccccc;
+	border-radius: 5px;
+}

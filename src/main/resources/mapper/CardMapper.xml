@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.CardDAO">
+
+    <select id="retrieveByPk" parameterType="java.lang.String" resultType="com.iandtop.model.card.CardModel">
+        select * from card_card where pk_card=#{pk_card}
+    </select>
+
+    <select id="selectByPkStaff" parameterType="java.lang.String" resultType="com.iandtop.model.card.CardModel">
+        select * from db_staff left join card_card on db_staff.pk_staff=card_card.pk_staff where db_staff.staff_code=#{pk_staff}and card_card.card_state in('10','20')
+    </select>
+
+    <select id="retrieveAllNormalWithPage" resultType="com.iandtop.model.card.CardModel">
+        select
+        DISTINCT
+        a.pk_card,
+        a.staff_code,
+        a.staff_name,
+        a.card_code,
+        if(a.card_state=10, '正常',if(a.card_state=20,'挂失', if(a.card_state =40, '注销', '未发卡'))) card_state,
+        a.pk_staff,
+        a.card_issue_ts,
+        a.card_ineffectived_ts,
+        a.card_costing/100 card_costing,
+        a.card_deposit/100 card_deposit,
+        a.money_cash/100 money_cash,
+        a.money_allowance/100 money_allowance,
+        a.pk_meal_rule,
+        a.password,
+        a.def1
+        from (
+        select card_card.*,db_staff.staff_code,db_staff.staff_name,db_department.pk_department,db_department.department_code from card_card
+
+        left join db_staff on card_card.pk_staff = db_staff.pk_staff
+        left join db_department on db_department.department_code = db_staff.department_code) a
+
+        <where>
+            <if test="department_code!=null and department_code!=''">
+                and a.department_code like "${department_code}%"
+            </if>
+            <if test="staff_code!=null and staff_code!=''">
+                and a.staff_code like "%${staff_code}%"
+            </if>
+            <if test="staff_name!=null and staff_name!=''">
+                and a.staff_name like "%${staff_name}%"
+            </if>
+            <if test="card_code!=null and card_code!=''">
+                and a.card_code like "%${card_code}%"
+            </if>
+            <if test="card_state!=null and card_state!=''">
+                and a.card_state = "${card_state}"
+            </if>
+        </where>
+        and a.card_state = '10'
+        order by
+        a.staff_code asc
+        limit
+        #{offset},#{limit}
+    </select>
+<!-- 卡浏览  -->
+    <select id="retrieveAllNorOrLostWithPage" resultType="com.iandtop.model.card.CardModel">
+        select
+        DISTINCT
+        a.pk_card,
+        a.staff_code,
+        a.staff_name,
+        a.card_code,
+        if(a.card_state=10, '正常',if(a.card_state=20,'挂失', if(a.card_state =40, '注销', '未发卡'))) card_state,
+        a.pk_staff,
+        a.card_issue_ts,
+        a.card_ineffectived_ts,
+        a.card_costing/100 card_costing,
+        a.card_deposit/100 card_deposit,
+        a.money_cash/100 money_cash,
+        a.money_allowance/100 money_allowance,
+        a.pk_meal_rule,
+        a.password,
+        a.meal_rule_name,
+        a.def1,
+        if(a.def1!='',"已限制","未限制") def2
+        from (
+        select card_card.*,meal_rule.meal_rule_name,db_staff.staff_code,db_staff.staff_name,db_department.pk_department,db_department.department_code from card_card
+
+        left join db_staff on card_card.pk_staff = db_staff.pk_staff
+        left join db_department on db_department.department_code = db_staff.department_code
+        left join meal_rule on meal_rule.pk_meal_rule = card_card.pk_meal_rule) a
+
+
+        <where>
+            <if test="department_code!=null and department_code!=''">
+                and a.department_code like "${department_code}%"
+            </if>
+            <if test="staff_code!=null and staff_code!=''">
+                and a.staff_code like "%${staff_code}%"
+            </if>
+            <if test="staff_name!=null and staff_name!=''">
+                and a.staff_name like "%${staff_name}%"
+            </if>
+            <if test="card_code!=null and card_code!=''">
+                and a.card_code like "%${card_code}%"
+            </if>
+            <if test="card_state!=null and card_state!=''">
+                and a.card_state = "${card_state}"
+            </if>
+        </where>
+        and a.card_state in('10','20')
+        order by
+        a.staff_code asc
+        limit
+        #{offset},#{limit}
+    </select>
+
+    <select id="retrieveAllLostWithPage" resultType="com.iandtop.model.card.CardModel">
+        select
+        DISTINCT
+        a.pk_card,
+        a.staff_code,
+        a.staff_name,
+        a.card_code,
+        if(a.card_state=10, '正常',if(a.card_state=20,'挂失', if(a.card_state =40, '注销', '未发卡'))) card_state,
+        a.pk_staff,
+        a.card_issue_ts,
+        a.card_ineffectived_ts,
+        a.card_costing/100 card_costing,
+        a.card_deposit/100 card_deposit,
+        a.money_cash/100 money_cash,
+        a.money_allowance/100 money_allowance,
+        a.pk_meal_rule,
+        a.password,
+        a.def1
+        from (
+        select card_card.*,db_staff.staff_code,db_staff.staff_name,db_department.pk_department,db_department.department_code from card_card
+
+        left join db_staff on card_card.pk_staff = db_staff.pk_staff
+        left join db_department on db_department.department_code = db_staff.department_code) a
+
+        <where>
+            <if test="department_code!=null and department_code!=''">
+                and a.department_code like "${department_code}%"
+            </if>
+            <if test="staff_code!=null and staff_code!=''">
+                and a.staff_code like "%${staff_code}%"
+            </if>
+            <if test="staff_name!=null and staff_name!=''">
+                and a.staff_name like "%${staff_name}%"
+            </if>
+            <if test="card_code!=null and card_code!=''">
+                and a.card_code like "%${card_code}%"
+            </if>
+            <if test="card_state!=null and card_state!=''">
+                and a.card_state = "${card_state}"
+            </if>
+        </where>
+        and a.card_state ='20'
+        order by
+        a.staff_code asc
+        limit
+        #{offset},#{limit}
+    </select>
+
+    <select id="retrieveAllNoIssueWithPage" resultType="com.iandtop.model.card.CardModel">
+        select
+        DISTINCT
+        a.pk_card,
+        a.staff_code,
+        a.staff_name,
+--         a.card_code,
+        if(a.card_state=10, '正常',if(a.card_state=20,'挂失', if(a.card_state =40, '注销', '未发卡'))) card_state,
+        a.pk_staff,
+        a.card_issue_ts,
+        a.card_ineffectived_ts,
+        a.pk_merchant
+        from (
+        select
+        db_staff.pk_staff,
+        db_staff.staff_code,
+        db_staff.staff_name,
+        db_staff.staff_type,
+        db_staff.pk_merchant,
+        db_department.department_code,
+        card_card.pk_card,
+        card_card.card_issue_ts,
+        card_card.card_ineffectived_ts,
+        card_card.card_code,
+        card_card.card_state
+        from db_staff
+        left join card_card on db_staff.pk_staff = card_card.pk_staff
+        left join db_department on db_department.department_code = db_staff.department_code) a
+
+        <where>
+            <if test="department_code!=null and department_code!=''">
+                and a.department_code like "${department_code}%"
+            </if>
+            <if test="staff_code!=null and staff_code!=''">
+                and a.staff_code like "%${staff_code}%"
+            </if>
+            <if test="staff_name!=null and staff_name!=''">
+                and a.staff_name like "%${staff_name}%"
+            </if>
+            <if test="card_state!=null and card_state!=''">
+                and a.card_state = "${card_state}"
+            </if>
+            <if test="staff_type!=null and staff_type!=''">
+                and a.staff_type = "${staff_type}"
+            </if>
+        </where>
+        and a.pk_staff not in(select pk_staff from card_card where card_state in('10','20'))
+        and a.staff_type = 1
+        order by
+        a.staff_code asc
+        limit
+        #{offset},#{limit}
+    </select>
+
+    <select id="retrieveAllNormalWithPageCount" resultType="com.iandtop.model.card.CardModel">
+        select
+        DISTINCT
+        a.pk_card,
+        a.staff_code,
+        a.staff_name,
+        a.staff_type,
+        a.card_code,
+        if(a.card_state=10, '正常',if(a.card_state=20,'挂失', if(a.card_state =40, '注销', '未发卡'))) card_state,
+        a.pk_staff,
+        a.card_issue_ts,
+        a.card_ineffectived_ts,
+        a.card_costing/100 card_costing,
+        a.card_deposit/100 card_deposit,
+        a.money_cash/100 money_cash,
+        a.money_allowance/100 money_allowance,
+        a.pk_meal_rule,
+        a.password,
+        a.def1
+        from (
+        select card_card.*,db_staff.staff_code,db_staff.staff_name,db_staff.staff_type,db_department.pk_department,db_department.department_code from card_card
+
+        left join db_staff on card_card.pk_staff = db_staff.pk_staff
+        left join db_department on db_department.department_code = db_staff.department_code) a
+
+        <where>
+            <if test="department_code!=null and department_code!=''">
+                and a.department_code like "${department_code}%"
+            </if>
+            <if test="staff_code!=null and staff_code!=''">
+                and a.staff_code like "%${staff_code}%"
+            </if>
+            <if test="staff_name!=null and staff_name!=''">
+                and a.staff_name like "%${staff_name}%"
+            </if>
+            <if test="card_code!=null and card_code!=''">
+                and a.card_code like "%${card_code}%"
+            </if>
+            <if test="card_state!=null and card_state!=''">
+                and a.card_state = "${card_state}"
+            </if>
+        </where>
+        and a.card_state = '10'
+        order by
+        a.staff_code asc
+    </select>
+
+    <select id="retrieveAllNorOrLostWithPageCount" resultType="com.iandtop.model.card.CardModel">
+        select
+        DISTINCT
+        a.pk_card,
+        a.staff_code,
+        a.staff_name,
+        a.card_code,
+        if(a.card_state=10, '正常',if(a.card_state=20,'挂失', if(a.card_state =40, '注销', '未发卡'))) card_state,
+        a.pk_staff,
+        a.card_issue_ts,
+        a.card_ineffectived_ts,
+        a.card_costing/100 card_costing,
+        a.card_deposit/100 card_deposit,
+        a.money_cash/100 money_cash,
+        a.money_allowance/100 money_allowance,
+        a.pk_meal_rule,
+        a.password,
+        a.def1
+        from (
+        select card_card.*,db_staff.staff_code,db_staff.staff_name,db_department.pk_department,db_department.department_code from card_card
+
+        left join db_staff on card_card.pk_staff = db_staff.pk_staff
+        left join db_department on db_department.department_code = db_staff.department_code) a
+
+        <where>
+            <if test="department_code!=null and department_code!=''">
+                and a.department_code like "${department_code}%"
+            </if>
+            <if test="staff_code!=null and staff_code!=''">
+                and a.staff_code like "%${staff_code}%"
+            </if>
+            <if test="staff_name!=null and staff_name!=''">
+                and a.staff_name like "%${staff_name}%"
+            </if>
+            <if test="card_code!=null and card_code!=''">
+                and a.card_code like "%${card_code}%"
+            </if>
+            <if test="card_state!=null and card_state!=''">
+                and a.card_state = "${card_state}"
+            </if>
+        </where>
+        and a.card_state in('10','20')
+        order by
+        a.staff_code asc
+    </select>
+
+    <select id="retrieveAllLostWithPageCount" resultType="com.iandtop.model.card.CardModel">
+        select
+        DISTINCT
+        a.pk_card,
+        a.staff_code,
+        a.staff_name,
+        a.card_code,
+        if(a.card_state=10, '正常',if(a.card_state=20,'挂失', if(a.card_state =40, '注销', '未发卡'))) card_state,
+        a.pk_staff,
+        a.card_issue_ts,
+        a.card_ineffectived_ts,
+        a.card_costing/100 card_costing,
+        a.card_deposit/100 card_deposit,
+        a.money_cash/100 money_cash,
+        a.money_allowance/100 money_allowance,
+        a.pk_meal_rule,
+        a.password,
+        a.def1
+        from (
+        select card_card.*,db_staff.staff_code,db_staff.staff_name,db_department.pk_department,db_department.department_code from card_card
+
+        left join db_staff on card_card.pk_staff = db_staff.pk_staff
+        left join db_department on db_department.department_code = db_staff.department_code) a
+
+        <where>
+            <if test="department_code!=null and department_code!=''">
+                and a.department_code like "${department_code}%"
+            </if>
+            <if test="staff_code!=null and staff_code!=''">
+                and a.staff_code like "%${staff_code}%"
+            </if>
+            <if test="staff_name!=null and staff_name!=''">
+                and a.staff_name like "%${staff_name}%"
+            </if>
+            <if test="card_code!=null and card_code!=''">
+                and a.card_code like "%${card_code}%"
+            </if>
+            <if test="card_state!=null and card_state!=''">
+                and a.card_state = "${card_state}"
+            </if>
+        </where>
+        and a.card_state ='20'
+        order by
+        a.staff_code asc
+    </select>
+
+    <select id="retrieveAllNoIssueWithPageCount" resultType="com.iandtop.model.card.CardModel">
+        select
+        DISTINCT
+        a.pk_card,
+        a.staff_code,
+        a.staff_name,
+--         a.card_code,
+        if(a.card_state=10, '正常',if(a.card_state=20,'挂失', if(a.card_state =40, '注销', '未发卡'))) card_state,
+        a.pk_staff,
+        a.card_issue_ts,
+        a.card_ineffectived_ts,
+        a.pk_merchant
+        from (
+        select
+        db_staff.pk_staff,
+        db_staff.staff_code,
+        db_staff.staff_name,
+        db_staff.staff_type,
+        db_staff.pk_merchant,
+        db_department.department_code,
+        card_card.pk_card,
+        card_card.card_issue_ts,
+        card_card.card_ineffectived_ts,
+        card_card.card_code,
+        card_card.card_state
+        from db_staff
+        left join card_card on db_staff.pk_staff = card_card.pk_staff
+        left join db_department on db_department.department_code = db_staff.department_code) a
+
+        <where>
+            <if test="department_code!=null and department_code!=''">
+                and a.department_code like "${department_code}%"
+            </if>
+            <if test="staff_code!=null and staff_code!=''">
+                and a.staff_code like "%${staff_code}%"
+            </if>
+            <if test="staff_name!=null and staff_name!=''">
+                and a.staff_name like "%${staff_name}%"
+            </if>
+            <if test="card_state!=null and card_state!=''">
+                and a.card_state = "${card_state}"
+            </if>
+        </where>
+        and a.pk_staff not in(select pk_staff from card_card where card_state in('10','20'))
+        and a.staff_type = 1
+        order by
+        a.staff_code asc
+    </select>
+
+    <insert id="insertByVO" parameterType="com.iandtop.model.card.CardModel">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="pk_card">
+            SELECT LAST_INSERT_ID() AS pk_card
+        </selectKey>
+        INSERT INTO card_card(pk_staff, card_code, card_state, card_issue_ts, card_ineffectived_ts, card_costing, card_deposit,money_cash,money_allowance,pk_meal_rule,password,serial, memo, def1, def2 , def3, def4, def5)
+        VALUES (#{pk_staff},#{card_code},#{card_state},#{card_issue_ts},#{card_ineffectived_ts},#{card_costing},#{card_deposit},#{money_cash},#{money_allowance},#{pk_meal_rule},#{password},#{serial},#{memo},#{def1},#{def2},#{def3},#{def4},#{def5})
+    </insert>
+
+    <select id="findPkcard" parameterType="com.iandtop.model.card.CardModel" resultType="com.iandtop.model.card.CardModel">
+        SELECT pk_card from card_card WHERE pk_staff = #{pk_staff}
+    </select>
+
+    <update id="updateByVO">
+        update card_card
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="card_code != null">card_code=#{card_code},</if>
+            <if test="card_state != null">card_state=#{card_state},</if>
+            <if test="card_issue_ts != null">card_issue_ts=#{card_issue_ts},</if>
+            <if test="card_ineffectived_ts != null">card_ineffectived_ts=#{card_ineffectived_ts},</if>
+            <if test="card_costing != null">card_costing=#{card_costing},</if>
+            <if test="card_deposit != null">card_deposit=#{card_deposit},</if>
+            <if test="money_cash != null">money_cash=#{money_cash},</if>
+            <if test="money_allowance != null">money_allowance=#{money_allowance},</if>
+            <if test="pk_meal_rule != null">pk_meal_rule=#{pk_meal_rule},</if>
+            <if test="password != null">password=#{password},</if>
+            <if test="serial != null">serial=#{serial},</if>
+            <if test="memo != null">memo=#{memo},</if>
+            <if test="def1 != null">def1=#{def1},</if>
+            <if test="def2 != null">def2=#{def2},</if>
+            <if test="def3 != null">def3=#{def3},</if>
+            <if test="def4 != null">def4=#{def4},</if>
+            <if test="def5 != null">def5=#{def5},</if>
+        </trim>
+        where pk_card=#{pk_card}
+    </update>
+    <update id="updatePwd" parameterType="com.iandtop.model.card.CardModel">
+        UPDATE card_card SET
+        password=#{password}
+        WHERE
+        pk_staff=#{pk_staff}
+    </update>
+
+</mapper>

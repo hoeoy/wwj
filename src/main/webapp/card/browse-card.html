@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>挂失</title>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table.js"></script>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table-zh-CN.js"></script>
+    <link rel="stylesheet" href="../js/bootstrap-table/dist/bootstrap-table.min.css">
+    <link rel="stylesheet" href="../js/element-ui/lib/theme-default/index.css">
+
+    <script src="../js/card/browse-card.js"></script>
+    <script src="../js/element-ui/lib/index.js"></script>
+    <style>
+        .no-paddings{
+            padding-left: 0 !important;
+            /*padding-right: 0 !important;*/
+        }
+    </style>
+</head>
+<body>
+<OBJECT ID="AxRead" CLASSID="CLSID:1B83CB21-E01E-4CA4-B54C-356E31448A86" style="display: none;"></OBJECT>
+<div class="panel-body " style="padding-bottom:0px;">
+
+    <div>
+        <div id="tree"  class="col-md-2 ztree" style="overflow: auto"></div>
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">查询条件</div>
+                <div class="panel-body">
+                    <form id="formSearch" class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-3 no-paddings-left-right text-center" for="txt_search_staff_code" style="padding-right: 0">编码</label>
+                                <div class=" col-sm-9 no-paddings-left-right">
+                                    <input type="text"  id="txt_search_staff_code" class="form-control" >
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-3 no-paddings-left-right text-center" for="txt_search_name" style="padding-right: 0">姓名</label>
+                                <div class=" col-sm-9 no-paddings-left-right">
+                                    <input type="text"  id="txt_search_name"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-3 no-paddings-left-right text-center" for="txt_search_card_code" style="padding-right: 0">卡号</label>
+                                <div class=" col-sm-9 no-paddings-left-right">
+                                    <input type="text"  id="txt_search_card_code"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-3" style="text-align:left;">
+                                <button type="button"   id="btn_query" class="btn btn-info col-sm-5 col-sm-offset-1">查询</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="toolbar" class="btn-group">
+                <button id="btn_read_card" type="button" class="btn btn-info">
+                    <span class="iconfont icon-duqia"></span><span>读卡</span>
+                </button>
+                <button type="button" class="btn btn-info" id="btn_edit" disabled="true">
+                    <span class="iconfont icon-xiugai"></span><span>修改</span>
+                </button>
+            </div>
+            <table id="table"></table>
+
+        </div>
+    </div>
+
+    <div class="modal fade modal-info in" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="info-modal-label" aria-hidden="true" style="padding-right: 17px;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background: #2272bb;">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">修改</h4>
+                </div>
+                <div>
+                    <h4 id="tipinfo"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <fieldset id="fieldset1">
+                            <legend>卡信息</legend>
+                            <div class="row" style="margin-top: 1em;">
+                                <div class="col-md-6" style="margin-top: 1em;">
+                                    <div class="col-md-4 no-paddings  control-label text-right"><p class="modal_p">卡号</p></div>
+                                    <div class="col-md-8 no-paddings ">
+                                        <input class="form-control"  type="text" class="center-block" name="cardid" id="card_code" readonly="true">
+                                        <input class="form-control hidden"  type="text" class="center-block" name="cardid" id="pk_card" >
+                                    </div>
+                                </div>
+                                <div class="col-md-6" style="margin-top: 1em;">
+                                    <div class="col-md-4 no-paddings  control-label text-right"><p class="modal_p">编码</p></div>
+                                    <div class="col-md-8 no-paddings "><input class="form-control" type="text" class="center-block" name="id" id="staff_code" readonly="true" ></div>
+                                </div>
+                                <div class="col-md-6" style="margin-top: 1em;">
+                                    <div class="col-md-4 no-paddings  control-label text-right"><p class="modal_p">姓名</p></div>
+                                    <div class="col-md-8 no-paddings "><input class="form-control" type="text" class="center-block" name="id" id="staff_name" readonly="true" ></div>
+                                </div>
+                                <div class="col-md-6" style="margin-top: 1em;">
+                                    <div class="col-md-4 no-paddings  control-label text-right"><p class="modal_p">卡成本</p></div>
+                                    <div class="col-md-8 no-paddings "><input class="form-control" type="text" class="center-block" name="name" id="card_costing" readonly="true"  ></div>
+                                </div>
+                                <div class="col-md-6" style="margin-top: 1em;">
+                                    <div class="col-md-4 no-paddings  control-label text-right"><p class="modal_p">卡押金</p></div>
+                                    <div class="col-md-8 no-paddings "><input class="form-control" type="text" class="center-block" name="name" id="card_deposit" readonly="true"></div>
+                                </div>
+                                <div class="col-md-6" style="margin-top: 1em;">
+                                    <div class="col-md-4 no-paddings control-label text-right"><p class="modal_p">有效期</p></div>
+                                    <div class="col-md-8 no-paddings"><input class="form-control" type="text" class="center-block" name="name" id="card_ineffectived_ts"  ></div>
+                                </div>
+                                <div class="col-md-6" style="margin-top: 1em;">
+                                    <div class="col-md-4 no-paddings  control-label text-right"><p class="modal_p">密码</p></div>
+                                    <div class="col-md-8 no-paddings "><input class="form-control" type="password" class="center-block" name="name" id="password" maxlength="6"></div>
+                                   <!-- <div class="col-md-8 control-label">
+                                        <p class="modal_p" style="color: salmon">*&nbsp;&nbsp;长度6位</p>
+                                    </div>-->
+                                </div>
+                                <div class="col-md-6" style="margin-top: 1em;">
+                                    <div class="col-md-4 no-paddings  control-label text-right"><p class="modal_p">消费规则</p></div>
+                                    <div class="col-md-8 no-paddings ">
+                                        <select id="pk_meal_rule" class="form-control  " ></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin-top: 1em;">
+                                    <div class="col-md-2 no-paddings  control-label text-right" style="width: 63.96px;padding-right:0"><p class="modal_p">消费权限</p></div>
+                                    <div class="col-md-10 no-paddings ">
+                                        <el-checkbox-group v-model="checkList" style="margin-left: 15px;margin-top: 6px;">
+                                            <el-checkbox label="早餐" :value="0"></el-checkbox>
+                                            <el-checkbox label="午餐" :value="1"></el-checkbox>
+                                            <el-checkbox label="外卖" :value="2"></el-checkbox>
+                                            <el-checkbox label="晚餐" :value="3"></el-checkbox>
+                                            <el-checkbox label="夜宵" :value="4"></el-checkbox>
+                                        </el-checkbox-group>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="modal-footer row" >
+                    <div class="col-md-11">
+                        <button type="button" class="btn modal-btn btn-primary" id="okBtn_One" @click="save">确定</button>
+                        <button type="button" class="btn modal-btn btn-default" data-dismiss="modal" id="dismiss">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<link rel="stylesheet" href="../js/bootstrap/dist/css/bootstrap.css" />
+<!-- 编辑时 少了上面的引用 BS 不提示    没什么 用   生产前  删除-->
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>设备时间段设置</title>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table.js"></script>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table-zh-CN.js"></script>
+    <link rel="stylesheet" href="../js/bootstrap-table/dist/bootstrap-table.min.css">
+    <link rel="stylesheet" href="../js/timepicker/jquery.timepicker.css">
+    <script src="../js/device/device-mng.js"></script>
+
+</head>
+<body>
+<div class="panel-body" style="padding-bottom:0px;">
+
+    <div>
+        <div class="col-md-2">
+            <div class="title">
+                <h5>选择时间段</h5>
+            </div>
+            <div id="tree"  class="ztree" style="overflow: auto"></div>
+        </div>
+
+        <div class="col-md-10">
+            <!--操作按钮-->
+            <div id="toolbar" class="btn-group">
+                <button  type="button" class="btn btn-info" id="btn_add">
+                    <span class="iconfont icon-zengjia"></span><span>新增</span>
+                </button>
+                <button type="button" class="btn btn-info" id="btn_edit" disabled="true">
+                    <span class="iconfont icon-xiugai"></span><span>修改</span>
+                </button>
+                <button type="button" class="btn btn-info" id="btn_delete" disabled="true">
+                    <span class="iconfont icon-shanchu"></span><span>删除</span>
+                </button>
+            </div>
+
+            <table id="table"></table>
+        </div>
+        </div>
+    </div>
+<div class="modal fade modal-primary in" id="addTimeModal" tabindex="-1" role="dialog" aria-labelledby="primary-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 900px;left: 50%;margin-left: -450px;">
+            <div class="modal-header" style="border: none;background-color: #199ed8;">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel2" style="color:#ffffff;">新增时间段</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <span>时间段名称：</span>
+                    <input type="text" class="text" id="time_name" />
+                    <span style="margin-left: 20px;color: crimson">*&nbsp;&nbsp; 1、开始时间不能大于结束时间&nbsp;&nbsp;&nbsp;&nbsp; 2、时间段不能重叠&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                </div>
+                <div class="row text-center row_class" style="margin-top: 2em;margin-bottom: 2em;">
+                    <fieldset style="border: 1px solid #199ed8;" id="children_data">
+                        <div class="row form-group relative" style="margin-top: 1em;" id="data0">
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data0_name">名称</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text" id="data0_name" class="form-control" name="sub_name" />
+                                    <input type="text" class="form-control" name="pk_device_time_sub" style="display:none;"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data0_start_time">开始时间</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text" id="data0_start_time" class="form-control" name="start_time" />
+                                </div>
+                            </div>
+                            <!--onclick="laydate({istime: true, format: 'hh:mm:ss'})"-->
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data0_end_time" >结束时间</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text" id="data0_end_time" class="form-control" name="end_time"   />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data0_frequency_time">段限次</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="number" id="data0_frequency_time" class="form-control" name="frequency_time" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group relative" style="margin-top: 1em;" id="data1">
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data1_name">名称</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text" id="data1_name" class="form-control" name="sub_name" />
+                                    <input type="text" class="form-control" name="pk_device_time_sub" style="display:none;"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data1_start_time">开始时间</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text" id="data1_start_time" class="form-control" name="start_time"/>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data1_end_time" >结束时间</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text" id="data1_end_time" class="form-control" name="end_time" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data1_frequency_time">段限次</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="number" id="data1_frequency_time" class="form-control" name="frequency_time" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group relative" style="margin-top: 1em;" id="data2">
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data2_name">名称</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text" id="data2_name" class="form-control" name="sub_name" />
+                                    <input type="text" class="form-control" name="pk_device_time_sub" style="display:none;"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data2_start_time">开始时间</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text" id="data2_start_time" class="form-control" name="start_time"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data2_end_time" >结束时间</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text" id="data2_end_time" class="form-control" name="end_time" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data2_frequency_time">段限次</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="number" id="data2_frequency_time" class="form-control" name="frequency_time" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group relative" style="margin-top: 1em;" id="data3">
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data3_name">名称</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text" id="data3_name" class="form-control" name="sub_name" />
+                                    <input type="text" class="form-control" name="pk_device_time_sub" style="display:none;"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data3_start_time">开始时间</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text" id="data3_start_time" class="form-control" name="start_time"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data3_end_time" >结束时间</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text" id="data3_end_time" class="form-control" name="end_time" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data3_frequency_time">段限次</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="number" id="data3_frequency_time" class="form-control" name="frequency_time" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group relative" style="margin-top: 1em;" id="data4">
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data4_name">名称</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text" id="data4_name" class="form-control" name="sub_name" />
+                                    <input type="text" class="form-control" name="pk_device_time_sub" style="display:none;"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data4_start_time">开始时间</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text" id="data4_start_time" class="form-control" name="start_time"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data4_end_time" >结束时间</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="text" id="data4_end_time" class="form-control" name="end_time" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="control-label col-sm-4 no-padding-left-right text-center padding-top" for="data4_frequency_time">段限次</label>
+                                <div class=" col-sm-8 no-padding-left-right">
+                                    <input type="number" id="data4_frequency_time" class="form-control" name="frequency_time" />
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                <!--    <fieldset style="border: 1px solid #199ed8;" id="children_data">
+                        <div class="row" style="margin-top: 1em;" id="data0">
+                            <div class="col-md-4">
+                                <span>名称</span>
+                                <input type="text" class="" name="sub_name" />
+                                <input type="text" class="" name="pk_device_time_sub" style="display:none;"/>
+                            </div>
+                            <div class="col-md-4">
+                                <span>开始时间</span>
+                                <input type="time" class="" name="start_time" />
+                            </div>
+                            <div class="col-md-4">
+                                <span>结束时间</span>
+                                <input type="time" class="" name="end_time" />
+                            </div>
+                            <div class="col-md-4">
+                                <span>段限次</span>
+                                <input type="number" class="" name="frequency_time" />
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 1em;" id="data1">
+                            <div class="col-md-4">
+                                <span>名称</span>
+                                <input type="text" class="" name="sub_name" />
+                                <input type="text" class="" name="pk_device_time_sub" style="display:none;"/>
+                            </div>
+                            <div class="col-md-4">
+                                <span>开始时间</span>
+                                <input type="time" class="" name="start_time" />
+                            </div>
+                            <div class="col-md-4">
+                                <span>结束时间</span>
+                                <input type="time" class="" name="end_time" />
+                            </div>
+                            <div class="col-md-4">
+                                <span>段限次</span>
+                                <input type="number" class="" name="frequency_time" />
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 1em;" id="data2">
+                            <div class="col-md-4">
+                                <span>名称</span>
+                                <input type="text" class="" name="sub_name" />
+                                <input type="text" class="" name="pk_device_time_sub" style="display:none;"/>
+                            </div>
+                            <div class="col-md-4">
+                                <span>开始时间</span>
+                                <input type="time" class="" name="start_time" />
+                            </div>
+                            <div class="col-md-4">
+                                <span>结束时间</span>
+                                <input type="time" class="" name="end_time" />
+                            </div>
+                            <div class="col-md-4">
+                                <span>段限次</span>
+                                <input type="number" class="" name="frequency_time" />
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 1em;" id="data3">
+                            <div class="col-md-4">
+                                <span>名称</span>
+                                <input type="text" class="" name="sub_name" />
+                                <input type="text" class="" name="pk_device_time_sub" style="display:none;"/>
+                            </div>
+                            <div class="col-md-4">
+                                <span>开始时间</span>
+                                <input type="time" class="" name="start_time" />
+                            </div>
+                            <div class="col-md-4">
+                                <span>结束时间</span>
+                                <input type="time" class="" name="end_time" />
+                            </div>
+                            <div class="col-md-4">
+                                <span>段限次</span>
+                                <input type="number" class="" name="frequency_time" />
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 1em;" id="data4">
+                            <div class="col-md-4">
+                                <span>名称</span>
+                                <input type="text" class="" name="sub_name" />
+                                <input type="text" class="" name="pk_device_time_sub" style="display:none;"/>
+                            </div>
+                            <div class="col-md-4">
+                                <span>开始时间</span>
+                                <input type="time" class="" name="start_time" />
+                            </div>
+                            <div class="col-md-4">
+                                <span>结束时间</span>
+                                <input type="time" class="" name="end_time" />
+                            </div>
+                            <div class="col-md-4">
+                                <span>段限次</span>
+                                <input type="number" class="" name="frequency_time" />
+                            </div>
+                        </div>
+                    </fieldset>
+                -->
+                    <div class="row" style="margin-top: 2em;">
+                        <button type="button" class="btn btn-info" style="width: 100px;" id="small_sure">保存并创建</button>
+                        <button type="button" class="btn btn-info" style="width: 100px;" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</div>
+
+<script src="../js/timepicker/jquery.timepicker.js"></script>
+<link rel="stylesheet" href="../js/bootstrap/dist/css/bootstrap.css" />
+<!-- 编辑时 少了上面的引用 BS 不提示    没什么 用   生产前  删除-->
+<script type="text/javascript">
+    $('#data0_start_time').timepicker({ 'timeFormat': 'H:i:s' });
+    $('#data0_end_time'  ).timepicker({ 'timeFormat': 'H:i:s' });
+    $('#data1_start_time').timepicker({ 'timeFormat': 'H:i:s' });
+    $('#data1_end_time'  ).timepicker({ 'timeFormat': 'H:i:s' });
+    $('#data2_start_time').timepicker({ 'timeFormat': 'H:i:s' });
+    $('#data2_end_time'  ).timepicker({ 'timeFormat': 'H:i:s' });
+    $('#data3_start_time').timepicker({ 'timeFormat': 'H:i:s' });
+    $('#data3_end_time'  ).timepicker({ 'timeFormat': 'H:i:s' });
+    $('#data4_start_time').timepicker({ 'timeFormat': 'H:i:s' });
+    $('#data4_end_time'  ).timepicker({ 'timeFormat': 'H:i:s' });
+</script>
+
+</body>
+</html>

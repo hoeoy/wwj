@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>智慧园区管理平台</title>
+    <link rel="stylesheet" href="js/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/login.css"/>
+    <link rel="stylesheet" href="css/AdminLTE.min.css">
+    <link rel="stylesheet" href="js/bootstrap/dist/css/font-awesome.min.css" />
+</head>
+<body>
+<div class="row">
+    <div class="col-xs-6 col-lg-offset-3 clearfix wrap">
+        <div class="row">
+            <img src="img/ad_font.png" alt="" class="col-xs-6 no-padding-left">
+        </div>
+        <div class="row magin-top  content">
+            <div class="col-xs-7 col-xs-10 no-padding no-margin relative text-center login-ad">
+                <!--<div class="center-vertical">-->
+                <img src="img/login_ad.png" alt="" class="col-md-10 col-md-offset-1 no-padding no-margin block center-vertical">
+                <!--</div>-->
+            </div>
+            <div class="col-xs-5 login-content">
+                <div class="row margin-top28">
+                    <h4 class="col-xs-9 col-xs-offset-1 no-padding-left"><b>用户登录</b></h4>
+                </div>
+                <div class="row padding-top">
+                    <input type="text" placeholder="用户名" id="code" class="col-xs-10 col-xs-offset-1 border-radius50 no-outline magin-top25 magin-bottom15 height36 paddin-left"
+                           v-model="code">
+                </div>
+                <div class="row">
+                    <input type="password" placeholder="密码" id="password"  class="col-xs-10 col-xs-offset-1 border-radius50  no-outline height36 paddin-left" v-model="password" @keyup.enter="login">
+                </div>
+                <div class="row">
+                    <p class="col-xs-6 col-xs-offset-1 padding-top2 "><input type="checkbox" class="" v-model="isRemember">记住密码</p>
+                </div>
+                <div class="row">
+                    <button id="login" class=" border-radius50 col-xs-10 col-xs-offset-1 no-outline no-border btn-login" @click="login" v-text="logintext"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript" src="js/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/public.js"></script>
+<script type="text/javascript" src="js/bootstrap/dist/js/ivt.js"></script>
+<script type="text/javascript" src="js/bootstrap/dist/js/app.min.js"></script>
+<script type="text/javascript" src="js/bootstrap/dist/js/toastr.js"></script>
+<script>
+    var vm = new Vue({
+        el:'.content',
+        data:{
+            code:'',
+            password:'',
+            isRemember:'',
+            logintext:'登录'
+        },
+        methods:{
+            init:function(){
+                localStorage.isRemember != '' && (this.isRemember = localStorage.isRemember);
+                localStorage.username != '' && (this.code = localStorage.username);
+                (this.isRemember && localStorage.password != '') && (this.password = localStorage.password)
+            },
+            login:function(){
+                this.remember();
+                if (this.code == "" || this.password == "") {
+                    Notify('用户名或密码不能为空', 'top-right', '5000', 'danger', 'fa-times-circle', true);
+                } else {
+                    this.logintext = '正在登录';
+                    $('#login').attr('disabled',true);
+                    $.ajax({
+                        type: 'get',
+                        data: {user_code:vm.code,password:vm.password},
+                        dataType: "json",
+                        url:getUrl()+ '/Api/user/login',
+                        contentType: "application/json;charset=UTF-8",
+                        success: function (data) {
+                            $('#login').removeAttr('disabled');
+                            if (data.success) {
+                                vm.logintext = '登录成功';
+                                localStorage.user = JSON.stringify(data.data);
+                                location.href = "index.html";
+                                localStorage.password = vm.password;
+                            } else {
+                                vm.logintext = '登录';
+                                $('#login').removeAttr('disabled');
+                                Notify('用户名或密码错误', 'top-right', '5000', 'danger', 'fa-times-circle', true);
+
+
+                            }
+                        },
+                        error: function (data) {
+                            console.log(data);
+                            vm.logintext = '登录';
+                            $('#login').removeAttr('disabled');
+                            Notify('连接服务器失败', 'top-right', '5000', 'danger', 'fa-times-circle', true);
+
+                        }
+                    });
+                }
+            },
+            remember:function(){
+                console.log(this.isRemember);
+                if (this.isRemember ) {
+                    localStorage.username = this.code;
+                    localStorage.password = this.password;
+                    localStorage.isRemember = this.isRemember;
+                }else {
+                    localStorage.password = '';
+                }
+            }
+        }
+    });
+    vm.init();
+</script>
+</html>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.OrderFormDao">
+    <select id="findformforname" parameterType="com.iandtop.model.OrderFormModel" resultType="com.iandtop.model.OrderFormModel">
+        select o.pk_formcode,o.formstatus,
+        o.formpeople,o.formtime,
+        o.amount,o.operationtime,
+        o.operator,o.staff_code FROM order_form o
+        left join card_card c on c.pk_staff = o.staff_code
+        WHERE 1=1
+        <if test="formpeople !=null and formpeople!=''">AND o.formpeople=#{formpeople}</if>
+        <if test="formtime !=null and formtime!=''"> AND o.formtime <![CDATA[ >= ]]> '${formtime}' AND o.formtime <![CDATA[ <= ]]> '${stopTime}'</if>
+        <if test="formstatus !=null and formstatus!=''">AND o.formstatus=#{formstatus}</if>
+        <if test="staff_code !=null and staff_code!=''">AND o.staff_code=#{staff_code}</if>
+        <if test="card_code !=null and card_code!=''">AND c.card_code=#{card_code}</if>
+        order by formtime desc
+    </select>
+<insert id="insertForm" parameterType="java.util.Map">
+    INSERT INTO order_form (
+    pk_formcode,formstatus,formpeople,formtime,amount,staff_code
+    )VALUES (#{pk_formcode},1,#{formpeople},sysdate(),#{meal_money},#{staff_code})
+</insert>
+    <insert id="insertdetail" parameterType="java.util.List">
+        insert into order_detail(fk_formcode,foodname,price,count)
+        values
+            (#{pk_formcode},#{foodname},#{price},#{count})
+    </insert>
+    <insert id="insertForm2" parameterType="java.util.Map">
+        INSERT INTO order_form (
+        pk_formcode,formstatus,formpeople,formtime,amount,staff_code
+        )VALUES (#{pk_formcode},3,#{formpeople},sysdate(),#{meal_money},#{staff_code})
+    </insert>
+    <insert id="insertdetail2" parameterType="java.util.List">
+        insert into order_detail(fk_formcode,foodname,price,count)
+        values
+        (#{pk_formcode},#{foodname},#{price},#{count})
+    </insert>
+    <update id="updateForm" parameterType="com.iandtop.model.OrderFormModel">
+        UPDATE order_form SET formstatus=2,operationtime=sysdate()
+        WHERE pk_formcode=#{pk_formcode}
+    </update>
+    <update id="updateForm2" parameterType="com.iandtop.model.OrderFormModel">
+        UPDATE order_form SET formstatus=2,operationtime=sysdate()
+        WHERE pk_formcode=#{pk_formcode}
+    </update>
+</mapper>

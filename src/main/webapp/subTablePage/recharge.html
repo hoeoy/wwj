@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>充值明细报表</title>
+	<!--<link href="css/sub/recharge.css" rel="stylesheet">-->
+	<link href="css/report.css" rel="stylesheet"><!-- 报表公用的CSS -->
+</head>
+<body>
+<OBJECT ID="AxRead" CLASSID="CLSID:1B83CB21-E01E-4CA4-B54C-356E31448A86" style="display: none;"></OBJECT>
+<div class="row wwj-tab-wrap"><!--外文局 缩写wwj-->
+
+	<div class="col-sm-2 no-padding-left-right" id="dept_tree" style="overflow: auto;"></div>
+	<div class="col-sm-10">
+		<div class="panel panel-default">
+			<div class="panel-heading">查询条件</div>
+			<div class="panel-body">
+				<form id="formSearch" class="form-horizontal">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-sm-3">
+								<label class="control-label col-sm-4 no-padding-left-right text-center" for="jobNumber">工号</label>
+								<div class=" col-sm-8 no-padding-left-right">
+									<input type="text"  id="jobNumber" class="form-control" v-model="jobNumber">
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<label class="control-label col-sm-4 no-padding-left-right text-center" for="cardNumber">卡号</label>
+								<div class=" col-sm-8 no-padding-left-right">
+									<input type="text"  id="cardNumber"  class="form-control" v-model="cardNumber">
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<label class="control-label col-sm-4 no-padding-left-right text-center" for="pName">姓名</label>
+								<div class=" col-sm-8 no-padding-left-right">
+									<input type="text"  id="pName"  class="form-control" v-model="pName">
+								</div>
+							</div>
+							<div class="col-sm-3" style="text-align:left;">
+								<label class="control-label col-sm-4 no-padding-left-right text-center" for="topUpType">充值类型</label>
+								<div class="col-md-8">
+									<select class=" form-control no-padding-left-right"  id="topUpType" v-model="topUpType">
+										<option value="">全部</option>
+										<option value="0">线下现金</option>
+										<option value="1">卡押金</option>
+										<option value="2">卡成本</option>
+										<option value="3">清零补贴</option>
+										<option value="4">累加补贴</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-3">
+								<label class="control-label col-sm-4 no-padding-left-right text-center" for="operator">操作员</label>
+								<div class=" col-sm-8 no-padding-left-right relative">
+									<input type="text"  id="operator"  class="form-control" v-model="operator">
+									<div class="dropdown" @click="active">
+										<button  class="btn btn-link  absolute dropdown-btn" data-toggle="dropdown">
+											<span class="caret "></span>
+										</button >
+										<ul class="dropdown-menu">
+											<template v-for="operator in operators">
+												<li class=""><a style="padding-left: 12px;" v-html="operator.user_name" @click="selectOperator"></a></li>
+											</template>
+										</ul>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<label class="control-label col-sm-4 no-padding-left-right text-center" for="startTime">开始时间</label>
+								<div class=" col-sm-8 no-padding-left-right">
+									<input type="text"  id="startTime"  class="form-control no-padding-left-right" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<label class="control-label col-sm-4 no-padding-left-right text-center" for="endTime">结束时间</label>
+								<div class=" col-sm-8 no-padding-left-right">
+									<input type="text"  id="endTime"  class="form-control no-padding-left-right" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})">
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<button type="button"    class="btn btn-info col-sm-5 " @click="query">查询</button>
+								<button type="button"    class="btn btn-info col-sm-5 col-sm-offset-1" @click="readCard">读卡</button>
+
+
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<!--操作按钮-->
+		<div id="toolbar" class="toolbartoolbar btn-group">
+			<button type="button" class="btn btn-info"   @click="exportToExcel">
+				<span class="iconfont icon-daochuexcel"></span><span>导出excel</span>
+			</button>
+			<button type="button" class="btn btn-info"   @click="print">
+				<span class="iconfont icon-dayinyulan"></span><span>打印预览</span>
+			</button>
+		</div>
+
+		<div class="" id="wwj-table">
+			<table class="table table-bordered" cellspacing="0" cellpadding="0">
+				<caption  class="text-center">
+					<h3 class=" tab-title">充值明细表</h3>
+					<div>
+						<span class="pull-right today" v-html="'打印日期:' + today"></span>
+						<span class="pull-left fromTo" v-html="'开始时间:' + startTime + '  结束时间: ' + endTime" ></span>
+					</div>
+				</caption>
+				<thead>
+				<tr>
+					<td  class="text-center">工号</td>
+					<!--<td  class="text-center">卡号</td>-->
+					<td  class="text-center">姓名</td>
+					<td  class="text-center">部门</td>
+					<td  class="text-center">充值金额(元)</td>
+					<td  class="text-center ">帐户余额(元)</td>
+					<!--<td  class="text-center">卡次</td>-->
+					<td  class="text-center">充值类型</td>
+					<td  class="text-center time">充值时间</td>
+					<td  class="text-center">操作员</td>
+				</tr>
+				</thead>
+				<tbody>
+			<!--	<tr>
+					<td colspan="10" class="text-center" v-if="!succ" v-html="waitInfo"></td>
+				</tr>-->
+				<tr  v-if="succ" v-for="detail in details">
+					<td class="text-center" v-html="detail.staff_code"></td>
+					<!--<td class="text-center" v-html="detail.card_code"></td>-->
+					<td class="text-center" v-html="detail.staff_name"></td>
+					<td class="text-center" v-html="detail.department_name"></td>
+					<td class="text-center" v-html="detail.charge_money"></td>
+					<td class="text-center" v-html="detail.money_retain"></td>
+					<!--<td class="text-center" v-html="detail.serial"></td>-->
+					<td class="text-center" v-html="transformType(detail.charge_type)"></td>
+					<td class="text-center time" v-html="detail.charge_ts"></td>
+					<td class="text-center" v-html="detail.user_name"></td>
+				</tr>
+				</tbody>
+				<tfoot v-if="succ">
+				<tr>
+					<td class="text-center">汇总</td>
+					<!--<td class="text-center"></td>-->
+					<td class="text-center"></td>
+					<td class="text-center"></td>
+					<td class="text-center" v-html="sum(details,'charge_money')"></td>
+					<td class="text-center"></td>
+					<!--<td class="text-center"></td>-->
+					<td class="text-center"></td>
+					<td class="text-center"></td>
+					<td class="text-center"></td>
+				</tr>
+				</tfoot>
+			</table>
+		</div>
+		<el-pagination
+				@size-change="changePageSize"
+				@current-change="changeCurrtentPage"
+				:current-page="pagination.currentPage"
+				:page-sizes="pagination.pageSizes"
+				:page-size="pagination.pageSize"
+				layout="total, sizes, prev, pager, next, jumper"
+				:total="pagination.total">
+		</el-pagination>
+	</div>
+</div>
+<script src="js/jquery/jquery.jqprint-0.3.js" type="text/javascript"></script>
+<link rel="stylesheet" href="../js/bootstrap/dist/css/bootstrap.css" />
+<!-- 编辑时 少了上面的引用 BS 不提示    没什么 用   生产前  删除-->
+<script>
+	document.getElementById("dept_tree").style.maxHeight=$(window).height()+'px';
+	var vm = new Vue({
+		el:'.wwj-tab-wrap',
+		data:{
+			jobNumber:'',//工号
+			cardNumber:'',//卡号
+			pName:'',//姓名
+			startTime:'',
+			endTime:'',
+			today:'',//今天
+            operator:'',//操作员
+            topUpType:'',//冲值类型
+            operators:'',//操作员列表
+			details:'',
+			currentDept:'',//部门
+			waitInfo:'请选择查询条件...',
+			succ:false,
+            pagination:{currentPage:1,pageSizes:[20,30,40],pageSize:20,total:0},
+		},
+		methods:{
+            changePageSize:function (val) {
+                this.pagination.pageSize = val;this.query();
+            },
+            changeCurrtentPage:function (val) {
+                this.pagination.currentPage = val;this.query();
+            },
+			init:function(){//初始化
+				this.getToday();//获取 当前日期
+                this.getOperator();//获取 操作员
+				var date = new Date();
+				$("#startTime").val( date.getFullYear() + '-' + ((date.getMonth() + 1) > 9 ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '-01 00:00:01') ;
+				$("#endTime").val(date.getFullYear() + '-' + ((date.getMonth() + 1) > 9 ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '-' + (date.getDate()  > 9 ? date.getDate() : ('0' + date.getDate() )) + ' 23:59:59' ) ;
+				this.getDept();
+				this.query();
+			},
+			getStartTimeAndEndTime:function(){
+				this.startTime=$("#startTime").val();
+				this.endTime=$("#endTime").val();
+				//console.log("starttime:"+this.startTime+"endTime:"+this.endTime+"jobNumber:"+this.jobNumber+"pName:"+this.pName+"deviceNumber:"+this.deviceNumber);
+			},
+			getToday:function(){
+				var newDay = new Date();
+				this.today = newDay.getFullYear() + '-' + (newDay.getMonth() > 8 ? (newDay.getMonth() + 1) : ('0' + (newDay.getMonth() + 1))) + '-' + newDay.getDate();
+			},
+			readCard:function(){
+				console.log('读卡');
+				var v = AxRead.RequestPhyNo( ) ;// 调取硬件读取卡号
+				console.log(AxRead)
+				if( v == 0 ) alert("没有检测到卡或者发卡器");
+				else this.cardNumber = v;
+			},
+			query:function(){//获取 充值明细报表
+				this.details = '';_id ++;
+				console.log('查询');
+				vm.waitInfo = '正在查询...';
+                this.getStartTimeAndEndTime();
+				var data = {
+					staff_code:this.jobNumber,
+					staff_name:this.pName,
+					user_name:this.operator,
+					card_code:this.cardNumber,
+					charge_type:this.topUpType,
+					start_ts:this.startTime,
+					end_ts:this.endTime,
+                    pageNo:this.pagination.currentPage,
+                    pageSize:this.pagination.pageSize,
+					dept_code:this.currentDept,id:_id
+				}
+				$.ajax({
+					url:getUrl()+ '/Api/detailAll/queryCharge',
+					type:'GET',
+					dataType: "json",
+					data:data,
+					success: function (data) {
+						//console.log(data);
+						vm.succ = data.success;
+						//console.log('vm.succ '+vm.succ)
+                        data.success ?  ((vm.details = data.data.list) && (vm.pagination.total = data.data.total)) : ((vm.waitInfo = '未找到指定条件的数据') && (vm.details = '')) ;
+					},
+					error:function(){
+						vm.succ = false;
+						vm.waitInfo = '不能连接服务器,请检查您的网络';
+					}
+				});
+			},
+			transformType:function (typeNum){
+				typeNum = parseFloat(typeNum);
+				if(typeNum == '0'){
+					return '线下现金';
+				}else if(typeNum == '1'){
+					return '卡押金';
+				}if(typeNum == '2'){
+					return '卡成本';
+				}if(typeNum == '3'){
+					return '清零补贴';
+				}if(typeNum == '4'){
+					return '累加补贴';
+				}
+			},
+			exportToExcel:function(){
+//				console.log('导出');
+                $("#wwj-table").table2excel({
+                    exclude: ".noExl",
+                    name: "Excel Document Name",
+                    filename: "充值明细报表.xls" ,
+                    fileext: ".xls",
+                    exclude_img: true,
+                    exclude_links: true,
+                    exclude_inputs: true
+                });
+				//$('#wwj-table').tableExport({ type: 'excel', separator: ';', escape: 'false' });
+			},
+			print:function(){
+                $("#wwj-table>.table").jqprint();
+			},
+            active:function(e){
+                $(e.currentTarget).toggleClass('active');
+            },
+			getDept:function(){//获取 部门
+				if(sessionStorage.deptTree != ''){
+					this.showDept();
+					return;
+				}
+				else {
+					var _this = this;
+					setTimeout(function(){
+						_this.getDept();
+					},500)
+				}
+			},
+			showDept:function(){
+				var nodes = sessionStorage.deptTree;
+				$('#dept_tree').treeview({
+					data: nodes,
+					onhoverColor:'#5bc0de',
+					onNodeSelected: function (event, node) {
+						vm.currentDept = node.department_code;vm.query();
+					},
+					onNodeUnselected: function (event, node){
+						vm.currentDept = '';
+					}
+				});
+			},
+            getOperator:function(){//获取 操作员
+                $.ajax({
+                    url:getUrl()+ '/Api/detailAll/queryUserAll',
+                    type:'get',
+                    dataType: "json",
+                    data:'',
+                    success: function (data) {
+                        console.log(data);
+                       data.success == true &&  (vm.operators = data.data);
+                    },
+                    error:function(msg){
+                        console.log(msg);
+                    }
+                });
+            },
+            selectOperator:function(e){
+                this.operator = e.currentTarget.innerHTML;
+            },
+            sum:function(arr,type){
+                var total = 0;
+                if(arr.length > 0){//money_retain
+
+                    $.each(arr,function(index,value){
+                        var str = '(arr[index].' + type + '!= undefined || arr[index].' + type + ' != null) && (total += (arr[index].' + type + '))';
+                        eval(str);
+                    })
+
+                    return Math.round(total * 100)/100;
+                }else return total ;
+            },
+			transformMoney:function(money){
+				if(money == undefined || money == null)  return 0;
+				money = parseFloat((money + "").replace(/[^\d\.-]/g, "")).toFixed(2) + "";
+				var l = money.split(".")[0].split("").reverse();
+				var r = money.split(".")[1];
+				var t = "";
+				for (i = 0; i < l.length; i++) {
+					t += l[i] + ((i + 1) % 3 == 0 && (i + 1) != l.length ? "," : "");
+				}
+				return t.split("").reverse().join("") + "." + r;
+			},
+		}
+	});
+	vm.init();
+	$('.wwj-tab-wrap').on('click',function(e){
+		if ($(e.target).hasClass('dropdown') || $(e.target).hasClass('caret') || $(e.target).hasClass('dropdown-btn')) return;else  $('.dropdown').removeClass('active');
+	});
+	(function(){
+		$('.index_treemenu').css({background:'#f1f1f1'});
+		$('#dept_tree').css({minHeight:deptTreeHeight,background:'#fff'});
+		$('#wwj-table').css({minHeight:reportMinHeight,background:'#fff',maxHeight:reportMaxHeight});
+	})();
+</script>
+</body>
+</html>

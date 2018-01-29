@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>挂失</title>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table.js"></script>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table-zh-CN.js"></script>
+    <link rel="stylesheet" href="../js/bootstrap-table/dist/bootstrap-table.min.css">
+    <script src="../js/card/lost-card.js"></script>
+</head>
+<body>
+<div class="panel-body" style="padding-bottom:0px;">
+
+    <div>
+        <div id="tree"  class="col-md-2 ztree" style="overflow: auto"></div>
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">查询条件</div>
+                <div class="panel-body">
+                    <form id="formSearch" class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-3 no-padding-left-right text-center" for="txt_search_staff_code">编码</label>
+                                <div class=" col-sm-9 no-padding-left-right">
+                                    <input type="text"  id="txt_search_staff_code" class="form-control" >
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-3 no-padding-left-right text-center" for="txt_search_name">姓名</label>
+                                <div class=" col-sm-9 no-padding-left-right">
+                                    <input type="text"  id="txt_search_name"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label col-sm-3 no-padding-left-right text-center" for="txt_search_card_code">卡号</label>
+                                <div class=" col-sm-9 no-padding-left-right">
+                                    <input type="text"  id="txt_search_card_code"  class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-3" style="text-align:left;">
+                                <button type="button"   id="btn_query" class="btn btn-info col-sm-5 col-sm-offset-1">查询</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="toolbar" class="btn-group">
+                <button id="btn_lost" type="button" class="btn btn-info" disabled="true">
+                    <span class="iconfont icon-qiaguashi1"></span><span>挂失</span>
+                </button>
+                <button id="btn_unlost" type="button" class="btn btn-info" disabled="true">
+                    <span class="iconfont icon-guashijiegua"></span><span>解挂</span>
+                </button>
+            </div>
+            <table id="table"></table>
+
+        </div>
+    </div>
+
+</div>
+<link rel="stylesheet" href="../js/bootstrap/dist/css/bootstrap.css" />
+<!-- 编辑时 少了上面的引用 BS 不提示    没什么 用   生产前  删除-->
+
+</body>
+</html>

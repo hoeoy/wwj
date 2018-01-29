@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.OrderStyleDao">
+    <select id="findStyle" resultType="com.iandtop.model.OrderStyleModel">
+        SELECT * FROM order_goodstyle WHERE 1=1
+    </select>
+
+    <select id="findtype" resultType="com.iandtop.model.OrderModelVo">
+        SELECT * FROM order_goodstype og WHERE og.pk_parentid=#{pk_parentid}
+    </select>
+    <insert id="addOrderStyle" parameterType="com.iandtop.model.OrderStyleModel">
+    INSERT into order_goodstyle (stylename) values(#{stylename});
+    </insert>
+    <insert id="addOrderType" parameterType="com.iandtop.model.OrderModelVo">
+        INSERT into order_goodstype (pk_parentid,typename) values(#{pk_parentid},#{typename});
+    </insert>
+    <delete id="delOrderStyle" parameterType="com.iandtop.model.OrderStyleModel">
+        DELETE FROM order_goodstyle WHERE Id=#{id}
+    </delete>
+    <delete id="delOrderType" parameterType="com.iandtop.model.OrderModelVo">
+        DELETE FROM order_goodstype WHERE pk_only=#{pk_only}
+    </delete>
+    <update id="updateOrderStyle">
+    UPDATE order_goodstyle SET stylename = #{stylename} WHERE Id = #{id}
+    </update>
+    <update id="updateOrderType">
+    UPDATE order_goodstype SET typename = #{typename} WHERE pk_only = #{pk_only}
+    </update>
+    <select id="findStyleforcondition" resultType="com.iandtop.model.OrderStyleModel">
+        SELECT * FROM order_goodstyle WHERE stylename LIKE '%${stylename}%'
+    </select>
+    <select id="findtypeforcondition" resultType="com.iandtop.model.OrderModelVo">
+        SELECT * FROM order_goodstype WHERE typename=#{typename}
+    </select>
+</mapper>

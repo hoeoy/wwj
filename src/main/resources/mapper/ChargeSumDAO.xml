@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iandtop.dao.ChargeSumDAO">
+    <select id="queryChargeSum" resultType="com.iandtop.model.form.ChargeSumModel"></select>
+    <delete id="delrecordsum" parameterType="java.lang.String">
+        delete from meal_record_sum where  meal_ts >=#{0} and #{1} >= meal_ts
+    </delete>
+    <select id="queryMealCharge" parameterType="java.lang.String" resultType="com.iandtop.model.form.ChargeSumModel">
+        select  p.op_date sum_date ,IFNULL(p.meal_money,0) meal_money ,IFNULL(p.charge_money,0) charge_money,
+        IFNULL(p.subsidy,0) subsidy,IFNULL(p.subsidy_empty,0) subsidy_empty, IFNULL(p.pledge_income,0)pledge_income,
+        IFNULL(p.card_cost,0) card_cost,IFNULL(p.refund_money,0)refund_money, IFNULL(p.pledge_refund,0) pledge_refund
+        from
+        (
+        select  IFNULL(t.op_date,r.refund_ts) op_date ,meal_money,t.charge_money,t.subsidy,t.subsidy_empty,t.pledge_income,t.card_cost,r.refund_money,r.pledge_refund
+        from
+        (
+        select IFNULL(m.meal_ts,c.charge_ts) op_date,m.meal_money,c.charge_money,c.subsidy,c.subsidy_empty,c.pledge_income,c.card_cost from
+        (select  substring(meal_ts,1,10 ) 'meal_ts' ,IFNULL(sum(meal_money/100),0) 'meal_money' from meal_record_sum where
+        substring(meal_ts,1,10) >= #{0}   and #{1} >= substring(meal_ts,1,10) GROUP BY   substring(meal_ts,1,10)) m
+        left join
+        (select charge_ts,charge_money, subsidy, subsidy_empty, pledge_income, card_cost
+        from v_charge_sum   where charge_ts>= #{0} and #{1} >= charge_ts) c on m.meal_ts=c.charge_ts
+        UNION
+        select IFNULL(m.meal_ts,c.charge_ts) op_date,m.meal_money,c.charge_money,c.subsidy,c.subsidy_empty,c.pledge_income,c.card_cost from
+        (select  substring(meal_ts,1,10 ) 'meal_ts' ,IFNULL(sum(meal_money/100),0) 'meal_money' from meal_record_sum where
+        substring(meal_ts,1,10) >= #{0}   and #{1} >= substring(meal_ts,1,10) GROUP BY   substring(meal_ts,1,10)) m
+        RIGHT join
+
+        (select charge_ts,charge_money, subsidy, subsidy_empty, pledge_income, card_cost
+        from v_charge_sum   where charge_ts>= #{0} and #{1} >= charge_ts) c on m.meal_ts=c.charge_ts
+        ) as t
+        left  JOIN
+        (select  refund_ts,refund_money ,pledge_refund  from v_refund_sum   where refund_ts>= #{0} and #{1}>= refund_ts ) r
+        on t.op_date =r.refund_ts
+
+
+        UNION
+        select  IFNULL(t.op_date,r.refund_ts) op_date ,t.meal_money,t.charge_money,t.subsidy,t.subsidy_empty,t.pledge_income,t.card_cost,r.refund_money,r.pledge_refund
+        from
+        (
+        select IFNULL(m.meal_ts,c.charge_ts) op_date,m.meal_money,c.charge_money,c.subsidy,c.subsidy_empty,c.pledge_income,c.card_cost from
+        (select  substring(meal_ts,1,10 ) 'meal_ts' ,IFNULL(sum(meal_money/100),0) 'meal_money' from meal_record_sum where
+        substring(meal_ts,1,10) >= #{0}   and #{1} >= substring(meal_ts,1,10) GROUP BY   substring(meal_ts,1,10)) m
+        left join
+
+        (select charge_ts,charge_money, subsidy, subsidy_empty, pledge_income, card_cost
+        from v_charge_sum  where charge_ts>= #{0} and #{1} >= charge_ts) c on m.meal_ts=c.charge_ts
+
+        UNION
+        select IFNULL(m.meal_ts,c.charge_ts) op_date,m.meal_money,c.charge_money,c.subsidy,c.subsidy_empty,c.pledge_income,c.card_cost from
+
+        (select  substring(meal_ts,1,10 ) 'meal_ts' ,IFNULL(sum(meal_money/100),0) 'meal_money' from meal_record_sum where
+        substring(meal_ts,1,10) >= #{0}   and #{1} >= substring(meal_ts,1,10) GROUP BY   substring(meal_ts,1,10)) m
+        RIGHT join
+
+        (select charge_ts,charge_money, subsidy, subsidy_empty, pledge_income, card_cost
+        from v_charge_sum  where charge_ts>= #{0} and #{1} >= charge_ts) c on m.meal_ts=c.charge_ts
+        ) as t
+        RIGHT  JOIN
+        (select  refund_ts,refund_money ,pledge_refund  from v_refund_sum   where refund_ts>= #{0} and #{1} >= refund_ts ) r
+        on t.op_date =r.refund_ts
+
+        )p order by p.op_date
+    </select>
+<select id="getline" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(*) from meal_record_sum where meal_ts >=#{0} and #{1} >= meal_ts
+</select>
+    <delete id="delnull">
+        delete from meal_record_sum where meal_ts is null
+    </delete>
+</mapper>

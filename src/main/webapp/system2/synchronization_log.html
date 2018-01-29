@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/system2/synchronization_log.css">
+    <title>同步日志</title>
+    <style>
+        .fixed-table-toolbar .columns{
+            margin-right: 15px!important;
+        }
+    </style>
+</head>
+<body>
+<div id="allcontent">
+    <!--查询条件栏-->
+    <div class="panel panel-default" style="margin-top: 25px">
+        <div class="panel-heading">查询条件</div>
+        <div class="panel-body">
+                <div class="form-group">
+                    <div class="col-md-9 cd2">
+                        <span class="search_row_title text-left">同步时间</span>
+                        <input type="text" id="start_ts" class="modal_txt" onclick="laydate()">
+                        <span class="search_row_title text-center">至</span>
+                        <input type="text" id="end_ts" class="modal_txt" onclick="laydate()">
+                    </div>
+                    <div class="col-md-3" style="text-align:left;">
+                        <button type="button"   id="btn_query" class="btn btn-info col-sm-5 col-sm-offset-1">查询</button>
+                    </div>
+                </div>
+
+        </div>
+    </div>
+
+    <!--操作按钮-->
+    <div id="toolbar" class="btn-group" style="margin-top: 25px">
+        <button type="button" class="btn btn-info" id="btn_delete" disabled="true">
+            <span class="iconfont icon-shanchu"></span><span>删除</span>
+        </button>
+    </div>
+    <div class="row table_row">
+        <table class="table" id="table">
+
+        </table>
+    </div>
+</div>
+<script type="text/javascript" src="../js/system2/synchronization_log.js"></script>
+</body>
+</html>

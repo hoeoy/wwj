@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.UserDAO">
+
+    <select id="retrieveAll" resultType="com.iandtop.model.system.UserModel">
+        select * from sm_user
+    </select>
+
+    <sql id="RefundColume">
+        <trim suffix="" suffixOverrides=",">
+            <if test="pk_role != null">pk_role,</if>
+            <if test="pk_staff != null">pk_staff,</if>
+            <if test="user_code != null">user_code,</if>
+            <if test="user_name != null">user_name,</if>
+            <if test="password != null">password,</if>
+            <if test="memo != null">memo,</if>
+            <if test="def1 != null">def1,</if>
+            <if test="def2 != null">def2,</if>
+            <if test="def3 != null">def3,</if>
+            <if test="def4 != null">def4,</if>
+            <if test="def5 != null">def5,</if>
+            <if test="pk_device != null">pk_device,</if>
+        </trim>
+    </sql>
+
+
+    <sql id="RefundValue">
+        <trim suffix="" suffixOverrides=",">
+            <if test="pk_role != null">#{pk_role},</if>
+            <if test="pk_staff != null">#{pk_staff},</if>
+            <if test="user_code != null">#{user_code},</if>
+            <if test="user_name != null">#{user_name},</if>
+            <if test="password != null">#{password},</if>
+            <if test="memo != null">#{memo},</if>
+            <if test="def1 != null">#{def1},</if>
+            <if test="def2 != null">#{def2},</if>
+            <if test="def3 != null">#{def3},</if>
+            <if test="def4 != null">#{def4},</if>
+            <if test="def5 != null">#{def5},</if>
+            <if test="pk_device != null">#{pk_device},</if>
+        </trim>
+    </sql>
+
+    <insert id="insertByMo"  parameterType="com.iandtop.model.system.UserModel">
+        insert into sm_user (
+        <include refid="RefundColume"/>
+        ) values (
+        <include refid="RefundValue"/>
+        )
+    </insert>
+
+    <update id="updateByPk">
+        UPDATE sm_user
+        <trim prefix="SET" suffixOverrides=",">
+        <if test="pk_role !=null and pk_role!=''">pk_role=#{pk_role},</if>
+        <if test="pk_staff !=null and pk_staff!=''">pk_staff=#{pk_staff},</if>
+        <if test="user_name !=null and user_name!=''">user_name=#{user_name},</if>
+        <if test="password !=null and password!=''">password=#{password},</if>
+        <if test="memo !=null and memo!=''">memo=#{memo},</if>
+        <if test="def1 !=null and def1!=''">def1=#{def1},</if>
+        <if test="def2 !=null and def2!=''">def2=#{def2},</if>
+        <if test="def3 !=null and def3!=''">def3=#{def3},</if>
+        <if test="def4 !=null and def4!=''">def4=#{def4},</if>
+        <if test="def5 !=null and def5!=''">def5=#{def5},</if>
+        <if test="pk_device !=null and pk_device!=''">pk_device=#{pk_device},</if>
+        </trim>
+        WHERE
+        pk_user=#{pk_user}
+    </update>
+
+    <select id="retrieveAllWithPage" parameterType="com.iandtop.model.system.UserModel" resultType="com.iandtop.model.system.UserModel">
+        select a.*,b.role_name from sm_user a
+        left join sm_role b on a.pk_role = b.pk_role
+        <where>
+            a.user_code != 'admin'
+            <if test="user_code != null and user_code != ''">
+                and a.user_code like "%${user_code}%"
+            </if>
+            <if test="user_name != null and user_name != ''">
+                and a.user_name like "%${user_name}%"
+            </if>
+            <if test="role_name != null and role_name != ''">
+                and b.role_name like "%${role_name}%"
+            </if>
+        </where>
+        order by
+        a.pk_user asc
+        limit
+        #{offset},#{limit}
+    </select>
+
+    <delete id="deleteByPks" parameterType="java.util.List">
+        delete from sm_user where
+        <foreach collection="list" item="item" index="index"
+                 open="(" separator="or" close=")">
+            pk_user = #{item}
+        </foreach>
+    </delete>
+
+    <select id="retrieveByCodeAndPwd" resultType="com.iandtop.model.system.UserModel">
+        select * from sm_user where user_code=#{user_code} and password=#{password}
+    </select>
+
+    <select id="retrieveByCode" parameterType="java.lang.String" resultType="com.iandtop.model.system.UserModel">
+        select * from sm_user where user_code=#{user_code}
+    </select>
+    <select id="loginByCodeAndPwd" resultType="com.iandtop.model.system.UserModel">
+        select * from sm_user where user_code=#{user_code} and password=#{password} AND pk_staff is not null
+    </select>
+    <update id="updatePwd" parameterType="com.iandtop.model.system.UserModel">
+        UPDATE sm_user SET
+                password=#{password}
+        WHERE user_code=#{user_code}
+    </update>
+    <select id="oldPwd" resultType="com.iandtop.model.system.UserModel">
+        select * from sm_user where user_code=#{user_code} and password=#{oldpwd} AND pk_staff is not null
+    </select>
+</mapper>

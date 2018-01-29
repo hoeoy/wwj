@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.MerchantDAO">
+
+    <select id="retrieveAll" resultType="com.iandtop.model.meal.MerchantModel">
+        select * from meal_merchant
+    </select>
+
+    <sql id="RefundColume">
+        <trim suffix="" suffixOverrides=",">
+            <if test="merchant_code != null">merchant_code,</if>
+            <if test="merchant_name != null">merchant_name,</if>
+            <if test="merchant_phone != null">merchant_phone,</if>
+            <if test="merchant_psn != null">merchant_psn,</if>
+            <if test="memo != null">memo,</if>
+            <if test="def1 != null">def1,</if>
+            <if test="def2 != null">def2,</if>
+            <if test="def3 != null">def3,</if>
+            <if test="def4 != null">def4,</if>
+            <if test="def5 != null">def5,</if>
+        </trim>
+    </sql>
+
+
+    <sql id="RefundValue">
+        <trim suffix="" suffixOverrides=",">
+            <if test="merchant_code != null">#{merchant_code},</if>
+            <if test="merchant_name != null">#{merchant_name},</if>
+            <if test="merchant_phone != null">#{merchant_phone},</if>
+            <if test="merchant_psn != null">#{merchant_psn},</if>
+            <if test="memo != null">#{memo},</if>
+            <if test="def1 != null">#{def1},</if>
+            <if test="def2 != null">#{def2},</if>
+            <if test="def3 != null">#{def3},</if>
+            <if test="def4 != null">#{def4},</if>
+            <if test="def5 != null">#{def5},</if>
+        </trim>
+    </sql>
+
+    <insert id="insertByMo"  parameterType="com.iandtop.model.meal.MerchantModel">
+        insert into meal_merchant (
+        <include refid="RefundColume"/>
+        ) values (
+        <include refid="RefundValue"/>
+        )
+    </insert>
+
+    <update id="updateByPk">
+        UPDATE meal_merchant
+        <trim prefix="SET" suffixOverrides=",">
+        <if test="merchant_code !=null and merchant_code!=''">merchant_code=#{merchant_code},</if>
+        <if test="merchant_name !=null and merchant_name!=''">merchant_name=#{merchant_name},</if>
+        <if test="merchant_phone !=null and merchant_phone!=''">merchant_phone=#{merchant_phone},</if>
+        <if test="merchant_psn !=null and merchant_psn!=''">merchant_psn=#{merchant_psn},</if>
+        <if test="memo !=null and memo!=''">memo=#{memo},</if>
+        <if test="def1 !=null and def1!=''">def1=#{def1},</if>
+        <if test="def2 !=null and def2!=''">def2=#{def2},</if>
+        <if test="def3 !=null and def3!=''">def3=#{def3},</if>
+        <if test="def4 !=null and def4!=''">def4=#{def4},</if>
+        <if test="def5 !=null and def5!=''">def5=#{def5},</if>
+        </trim>
+        WHERE
+        pk_merchant=#{pk_merchant}
+    </update>
+
+    <select id="retrieveAllWithPage" parameterType="com.iandtop.model.meal.MerchantModel" resultType="com.iandtop.model.meal.MerchantModel">
+        select * from meal_merchant
+        <where>
+            <if test="merchant_code != null and merchant_code != ''">
+                and merchant_code like "%${merchant_code}%"
+            </if>
+            <if test="merchant_name != null and merchant_name != ''">
+                and merchant_name like "%${merchant_name}%"
+            </if>
+            <if test="merchant_phone != null and merchant_phone != ''">
+                and merchant_phone like "%${merchant_phone}%"
+            </if>
+            <if test="merchant_psn != null and merchant_psn != ''">
+                and merchant_psn like "%${merchant_psn}%"
+            </if>
+        </where>
+        order by
+        pk_merchant asc
+        limit
+        #{offset},#{limit}
+    </select>
+
+    <delete id="deleteByPks" parameterType="java.util.List">
+        delete from meal_merchant where
+        <foreach collection="list" item="item" index="index"
+                 open="(" separator="or" close=")">
+            pk_merchant = #{item}
+        </foreach>
+    </delete>
+
+    <select id="retrieveByCode" parameterType="java.lang.String" resultType="com.iandtop.model.meal.MerchantModel">
+        select * from meal_merchant where merchant_code=#{merchant_code}
+    </select>
+
+    <select id="retrieveByPk" parameterType="java.lang.String" resultType="com.iandtop.model.meal.MerchantModel">
+        select * from meal_merchant where pk_merchant=#{pk_merchant}
+    </select>
+
+</mapper>

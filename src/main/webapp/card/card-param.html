@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>卡参数设置</title>
+    <!-- <script type="text/javascript" src="js/jquery/jquery.min.js" ></script>
+     <script type="text/javascript" src="js/bootstrap/dist/js/bootstrap.min.js" ></script>
+     <link rel="stylesheet" href="js/bootstrap/dist/css/bootstrap.css" />
+ -->
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table.js"></script>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table-zh-CN.js"></script>
+    <link rel="stylesheet" href="../js/bootstrap-table/dist/bootstrap-table.min.css">
+    <script src="../js/card/card-param.js"></script>
+</head>
+<body>
+
+    <div id="toolbar" class="btn-group">
+        <!--<button id="btn_add" type="button" class="btn btn-default">-->
+            <!--<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增-->
+        <!--</button>-->
+        <button id="btn_edit" type="button" class="btn btn-info" disabled>
+            <span class="iconfont icon-xiugai"></span><span>修改</span>
+        </button>
+        <!--<button id="btn_delete" type="button" class="btn btn-default" disabled>-->
+            <!--<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除-->
+        <!--</button>-->
+    </div>
+    <table id="table"></table>
+    <div class="modal fade modal-default in" id="park-add-modal" tabindex="-1" role="dialog" aria-labelledby="default-modal-label" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">新增参数</h4>
+                </div>
+                <div class="modal-body">
+                        <div class="row add_menu">
+                            <div class="col-md-6">
+                                <div class="col-md-5 text-right">
+                                    <label class="text-red">*</label>名称:
+                                </div>
+                                <div class="col-md-7">
+                                    <input type="text" id="name" class="col-md-12"  required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-5 text-right">
+                                    <label class="text-red">*</label>卡押金(元):
+                                </div>
+                                <div class="col-md-7">
+                                    <input type="text" id="deposit"  class="col-md-12" required onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-5 text-right">
+                                    <label class="text-red">*</label>卡成本(元):
+                                </div>
+                                <div class="col-md-7">
+                                    <input type="text" id="costing" class="col-md-12" required onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-5 text-right">
+                                    <label class="text-red">*</label>有效月份:
+                                </div>
+                                <div class="col-md-7">
+                                    <input type="text" id="effective_months" class="col-md-12"  required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-5 text-right">
+                                    <label class="text-red">*</label>默认密码:
+                                </div>
+                                <div class="col-md-7">
+                                    <input type="text" id="password"  class="col-md-12" required>
+                                    <input type="text" id="pk_card_param" style="display: none">
+                                    <input type="text" id="pk_company" style="display: none">
+                                </div>
+                            </div>
+                        </div>
+
+
+                </div>
+                <div class="modal-footer text-center">
+                    <button type="button" class="btn btn-default footer_btn" id="save">保存</button>
+                    <button type="button" class="btn btn-default footer_btn" data-dismiss="modal" id="close">关闭</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    /*回车查询事件*/
+        $(document).keydown(function(e) {
+            if (e.keyCode == 13) {
+                var myInput = document.getElementById('txt_search_role_name');
+                if (myInput == document.activeElement) {
+                    var opt = {
+                        url: "Api/cardparam/retrieve",
+                        silent: true,
+                        query:JSON.stringify({
+                            limit:10,
+                            offset:0,
+                            type:1,
+                            level:2
+                        })
+                    };
+                    $("#table").bootstrapTable('refresh', opt);
+                } else {
+
+                }
+
+            }
+        });
+</script>
+    <link rel="stylesheet" href="../js/bootstrap/dist/css/bootstrap.css" />
+    <!-- 编辑时 少了上面的引用 BS 不提示    没什么 用   生产前  删除-->
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>消费结算</title>
+    <link rel="stylesheet" href="subTablePage/css/meal_account.css">
+</head>
+<body bgcolor="#f1f1f1">
+<div id="allcontent">
+    <div class="search_row">
+        <div class="col-md-4 cd4">
+            <div class="col-md-4 cd3">
+                开始时间:
+            </div>
+            <div class="col-md-8">
+                <input type="text" id="start_ts" onclick="laydate()">
+            </div>
+        </div>
+        <div class="col-md-4 cd4">
+            <div class="col-md-3 cd3">
+                结束时间:
+            </div>
+            <div class="col-md-8">
+                <input type="text" id="end_ts" onclick="laydate()">
+            </div>
+        </div>
+        <div class="col-md-2 cd4">
+            <button class="btn btn-default" id="js" @click="sure">结算</button>
+        </div>
+    </div>
+    <div class="result_row">
+        <span class="tips">
+            {{result_txt}}
+        </span>
+    </div>
+    <div class="right" @click="hideright">
+        <div class="col-md-2"></div>
+        <div class="col-md-3 text-right">
+            <img class="img img-responsive" src="../img/su.png" style="margin-top: 27px">
+        </div>
+        <div class="col-md-5 text-left">
+            <span style="color: #282828;font-size: 16px;font-weight: bold;">结算成功</span>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="subTablePage/js/meal_account.js"></script>
+</body>
+</html>

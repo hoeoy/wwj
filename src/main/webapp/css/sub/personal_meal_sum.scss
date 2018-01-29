@@ -1,0 +1,88 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.no-padding{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+.no-margin{
+    margin: 0 !important;
+}
+.min-padding{
+    padding-left: 5px!important;
+    padding-right: 0 !important;
+}
+.margin-bottom{
+    margin-bottom: 15px;
+}
+#excel,#print,#readCard,#query{
+    border-radius: 20px !important;
+}
+.wwj-tab-wrap{
+    .btn-primary {
+	color: #fff;
+	background-color: #337ab7;
+	border-color: #2e6da4;
+    }
+    >.wwj-tab-header{
+	margin-top: 15px;
+	input,.btn{
+	    height: 30px;
+	}
+	.btn{
+	    font-size: 10px;
+	}
+	>.row{
+	    height: 30px;
+	    line-height: 30px;
+	    >.col-md-12{
+		.input-item{
+		    font-size: .8em !important;
+		}
+		>.col-md-3{// >
+		    #excel{
+			padding-left: 6px !important;
+		    }
+		    #readCard,#query{
+			border-radius: 10px;
+		    }
+		}
+	    }
+	}
+    }
+    >#wwj-table{
+	font-size:12px;
+	overflow:auto;
+	>.table{
+	    border-collapse:collapse;
+	    font-family: SimSun;
+	    //table-layout:fixed
+	    td{
+		border: 1px solid #d5d5d5;
+	    }
+	    >caption{
+		font-size: 20px;
+		//font-weight: 400;
+	    }
+	    >thead{
+		>tr{
+		    font-weight: normal;
+		    .time{
+			word-break:keep-all;/* 不换行 */
+			white-space:nowrap;/* 不换行 */
+		    }
+		}
+	    }
+	    >tbody{
+		>tr{
+		    .time{
+			word-break:keep-all;/* 不换行 */
+			white-space:nowrap;/* 不换行 */
+		    }
+		}
+	    }
+	}
+    }
+}

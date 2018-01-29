@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.MealAllowanceDAO">
+
+    <insert id="save" parameterType="com.iandtop.model.meal.MealAllowanceModel">
+      INSERT INTO meal_allowance(pk_allowance, pk_allowance_num, pk_card, money_allowance, allowance_type)
+      VALUES(#{pk_allowance},#{pk_allowance_num},#{pk_card},#{money_allowance},#{allowance_type})
+    </insert>
+
+    <select id="findData" resultType="com.iandtop.model.meal.MealAllowanceModel">
+        SELECT * FROM meal_allowance WHERE 1=1
+        <if test="pk_allowance !=null and pk_allowance!=''">
+            AND pk_allowance=#{pk_allowance}
+        </if>
+        <if test="pk_allowance_num !=null and pk_allowance_num!=''">
+            AND pk_allowance_num=#{pk_allowance_num}
+        </if>
+        <if test="pk_card !=null and pk_card!=''">
+            AND pk_card=#{pk_card}
+        </if>
+        <if test="money_allowance !=null and money_allowance!=''">
+            AND money_allowance=#{money_allowance}
+        </if>
+        <if test="allowance_type !=null and allowance_type!=''">
+            AND allowance_type=#{allowance_type}
+        </if>
+
+    </select>
+
+    <select id="retrieveByPk" resultType="com.iandtop.model.card.CardModel">
+        SELECT * FROM card_card WHERE pk_staff=#{0} and card_state=10
+    </select>
+
+</mapper>

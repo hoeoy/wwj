@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.JurisdictionDAO">
+
+
+    <sql id="RefundColume">
+        <trim suffix="" suffixOverrides=",">
+            <if test="pk_navigation != null">pk_navigation,</if>
+            <if test="pk_role != null">pk_role,</if>
+            <if test="memo != null">memo,</if>
+            <if test="def1 != null">def1,</if>
+            <if test="def2 != null">def2,</if>
+            <if test="def3 != null">def3,</if>
+            <if test="def4 != null">def4,</if>
+            <if test="def5 != null">def5,</if>
+        </trim>
+    </sql>
+
+
+    <sql id="RefundValue">
+        <trim suffix="" suffixOverrides=",">
+            <if test="pk_navigation != null">#{pk_navigation},</if>
+            <if test="pk_role != null">#{pk_role},</if>
+            <if test="memo != null">#{memo},</if>
+            <if test="def1 != null">#{def1},</if>
+            <if test="def2 != null">#{def2},</if>
+            <if test="def3 != null">#{def3},</if>
+            <if test="def4 != null">#{def4},</if>
+            <if test="def5 != null">#{def5},</if>
+        </trim>
+    </sql>
+
+    <insert id="insertByVO"  parameterType="com.iandtop.model.system.JurisdictionModel">
+        insert into sm_jurisdiction (
+        <include refid="RefundColume"/>
+        ) values (
+        <include refid="RefundValue"/>
+        )
+    </insert>
+
+    <update id="updateByVO">
+        UPDATE sm_jurisdiction
+        <trim prefix="SET" suffixOverrides=",">
+        <if test="pk_navigation !=null and pk_navigation!=''">pk_navigation=#{pk_navigation},</if>
+        <if test="pk_role !=null and pk_role!=''">pk_role=#{pk_role},</if>
+        <if test="memo !=null and memo!=''">memo=#{memo},</if>
+        <if test="def1 !=null and def1!=''">def1=#{def1},</if>
+        <if test="def2 !=null and def2!=''">def2=#{def2},</if>
+        <if test="def3 !=null and def3!=''">def3=#{def3},</if>
+        <if test="def4 !=null and def4!=''">def4=#{def4},</if>
+        <if test="def5 !=null and def5!=''">def5=#{def5},</if>
+        </trim>
+        WHERE
+        pk_jurisdiction=#{pk_jurisdiction}
+    </update>
+
+
+    <insert id="insertByVOs" parameterType="java.util.List">
+        INSERT INTO sm_jurisdiction (pk_navigation,pk_role,memo,def1,def2,def3,def4,def5)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator="," >
+            (#{item.pk_navigation},#{item.pk_role},#{item.memo},#{item.def1},#{item.def2},#{item.def3},#{item.def4},#{item.def5})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByPks" parameterType="java.util.List">
+        delete from sm_jurisdiction where
+        <foreach collection="list" item="item" index="index"
+                 open="(" separator="or" close=")">
+            pk_navigation = #{item}
+        </foreach>
+    </delete>
+
+</mapper>

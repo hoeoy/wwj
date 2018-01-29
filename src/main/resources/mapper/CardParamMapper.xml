@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.CardParamDAO">
+
+    <select id="retrieveAll" resultType="com.iandtop.model.card.CardParamModel">
+        select
+        pk_card_param,
+         pk_company,
+         name,
+         costing/100 costing,
+         deposit/100 deposit,
+         effective_months,
+         password,
+         memo,
+         def1,
+         def2,
+         def3,
+         def4,
+         def5,
+         ts
+        from card_param
+    </select>
+
+    <select id="retrieveAllWithPage" parameterType="com.iandtop.model.card.CardParamModel" resultType="com.iandtop.model.card.CardParamModel">
+        select
+         pk_card_param,
+         pk_company,
+         name,
+         costing/100 costing,
+         deposit/100 deposit,
+         effective_months,
+         password,
+         memo,
+         def1,
+         def2,
+         def3,
+         def4,
+         def5,
+         ts
+        from card_param
+        order by
+        pk_card_param asc
+        limit
+        #{offset},#{limit}
+    </select>
+
+    <select id="retrieveByCompany" parameterType="java.lang.String" resultType="com.iandtop.model.card.CardParamModel">
+        select * from card_param where company_code=#{company_code}
+    </select>
+
+    <insert id="insertByMo" parameterType="com.iandtop.model.card.CardParamModel">
+        INSERT INTO card_param(pk_card_param, pk_company, name, costing, deposit, effective_months, password, memo, def1, def2 , def3, def4, def5)
+        VALUES (#{pk_card_param},#{pk_company},#{name},#{costing},#{deposit},#{effective_months},#{password},#{memo},#{def1},#{def2},#{def3},#{def4},#{def5})
+    </insert>
+
+    <delete id="deleteByPks" parameterType="java.util.List">
+        delete from card_param where
+        <foreach collection="list" item="item" index="index"
+                 open="(" separator="or" close=")">
+            pk_card_param = #{item}
+        </foreach>
+    </delete>
+
+    <update id="updateByPk" parameterType="com.iandtop.model.card.CardParamModel">
+        update card_param
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pk_company != null">pk_company=#{pk_company},</if>
+            <if test="name != null">name=#{name},</if>
+            <if test="costing != null">costing=#{costing},</if>
+            <if test="deposit != null">deposit=#{deposit},</if>
+            <if test="effective_months != null">effective_months=#{effective_months},</if>
+            <if test="password != null">password=#{password},</if>
+            <if test="memo != null">memo=#{memo},</if>
+            <if test="def1 != null">def1=#{def1},</if>
+            <if test="def2 != null">def2=#{def2},</if>
+            <if test="def3 != null">def3=#{def3},</if>
+            <if test="def4 != null">def4=#{def4},</if>
+            <if test="def5 != null">def5=#{def5},</if>
+        </trim>
+        where pk_card_param=#{pk_card_param}
+    </update>
+
+</mapper>

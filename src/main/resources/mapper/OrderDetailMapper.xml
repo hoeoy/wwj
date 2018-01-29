@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.OrderDetailDao">
+    <select id="findOrderDetail" resultType="com.iandtop.model.OrderDetailModel">
+    select d.foodname,d.price,d.count,
+            f.formstatus,f.formpeople,f.amount
+      from order_detail d
+      Left join order_form f
+      on d.fk_formcode=f.pk_formcode
+      WHERE d.fk_formcode=#{fk_formcode}
+
+
+    </select>
+
+
+
+
+</mapper>

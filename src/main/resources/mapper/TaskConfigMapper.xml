@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.TaskConfigDAO">
+
+    <select id="retrieveAll" resultType="com.iandtop.model.task.TaskConfigModel">
+        select * from task_config
+    </select>
+
+    <sql id="Colume">
+        <trim suffix="" suffixOverrides=",">
+            <if test="company_code != null">company_code,</if>
+            <if test="url != null">url,</if>
+            <if test="user != null">user,</if>
+            <if test="password != null">password,</if>
+            <if test="frequency != null">frequency,</if>
+            <if test="last_time != null">last_time,</if>
+            <if test="memo != null">memo,</if>
+            <if test="def1 != null">def1,</if>
+            <if test="def2 != null">def2,</if>
+            <if test="def3 != null">def3,</if>
+            <if test="def4 != null">def4,</if>
+            <if test="def5 != null">def5,</if>
+        </trim>
+    </sql>
+
+
+    <sql id="Value">
+        <trim suffix="" suffixOverrides=",">
+            <if test="company_code != null">#{company_code},</if>
+            <if test="url != null">#{url},</if>
+            <if test="user != null">#{user},</if>
+            <if test="password != null">#{password},</if>
+            <if test="frequency != null">#{frequency},</if>
+            <if test="last_time != null">#{last_time},</if>
+            <if test="memo != null">#{memo},</if>
+            <if test="def1 != null">#{def1},</if>
+            <if test="def2 != null">#{def2},</if>
+            <if test="def3 != null">#{def3},</if>
+            <if test="def4 != null">#{def4},</if>
+            <if test="def5 != null">#{def5},</if>
+        </trim>
+    </sql>
+
+    <insert id="insertByMo"  parameterType="com.iandtop.model.task.TaskConfigModel">
+        insert into task_config (
+        <include refid="Colume"/>
+        ) values (
+        <include refid="Value"/>
+        )
+    </insert>
+
+    <update id="updateByPk">
+        UPDATE task_config
+        <trim prefix="SET" suffixOverrides=",">
+        <if test="company_code !=null and company_code!=''">company_code=#{company_code},</if>
+        <if test="url !=null and url!=''">url=#{url},</if>
+        <if test="user !=null and user!=''">user=#{user},</if>
+        <if test="password !=null and password!=''">password=#{password},</if>
+        <if test="frequency !=null and frequency!=''">frequency=#{frequency},</if>
+        <if test="last_time !=null and last_time!=''">last_time=#{last_time},</if>
+        <if test="memo !=null and memo!=''">memo=#{memo},</if>
+        <if test="def1 !=null and def1!=''">def1=#{def1},</if>
+        <if test="def2 !=null and def2!=''">def2=#{def2},</if>
+        <if test="def3 !=null and def3!=''">def3=#{def3},</if>
+        <if test="def4 !=null and def4!=''">def4=#{def4},</if>
+        <if test="def5 !=null and def5!=''">def5=#{def5},</if>
+        </trim>
+        WHERE
+        pk_task_config=#{pk_task_config}
+    </update>
+
+
+    <delete id="deleteByPks" parameterType="java.util.List">
+        delete from task_config where
+        <foreach collection="list" item="item" index="index"
+                 open="(" separator="or" close=")">
+            pk_task_config = #{item}
+        </foreach>
+    </delete>
+
+</mapper>

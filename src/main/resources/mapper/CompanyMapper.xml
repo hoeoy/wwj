@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.CompanyDAO">
+
+    <select id="retrieveAll" resultType="com.iandtop.model.CompanyModel">
+        select * from db_company
+    </select>
+
+    <sql id="RefundColume">
+        <trim suffix="" suffixOverrides=",">
+            <if test="company_code != null">company_code,</if>
+            <if test="company_name != null">company_name,</if>
+            <if test="company_type != null">company_type,</if>
+            <if test="person_in_charge != null">person_in_charge,</if>
+            <if test="address != null">address,</if>
+            <if test="telephone != null">telephone,</if>
+            <if test="memo != null">memo,</if>
+            <if test="def1 != null">def1,</if>
+            <if test="def2 != null">def2,</if>
+            <if test="def3 != null">def3,</if>
+            <if test="def4 != null">def4,</if>
+            <if test="def5 != null">def5,</if>
+        </trim>
+    </sql>
+
+
+    <sql id="RefundValue">
+        <trim suffix="" suffixOverrides=",">
+            <if test="company_code != null">#{company_code},</if>
+            <if test="company_name != null">#{company_name},</if>
+            <if test="company_type != null">#{company_type},</if>
+            <if test="person_in_charge != null">#{person_in_charge},</if>
+            <if test="address != null">#{address},</if>
+            <if test="telephone != null">#{telephone},</if>
+            <if test="memo != null">#{memo},</if>
+            <if test="def1 != null">#{def1},</if>
+            <if test="def2 != null">#{def2},</if>
+            <if test="def3 != null">#{def3},</if>
+            <if test="def4 != null">#{def4},</if>
+            <if test="def5 != null">#{def5},</if>
+        </trim>
+    </sql>
+
+    <insert id="insertByMo"  parameterType="com.iandtop.model.CompanyModel">
+        insert into db_company (
+        <include refid="RefundColume"/>
+        ) values (
+        <include refid="RefundValue"/>
+        )
+    </insert>
+
+    <update id="updateByPk">
+        UPDATE db_company
+        <trim prefix="SET" suffixOverrides=",">
+        <if test="company_name !=null and company_name!=''">company_name=#{company_name},</if>
+        <if test="company_type !=null">company_type=#{company_type},</if>
+        <if test="person_in_charge !=null and person_in_charge!=''">person_in_charge=#{person_in_charge},</if>
+        <if test="address !=null and address!=''">address=#{address},</if>
+        <if test="telephone !=null and telephone!=''">telephone=#{telephone},</if>
+        <if test="memo !=null and memo!=''">memo=#{memo},</if>
+        <if test="def1 !=null and def1!=''">def1=#{def1},</if>
+        <if test="def2 !=null and def2!=''">def2=#{def2},</if>
+        <if test="def3 !=null and def3!=''">def3=#{def3},</if>
+        <if test="def4 !=null and def4!=''">def4=#{def4},</if>
+        <if test="def5 !=null and def5!=''">def5=#{def5},</if>
+        </trim>
+        WHERE
+        pk_company=#{pk_company}
+    </update>
+
+    <select id="retrieveAllWithPage" parameterType="com.iandtop.model.CompanyModel" resultType="com.iandtop.model.CompanyModel">
+        select * from db_company
+        <where>
+            <if test="company_code != null and company_code != ''">
+                and company_code like "%${company_code}%"
+            </if>
+            <if test="company_name != null and company_name != ''">
+                and company_name like "%${company_name}%"
+            </if>
+
+        </where>
+        order by
+        pk_company asc
+        limit
+        #{offset},#{limit}
+    </select>
+
+    <delete id="deleteByPks" parameterType="java.util.List">
+        delete from db_company where
+        <foreach collection="list" item="item" index="index"
+                 open="(" separator="or" close=")">
+            pk_company = #{item}
+        </foreach>
+    </delete>
+
+    <select id="retrieveByCode" parameterType="java.lang.String" resultType="com.iandtop.model.CompanyModel">
+        select * from db_company where company_code=#{company_code}
+    </select>
+
+</mapper>

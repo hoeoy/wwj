@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iandtop.dao.TenantPosDAO">
+<select id="queryMerchant" resultType="com.iandtop.model.meal.MerchantModel">
+    select merchant_code,merchant_name,pk_merchant from meal_merchant
+</select>
+<select id="queryDevice" resultType="com.iandtop.model.device.DeviceModel">
+    select pk_device,pk_merchant,device_code,device_name from meal_device
+    <where>
+        <if test="pk_merchant!=null and pk_merchant!=''">
+            and c.pk_merchant = #{pk_merchant}
+        </if>
+    </where>
+</select>
+</mapper>

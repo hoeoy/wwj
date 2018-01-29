@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="internetmall/css/order_manager.css"/>
+	</head>
+	<body>
+
+		<div id="all_content">
+			<OBJECT ID="AxRead" CLASSID="CLSID:1B83CB21-E01E-4CA4-B54C-356E31448A86" style="display: none;"></OBJECT>
+			<div class="row search_row" >
+				<div class="panel panel-default">
+					<div class="panel-heading">查询条件</div>
+					<div class="panel-body">
+						<form id="formSearch" class="form-horizontal">
+							<div class="form-group">
+								<div class="col-sm-10">
+									<div class="col-sm-3">
+										<label class="control-label col-sm-3 no-padding-left-right text-center spantitle" for="codeId">卡号:</label>
+										<div class=" col-sm-9 no-padding-left-right">
+											<input type="text"  id="codeId" class="form-control"  v-model="cardNumber">
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<label class="control-label col-sm-4 no-padding-left-right text-center spantitle" for="start_time">开始时间:</label>
+										<div class=" col-sm-8 no-padding-left-right">
+											<input type="text"  id="start_time"  class="form-control laydate-icon">
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<label class="control-label col-sm-4 no-padding-left-right text-center spantitle" for="end_time">结束时间:</label>
+										<div class=" col-sm-8 no-padding-left-right">
+											<input type="text"  id="end_time"  class="form-control laydate-icon">
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<label class="control-label col-sm-3 no-padding-left-right text-center spantitle" for="select_Statu">状态：</label>
+										<div class=" col-sm-7 no-padding-left-right">
+											<select id="select_Statu" class="col-sm-12 form-control ">
+												<option value="-1">请选择</option>
+												<option value="3">未支付</option>
+												<option value="1">已支付</option>
+												<option value="2">已取货</option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-2" style="text-align:left;">
+									<button type="button" id="btn_readcard" class="btn btn-info col-sm-5 col-sm-offset-1" @click="readCard">读卡</button>
+									<button type="button" id="btn_query" @click='Search' class="btn btn-info col-sm-5 col-sm-offset-1">查询</button>
+
+								</div>
+
+
+							</div>
+
+						</form>
+					</div>
+				</div>
+
+
+			</div>
+			<div class="row" style="margin-top: 15px;">
+					<table class="table">
+					<thead>
+						<tr>
+						<th bgcolor="#e0ebf0" class="text-center">订单编号</th>
+						<th bgcolor="#e0ebf0" class="text-center">下单日期</th>
+						<th bgcolor="#e0ebf0" class="text-center">下单人</th>
+						<th bgcolor="#e0ebf0" class="text-center">订单状态</th>
+						<th bgcolor="#e0ebf0" class="text-center">订单金额</th>
+						<th bgcolor="#e0ebf0" class="text-center">取货时间</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td bgcolor="#ffffff" colspan="6" class="text-center" style="padding-bottom: 15px;padding-top: 15px;" v-show='order_lists.length==0'>暂无数据</td>
+						</tr>
+						<tr v-for='order_list in order_lists'>
+							<td bgcolor="#ffffff" class="text-center"><a href="#" @click='checkOrder($event)'>{{order_list.pk_formcode}}</a></td>
+							<td bgcolor="#ffffff" class="text-center">{{order_list.formtime}}</td>
+							<td bgcolor="#ffffff" class="text-center formpeople">{{order_list.formpeople}}</td>
+							<td bgcolor="#ffffff" class="text-center">{{order_list.formstatus | statu}}</td>
+							<td bgcolor="#ffffff" class="text-center amount">{{order_list.amount}}</td>
+							<td bgcolor="#ffffff" class="text-center">{{order_list.operationtime}}</td>
+						</tr>
+
+					</tbody>
+				</table>
+				<div class="row text-center" style="margin-bottom: 2em;margin-top: 4em;">
+					<div class="bs-example" data-example-id="disabled-active-pagination">
+						<nav aria-label="...">
+							<ul class="pagination" id="fydh" style="margin-top: 2em;">
+								<li class="toPage"  v-for='(index,pages_total) in pages_totals' v-bind:class="{active_ :index==1}" v-bind:id="index" @click='toPage($event)'><a href="#">{{index}}</a></li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+
+			</div>
+			<div class="modal fade modal-primary in" id="OrderContentModal" tabindex="-1" role="dialog" aria-labelledby="primary-modal-label" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header" style="border: none;background-color:#00c0ef ;">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="myModalLabel1" style="color: #ffffff;">订单详情</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row row_update">
+							<table class="table">
+					<thead>
+						<tr>
+						<th class="text-center">商品名称</th>
+						<th class="text-center">商品单价</th>
+						<th class="text-center">数量</th>
+
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td colspan="4" class="text-center" style="padding-bottom: 15px;padding-top: 15px;" v-show='check_Orders.length==0'>暂无数据</td>
+						</tr>
+						<tr v-for='check_Order in check_Orders'>
+							<td class="text-center">{{check_Order.foodname}}</td>
+							<td class="text-center">{{check_Order.price}}</td>
+							<td class="text-center">{{check_Order.count}}</td>
+
+						</tr>
+
+					</tbody>
+					</table>
+					<div class="row">
+						<span>订单状态：{{Order_statu | statu}}</span>
+						<span style="margin-left: 20px;">订单人：{{Order_people}}</span>
+						<span style="margin-left: 20px;">总计金额：{{Order_amount}}</span>
+					</div>
+						</div>
+
+					</div>
+					<div class="modal-footer text-center">
+						<button type="button" class="btn btn-info" v-show='Order_statu==3' @click='chargeAndget'>支付并取货</button>
+						<button type="button" class="btn btn-info" v-show='Order_statu==1' @click='GetGood'>取货</button>
+						<button type="button" class="btn btn-info" v-show='Order_statu==2' data-dismiss="modal">返回</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		</div>
+
+		<script type="text/javascript" src="internetmall/js/order_manager.js"></script>
+		<script>
+			
+		</script>
+	</body>
+</html>

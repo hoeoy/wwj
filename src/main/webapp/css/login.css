@@ -1,0 +1,96 @@
+.row {
+  margin: 0 !important;
+  padding: 0 !important; }
+
+.no-padding-left {
+  padding-left: 0; }
+
+.center-vertical{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  /*width: 100%;*/
+  left: 8.5%;
+}
+
+.no-padding{
+  padding: 0 !important;
+}
+.no-margin{
+  margin: 0;
+}
+.max-padding {
+  padding: 38px 40px; }
+
+.magin-top {
+  margin-top: 10px !important; }
+
+.margin-top28 {
+  margin-top: 28px !important; }
+
+.padding {
+  padding: 24px 36px; }
+
+.border-radius50 {
+  border-radius: 5px; }
+
+.no-outline {
+  outline: none; }
+
+.no-border {
+  border: none; }
+
+.magin-bottom15 {
+  margin-bottom: 15px !important; }
+
+.height36 {
+  height: 36px !important; }
+
+.paddin-left {
+  padding-left: 10px !important; }
+
+.relative{
+  position: relative;
+}
+
+.block{
+  display: block;
+}
+.padding-top {
+  padding-top: 10px !important; }
+/*.padding-top27{*/
+  /*padding-top: 27px !important;*/
+/*}*/
+.padding-top2 {
+  padding-top: 2px; }
+
+body {
+  background: url(../img/login_bg.png) no-repeat;
+  background-size: cover; }
+  body > .row > .wrap {
+    margin-top:10.5%; }
+    body > .row > .wrap > .content {
+      height: 260px;
+      background-color: #fff;
+      box-shadow: 0 0 20px #020; }
+      body > .row > .wrap > .content .login-ad {
+        background-color: #EEEEEE;
+        height: 100%; }
+        body > .row > .wrap > .content .login-ad > div {
+          height:196px;
+          background: url(../img/login_ad.png) no-repeat;
+          background-color: transparent;
+          background-size: cover; }
+      body > .row > .wrap > .content .login-content {
+        height: 100%; }
+      body > .row > .wrap > .content .btn-login {
+        background-color: #53BAF5;
+        color: #fff;
+        height: 38px; }
+        body > .row > .wrap > .content .btn-login:hover {
+          background-color: #00b4e0; }
+
+/*# sourceMappingURL=login.css.map */
+#code,#password{
+  border:1px solid #cccccc;
+}

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.DeptDAO">
+
+    <select id="retrieveAll" resultType="com.iandtop.model.DeptModelVO">
+        select * from db_department
+    </select>
+
+    <select id="retrieveAllWithPage" parameterType="com.iandtop.model.DeptModelVO" resultType="com.iandtop.model.DeptModelVO">
+        select * from db_department
+        <where>
+            <if test="department_code != null and department_code != ''">
+                and department_code like "%${department_code}%"
+            </if>
+            <if test="department_name != null and department_name != ''">
+                and department_name like "%${department_name}%"
+            </if>
+            <if test="parent_code != null and parent_code != ''">
+                and parent_code = #{parent_code}
+            </if>
+        </where>
+        order by
+        pk_department asc
+        limit
+        #{offset},#{limit}
+    </select>
+
+    <select id="retrieveByCompany" parameterType="java.lang.String" resultType="com.iandtop.model.DeptModelVO">
+        select * from db_department where company_code=#{company_code} ORDER BY department_code
+    </select>
+
+    <insert id="insertByMo" parameterType="com.iandtop.model.DeptModelVO">
+        INSERT INTO db_department(pk_department, department_code, department_name, company_code, parent_code, type, haschild, memo, def1, def2 , def3, def4, def5)
+        VALUES (#{pk_department},#{department_code},#{department_name},#{company_code},#{parent_code},#{type},#{haschild},#{memo},#{def1},#{def2},#{def3},#{def4},#{def5})
+    </insert>
+
+    <delete id="deleteByPks" parameterType="java.util.List">
+        delete from db_department where
+        <foreach collection="list" item="item" index="index"
+                 open="(" separator="or" close=")">
+            pk_department = #{item}
+        </foreach>
+    </delete>
+
+    <update id="updateByPk" parameterType="com.iandtop.model.DeptModelVO">
+        update db_department
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="department_code != null">department_code=#{department_code},</if>
+            <if test="department_name != null">department_name=#{department_name},</if>
+            <if test="company_code != null">company_code=#{company_code},</if>
+            <if test="parent_code != null">parent_code=#{parent_code},</if>
+            <if test="type != null">type=#{type},</if>
+            <if test="haschild != null">haschild=#{haschild},</if>
+            <if test="memo != null">memo=#{memo},</if>
+            <if test="def1 != null">def1=#{def1},</if>
+            <if test="def2 != null">def2=#{def2},</if>
+            <if test="def3 != null">def3=#{def3},</if>
+            <if test="def4 != null">def4=#{def4},</if>
+            <if test="def5 != null">def5=#{def5},</if>
+        </trim>
+        where pk_department=#{pk_department}
+    </update>
+
+    <select id="retrieveByCode" parameterType="com.iandtop.model.DeptModelVO" resultType="com.iandtop.model.DeptModelVO">
+        select * from db_department where department_code=#{department_code} and company_code=#{company_code}
+    </select>
+
+    <select id="retrieveByDeptCode" parameterType="java.lang.String" resultType="com.iandtop.model.DeptModelVO">
+        select * from db_department where department_code="${department_code}"
+    </select>
+
+    <select id="retrieveByPk" parameterType="java.lang.String" resultType="com.iandtop.model.DeptModelVO">
+        select * from db_department where pk_department=#{pk_department}
+    </select>
+    <select id="queryretrieve" parameterType="java.lang.String" resultType="com.iandtop.model.DeptModelVO">
+        select department_code from db_department WHERE department_name=#{department_name}
+    </select>
+
+    <insert id="addBatch" useGeneratedKeys="true" parameterType="java.util.List">
+        <selectKey resultType="long" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        insert into db_department (department_code, department_name, company_code, parent_code, type, haschild, memo, def1, def2 , def3, def4, def5)
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+            (#{item.department_code},#{item.department_name},#{item.company_code},#{item.parent_code},#{item.type},#{item.haschild},#{item.memo},#{item.def1},#{item.def2},#{item.def3},#{item.def4},#{item.def5})
+        </foreach>
+    </insert>
+
+</mapper>

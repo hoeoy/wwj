@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>人员信息</title>
+
+    <link rel="stylesheet" href="../js/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="../js/bootstrap-table/dist/bootstrap-table.min.css">
+    <link rel="stylesheet" href="../css/baseinfo/staff.css">
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table.js"></script>
+    <script type="text/javascript" src="../js/bootstrap-table/dist/bootstrap-table-zh-CN.js"></script>
+    <script type="text/javascript" src="../internetmall/js/jquery-form.js"></script>
+
+
+    <style>
+        .no-padding-right{padding-right: 0}
+        #mymodal-data .col-md-6 .col-md-4{padding-top: 7px;}
+    </style>
+</head>
+<body>
+
+<div class="panel-body " style="padding-bottom:0px;">
+
+    <div>
+        <div id="tree"  class="col-md-2 ztree"></div>
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">查询条件</div>
+                <div class="panel-body">
+                    <form id="formSearch" class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                <div class="col-sm-4">
+                                    <label class="control-label col-sm-4 no-padding-left-right text-center" for="txt_search_staff_code">编码</label>
+                                    <div class=" col-sm-8 no-padding-left-right">
+                                        <input type="text"  id="txt_search_staff_code" class="form-control" >
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label col-sm-4 no-padding-left-right text-center" for="txt_search_name">姓名</label>
+                                    <div class=" col-sm-8 no-padding-left-right">
+                                        <input type="text"  id="txt_search_name"  class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4" >
+                                    <label class="control-label col-sm-4 no-padding-left-right text-center" for="txt_search_staff_type">员工状态</label>
+                                    <div class=" col-sm-8 no-padding-left-right">
+                                        <select id="txt_search_staff_type" class="col-sm-12 form-control ">
+                                            <option value="1">在职</option>
+                                            <option value="0">离职</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4" style="margin-top: 15px;">
+                                    <label class="control-label col-sm-4 no-padding-left-right text-center" for="txt_search_sex">性别</label>
+                                    <div class=" col-sm-8 no-padding-left-right">
+                                        <select id="txt_search_sex" class="col-sm-12 form-control ">
+                                            <option value="">请选择</option>
+                                            <option value="1">男</option>
+                                            <option value="0">女</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-2" style="text-align:left;">
+                                <button type="button"   id="btn_query" class="btn btn-info col-sm-10 col-sm-offset-1">查询</button>
+                            </div>
+
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <!--操作按钮-->
+            <div id="toolbar" class="btn-group">
+                <button  type="button" class="btn btn-default" id="btn_add"  disabled="true">
+                    <span class="iconfont icon-zengjia"></span><span>新增</span>
+                </button>
+                <button type="button" class="btn btn-default" id="btn_edit"  disabled="true">
+                    <span class="iconfont icon-xiugai"></span><span>修改</span>
+                </button>
+                <button type="button" class="btn btn-default" id="btn_delete"  disabled="true">
+                    <span class="iconfont icon-shanchu"></span><span>删除</span>
+                </button>
+                <button type="button" class="btn btn-default" id="inputExcel_btn" data-toggle="modal" data-target="#uploadExcelModal">
+                    <span class="iconfont icon-daochuexcel"></span><span>导入excel</span>
+                </button>
+                <button type="button" class="btn btn-default" id="changeDept" disabled="true">
+                    <span class="iconfont icon-daochuexcel"></span><span>部门变更</span>
+                </button>
+                <button type="button" class="btn btn-default" id="sync">
+                    <span class="iconfont icon-daochuexcel"></span><span>同步人事</span>
+                </button>
+                <button type="button" class="btn btn-default" id="bulk_editing" data-toggle="modal" data-target="#myModal">
+                    <span class="iconfont icon-daochuexcel"></span><span>批量修改</span>
+                </button>
+            </div>
+            <table id="table"></table>
+
+        </div>
+    </div>
+    <div id="allcontent" >
+
+        <div class="modal fade" id="changeDeptModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header"><h4>部门变更</h4></div>
+
+                    <div class="modal-body">
+                        <fieldset class="changeFieldset">
+                            <div id="changeDeptTree" class="ztree"></div>
+                            <div class="row text-center">
+                                <button type="button" class="btn btn-default m_btn" style="margin-left: -25px"
+                                        id="plokBtn1" data-toggle="modal" data-target="#surechangeDeptModel">确定
+                                </button>
+                                <button type="button" class="btn btn-default m_btn" style="margin-left: 50px"
+                                        data-dismiss="modal" id="pldismiss1">关闭
+                                </button>
+                            </div>
+
+                        </fieldset>
+                    </div>
+
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+        <div class="modal fade" id="surechangeDeptModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" style="width: 682px;">
+                    <div class="modal-header"><h4>确定信息</h4></div>
+
+                    <div class="modal-body">
+                        <fieldset class="changeFieldset"
+                                  style="padding-left: 50px;padding-right: 50px;padding-top: 50px;">
+                            <div class="row">
+                                <span style="color: #666666;font-size: 16px;margin-bottom: 20px">确定将所选目标移动到新部门吗？</span>
+                            </div>
+                            <div class="row text-center">
+                                <button type="button" class="btn btn-default m_btn" style="margin-left: -25px"
+                                        id="plokBtn" @click="plokBtn">确定
+                                </button>
+                                <button type="button" class="btn btn-default m_btn" style="margin-left: 50px"
+                                        data-dismiss="modal" id="pldismiss">关闭
+                                </button>
+                            </div>
+
+                        </fieldset>
+                    </div>
+
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+
+
+        <div class="modal fade modal-default in" id="mymodal-data" tabindex="-1" role="dialog"
+             aria-labelledby="default-modal-label" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                                class="sr-only">Close</span></button>
+                        <h4 class="modal-title font-weight" id="headTitle">人员信息</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row add_menu">
+                            <div class="col-md-6 no-padding-right">
+                                <div class="col-md-4 text-right no-padding-left-right">
+                                    <label class="text-red">*</label>编号:
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="staff_code">
+                                </div>
+                            </div>
+                            <div class="col-md-6 no-padding-right">
+                                <div class="col-md-4 text-right no-padding-left-right">
+                                    <label class="text-red">*</label>姓名:
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" id="staff_name" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row add_menu">
+                            <div class="col-md-6 no-padding-right">
+                                <div class="col-md-4 text-right no-padding-left-right">
+                                    <label class="text-red"></label>部门:
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" id="department_name" class="form-control" readonly="readonly">
+                                </div>
+                            </div>
+                            <div class="col-md-6 no-padding-right">
+                                <div class="col-md-4 text-right no-padding-left-right">
+                                    <label class="text-red"></label>状态:
+                                </div>
+                                <div class="col-md-8">
+                                    <select id="status" class="form-control">
+                                        <option value="1">在职</option>
+                                        <option value="0">离职</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row add_menu">
+                            <div class="col-md-6 no-padding-right">
+                                <div class="col-md-4 text-right no-padding-left-right">
+                                    <label class="text-red"></label>性别:
+                                </div>
+                                <div class="col-md-8">
+                                    <select id="sex" class="form-control">
+                                        <option value="1">男</option>
+                                        <option value="0">女</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!--<div class="col-md-6 no-padding-right">
+                                <div class="col-md-4 text-right control-label no-padding-left-right">
+                                    <label class="text-red"></label>身份证:
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" id="id_card" class="form-control no-padding-left-right">
+                                </div>
+                            </div>-->
+                            <div class="col-md-6 no-padding-right">
+                                <div class="col-md-4 text-right no-padding-left-right">
+                                    <label class="text-red"></label>生日:
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" id="birth_date" class="form-control" onclick="laydate()">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row add_menu">
+
+                            <div class="col-md-6 no-padding-right">
+                                <div class="col-md-4 text-right no-padding-left-right">
+                                    <label class="text-red"></label>联系电话:
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" id="phone" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6 no-padding-right">
+                                <div class="col-md-4 text-right no-padding-left-right">
+                                    <label class="text-red"></label>邮箱:
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" id="email" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row add_menu">
+                            <div class="col-md-6 no-padding-right">
+                                <div class="col-md-4 text-right no-padding-left-right">
+                                    <label class="text-red"></label>入职日期:
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" id="hire_date" class="form-control" onclick="laydate()">
+                                </div>
+                            </div>
+                            <div class="col-md-6 no-padding-right">
+                                <div class="col-md-4 text-right no-padding-left-right">
+                                    <label class="text-red"></label>离职日期:
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="text" id="leave_date" class="form-control" onclick="laydate()">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row add_menu">
+
+                            <div class="col-md-6 no-padding-right">
+                                <div class="col-md-4 text-right no-padding-left-right">
+                                    <label class="text-red"></label>所属商户:
+                                </div>
+                                <div class="col-md-8">
+                                    <select  class="form-control" id="merchants" v-model="merchants">
+                                        <option :value="item.pk_merchant" v-text="item.merchant_name" v-for="item in merchantArr"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row add_menu text-center" style="margin-top: 2.8em;">
+                            <button type="button" class="btn btn-primary col-md-2 col-md-offset-6 footer_btn" id="save"
+                                    @click="save">保存
+                            </button>
+                            <button type="button" class="btn btn-primary col-md-2 col-md-offset-1 footer_btn"
+                                    data-dismiss="modal" id="close">关闭
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form action="/Api/staff/ULE" id="inputExcel" method="post" enctype="multipart/form-data">
+            <div class="modal fade" id="uploadExcelModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content" id="plcharge-content">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span
+                                class="sr-only">Close</span></button>
+                        <div class="modal-header"><h4>导入Excel</h4></div>
+                        <div class="modal-body">
+                            <div class="row text-center">
+                                excel文件导入:<input type="file" name="file" id="excelfile"/>
+                                <p class="upload_tips">
+                                    1.Excel导入列必须按照模板导入;
+                                </p>
+                                <p class="upload_tips">
+                                    2导入部门名称列必须在系统内存在.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="modal-footer text-center">
+                            <button type="submit" class="btn btn-info" id="upload">导入</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+            </div>
+        </form>
+        <div class="information text-center" id="infor">
+            <span>导入完成,{{errCode}},<a class="information_a" href="baseinfo/information.html"
+                                      target="_blank">点击查看结果详情</a> </span>
+            <button type="button" @click="close_x" class="close"><span aria-hidden="true">×</span><span class="sr-only">Close</span>
+            </button>
+        </div>
+        <div id="zz"></div>
+        <div class="loading text-center" id="loading">
+            <img class="img" src="../img/loading.gif">
+            <p style="color: #ffffff;">导入中...</p>
+        </div>
+        <div class="loading text-center" id="tb_load">
+            <img class="img" src="../img/loading.gif">
+            <p style="color: #ffffff;">同步中...</p>
+        </div>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" >
+                <div class="modal-content" style="width: 688px;position: absolute;left: 340px;top: 60px;">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: 0"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">批量修改</h4>
+                    </div>
+                    <div class="modal-body clearfix">
+                        <div class="text-center row" style="margin-bottom: 15px;">
+                            <label class="control-label col-md-2 col-md-offset-3 no-padding-left-right text-center" style="margin-top:6px;" for="txt_search_sex">所属商户</label>
+                            <div class="col-sm-4" style="padding-left: 0;">
+                                <select  class="form-control" v-model="pk_merchant">
+                                    <option :value="item.pk_merchant" v-text="item.merchant_name" v-for="item in merchantArr"></option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="no-padding-left-right" id="dept_tree" style="height:284px;overflow: auto;border: 1px solid #ccc;width: 180px;float: left;" ></div>
+
+                        <div class="" style="padding-left: 0;padding-right: 0;float: right;">
+                            <my-transfer :data="data" v-model="bulkEdit"></my-transfer>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" style="margin-top: 0">关闭</button>
+                        <button type="button" class="btn btn-primary" @click="saveBulkEdit">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script src="../js/baseinfo/staff.js"></script>
+</body>
+</html>

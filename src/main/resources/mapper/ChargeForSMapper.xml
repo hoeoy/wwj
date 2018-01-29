@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.ChargeForSDao">
+    <select id="ChargeRecord" parameterType="com.iandtop.model.form.ChargeForSModel" resultType="com.iandtop.model.form.ChargeForSModel">
+        SELECT
+        u.user_name user_name,
+        SUM(ccr.charge_money)/100 money,
+        COUNT(1) headcount,
+        substr(charge_ts,1,10) AS charge_ts
+        FROM card_charge_record ccr
+        INNER JOIN sm_user u ON ccr.operator = u.pk_user
+        WHERE  1=1
+        <if test="pk_user != null and pk_user !='' "> AND u.pk_user = #{pk_user} </if>
+        <if test="start_date != null"> AND substr(ccr.charge_ts,1,10) >= #{start_date} </if>
+        <if test="end_date != null"> AND #{end_date} >= substr(ccr.charge_ts,1,10)</if>
+        GROUP BY substr(charge_ts,1,10)
+    </select>
+    <select id="ChargeStaff" parameterType="com.iandtop.model.form.ChargeForSModel" resultType="com.iandtop.model.form.ChargeForSModel">
+        SELECT
+        s.staff_code staff_code,
+        s.staff_name staff_name,
+        ccr.charge_money/100 charge_money,
+        count(*) as numbercount
+        FROM card_charge_record ccr
+        INNER JOIN db_staff s ON s.pk_staff = ccr.pk_staff
+        where 1 = 1
+        <if test="start_date != null"> AND substr(ccr.charge_ts,1,10) >= #{start_date} </if>
+        <if test="end_date != null">   AND #{end_date} >= substr(ccr.charge_ts,1,10)</if>
+        <if test="staff_name != null"> AND s.staff_name like "%${staff_name}%"</if>
+        group by s.staff_code
+    </select>
+    <select id="ChargeDepartment" parameterType="com.iandtop.model.form.ChargeForSModel" resultType="com.iandtop.model.form.ChargeForSModel">
+        SELECT
+        d.department_code department_code,
+        d.department_name department_name,
+        count(*) numbercount,
+        SUM(charge_money)/100  moneysum
+        FROM card_charge_record ccr
+        INNER JOIN db_staff s ON s.pk_staff = ccr.pk_staff
+        INNER JOIN db_department d ON s.def1 = d.department_code
+        WHERE 1 = 1
+        AND ccr.charge_type IN('3','4')
+        <if test="department_code != null">  AND d.department_code LIKE "${department_code}%"</if>
+        <if test="start_date != null"> AND substr(ccr.charge_ts,1,10) >= #{start_date} </if>
+        <if test="end_date != null">   AND #{end_date} >= substr(ccr.charge_ts,1,10)</if>
+        group by d.department_code
+    </select>
+    <select id="ChargeMerchant" parameterType="com.iandtop.model.form.ChargeForSModel" resultType="com.iandtop.model.form.ChargeForSModel">
+        SELECT
+        mm.merchant_code merchant_code,
+        mm.merchant_name merchant_name,
+        count(*) numbercount,
+        SUM(charge_money)/100 moneysum
+        FROM card_charge_record ccr
+        INNER JOIN db_staff s ON ccr.pk_staff = s.pk_staff
+        INNER JOIN meal_merchant mm ON s.pk_merchant = mm.pk_merchant
+        WHERE 1 = 1
+        <if test="pk_merchant != null">  AND mm.pk_merchant = #{pk_merchant} </if>
+        <if test="start_date != null"> AND substr(ccr.charge_ts,1,10) >= #{start_date} </if>
+        <if test="end_date != null">   AND #{end_date} >= substr(ccr.charge_ts,1,10)</if>
+    </select>
+</mapper>

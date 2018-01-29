@@ -1,0 +1,9 @@
+#start_ts,#end_ts{
+    border-radius: 5px;
+    height: 34px;
+    border:1px solid #cccccc;
+    width: 180px;
+}
+.table_row{
+    margin-top: 25px;
+}

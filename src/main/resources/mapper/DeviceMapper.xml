@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iandtop.dao.DeviceDAO">
+
+    <select id="retrieveByCode" resultType="com.iandtop.model.device.DeviceModel">
+        select * from meal_device where device_code=#{device_code}
+    </select>
+
+    <select id="retrieveAll" resultType="com.iandtop.model.device.DeviceModel">
+        select * from meal_device
+    </select>
+
+    <select id="retrieveAllWithPage" parameterType="com.iandtop.model.device.DeviceModel" resultType="com.iandtop.model.device.DeviceModel">
+        select
+        a.pk_device,
+        a.pk_device_time,
+        a.pk_merchant,
+        a.device_code,
+        a.device_name,
+        a.device_ip,
+        a.device_port,
+        a.device_meal_type,
+--         if(device_meal_type='0', '现金',if(device_meal_type='10','补贴', if(device_meal_type =20, '先现金后补贴', '先补贴后现金'))) device_meal_type,
+--         if(be_control_time='Y','开启','关闭') be_control_time,
+        a.device_meal_type,
+        a.be_control_time,
+        a.memo,
+        a.def1,
+        a.def2,
+        a.def3,
+        a.def4,
+        a.def5,
+        b.time_name,
+        a.device_type
+        from meal_device a
+        left join device_time b on a.pk_device_time = b.pk_device_time
+
+        <where>
+            <if test="device_code != null and device_code != ''">
+                and a.device_code like "%${device_code}%"
+            </if>
+            <if test="device_name != null and device_name != ''">
+                and a.device_name like "%${device_name}%"
+            </if>
+            <if test="pk_merchant != null and pk_merchant != ''">
+                and a.pk_merchant = #{pk_merchant}
+            </if>
+        </where>
+        order by
+        a.pk_device asc
+        limit
+        #{offset},#{limit}
+    </select>
+
+    <insert id="insertByMo" parameterType="com.iandtop.model.device.DeviceModel">
+        INSERT INTO meal_device(
+        pk_merchant,
+        pk_device_time,
+        device_code,
+        device_name,
+        device_ip,
+        device_port,
+        device_meal_type,
+        be_control_time,
+        memo,def1,def2,def3,def4,def5,device_type)
+        VALUES (
+        #{pk_merchant},
+        #{pk_device_time},
+        #{device_code},
+        #{device_name},
+        #{device_ip},
+        #{device_port},
+        #{device_meal_type},
+        #{be_control_time},
+        #{memo},#{def1},#{def2},#{def3},#{def4},#{def5},#{device_type})
+    </insert>
+
+    <delete id="deleteByPks" parameterType="java.util.List">
+        delete from meal_device where
+        <foreach collection="list" item="item" index="index"
+                 open="(" separator="or" close=")">
+            pk_device = #{item}
+        </foreach>
+    </delete>
+
+    <update id="updateByPk" parameterType="com.iandtop.model.device.DeviceModel">
+        update meal_device
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pk_merchant != null and pk_merchant != ''">pk_merchant=#{pk_merchant},</if>
+            <if test="pk_device_time != null and pk_device_time != ''">pk_device_time=#{pk_device_time},</if>
+            <if test="device_code != null and device_code != ''">device_code=#{device_code},</if>
+            <if test="device_name != null and device_name != ''">device_name=#{device_name},</if>
+            <if test="device_ip != null and device_ip != ''">device_ip=#{device_ip},</if>
+            <if test="device_port != null and device_port != ''">device_port=#{device_port},</if>
+            <if test="device_meal_type != null and device_meal_type != ''">device_meal_type=#{device_meal_type},</if>
+            <if test="be_control_time != null and be_control_time != ''">be_control_time=#{be_control_time},</if>
+            <if test="memo != null and memo != ''">memo=#{memo},</if>
+            <if test="def1 != null and def1 != ''">def1=#{def1},</if>
+            <if test="def2 != null and def2 != ''">def2=#{def2},</if>
+            <if test="def3 != null and def3 != ''">def3=#{def3},</if>
+            <if test="def4 != null and def4 != ''">def4=#{def4},</if>
+            <if test="def5 != null and def5 != ''">def5=#{def5},</if>
+            <if test="device_type != null and device_type != ''">device_type=#{device_type},</if>
+        </trim>
+        where pk_device=#{pk_device}
+    </update>
+
+    <select id="findAllretrieve" resultType="com.iandtop.model.device.DeviceModel">
+       SELECT pk_device,device_name FROM meal_device WHERE device_type = 3
+    </select>
+
+</mapper>
