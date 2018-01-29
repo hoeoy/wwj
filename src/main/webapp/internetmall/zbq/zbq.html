@@ -5,7 +5,7 @@
 	<title>商品查询报表</title>
 	<!--<link href="css/sub/consumer_details.css" rel="stylesheet">-->
 	<link href="css/report.css" rel="stylesheet"><!-- 报表公用的CSS -->
-	<link href="internetmall/zbq/css/goods.css" rel="stylesheet"/>
+	<link href="internetmall/zbq/css/zbq.css" rel="stylesheet"/>
 </head>
 <body>
 	<OBJECT ID="AxRead" CLASSID="CLSID:1B83CB21-E01E-4CA4-B54C-356E31448A86" style="display: none;"></OBJECT>
@@ -176,6 +176,7 @@
 				currentPage:1,
 				my_checked_goods:[],
 				currentId:'',
+				pId:'',
 				currentName:'',
 				id:'',
 				name:'',
@@ -227,7 +228,8 @@
 				choiceBClass:function(e){
 					this.type=0;
 					vm.smallClasses.splice(0,vm.smallClasses.length);
-					var parentid=e.currentTarget.parentNode.querySelector('.my_bigid').outerText;
+					<!--var parentid=e.currentTarget.parentNode.querySelector('.my_bigid').outerText;-->
+					this.pId = e.currentTarget.parentNode.querySelector('.my_bigid').outerText;
 					if(this.open==false){
 						<!--e.currentTarget.querySelector('.glyphicon').className='glyphicon glyphicon-minus menu_title2';-->
 						this.open=true;
@@ -235,20 +237,23 @@
 						<!--e.currentTarget.querySelector('.glyphicon').className='glyphicon glyphicon-plus menu_title2';-->
 						this.open=false;
 					}
+					if(this.open==false){
+					    this.currentId='';
+					}
 					var vmTemp = this;
 					$.ajax({
 						type:"POST",
 						url:getUrl()+'/Api/OrderStyle/findtype',
 						dataType:'json',
 						data:{
-							pk_parentid:parentid
+							pk_parentid:this.pId
 						},
 						success:function(data){
 							if(data.success){
 								for(var i=0;i<data.data.length;i++){
 									vm.smallClasses.push(data.data[i]);
 								}
-								console.log(parentid);
+								console.log(this.pId);
 								this.choice_numbers=0;
 								<!--vm.searchType=1;-->
 								<!--vm.currentPage=1;-->
@@ -260,7 +265,7 @@
 									dataType:'json',
 									data:{
 										foodname:vmTemp.foodname,
-										stypeid:parentid,
+										stypeid:this.pId,
 										start_ts:vmTemp.startTime,
 										end_ts:vmTemp.endTime,
 										pageNo:vmTemp.pagination.currentPage,
@@ -337,12 +342,10 @@
 					console.log('查询');
 					vm.waitInfo = '正在查询...';
 					this.getStartTimeAndEndTime();
-					var styid = e.currentTarget.parentNode.querySelector('.my_smallid').outerText;
-					var parentid=e.currentTarget.parentNode.querySelector('.my_bigid').outerText;
 					var data = {
 						foodname:this.foodname,
-						styleid:styid,
-						stypeid:parentid,
+						styleid:this.currentId,
+						stypeid:this.pId;
 						start_ts:this.startTime,
 						end_ts:this.endTime,
 						pageNo:this.pagination.currentPage,
