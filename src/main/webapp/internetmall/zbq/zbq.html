@@ -94,6 +94,7 @@
 						<td  class="text-center">商品数量</td>
 						<td  class="text-center">商品金额</td>
 						<td  class="text-center time">下单时间</td>
+						<td  class="text-center">取货状态</td>
 						<td  class="text-center">食堂名称</td>
 					</tr>
 					</thead>
@@ -108,6 +109,11 @@
 						<td class="text-center" v-text="detail.count"></td>
 						<td class="text-center" v-text="detail.amount"></td>
 						<td class="text-center" v-text="detail.formtime"></td>
+						<td class="text-center">
+							<span v-if ="detail.formstatus == 1">已支付</span>
+							<!--<span v-if ="detail.formstatus == 2">待支付</span>-->
+							<span v-if ="detail.formstatus == 3">未支付</span>
+						</td>
 						<td class="text-center" v-text="detail.stylename"></td>
 					</tr>
 					</tbody>
@@ -218,36 +224,69 @@
 					this.today = newDay.getFullYear() + '-' + (newDay.getMonth() > 8 ? (newDay.getMonth() + 1) : ('0' + (newDay.getMonth() + 1))) + '-' + newDay.getDate();
 				},
 				choiceBClass:function(e){
-				this.type=0;
-				vm.smallClasses.splice(0,vm.smallClasses.length);
-				var parentid=e.currentTarget.parentNode.querySelector('.my_bigid').outerText;
-				if(this.open==false){
-					<!--e.currentTarget.querySelector('.glyphicon').className='glyphicon glyphicon-minus menu_title2';-->
-					this.open=true;
-				}else{
-					<!--e.currentTarget.querySelector('.glyphicon').className='glyphicon glyphicon-plus menu_title2';-->
-					this.open=false;
-				}
-				$.ajax({
-					type:"POST",
-					url:getUrl()+'/Api/OrderStyle/findtype',
-					dataType:'json',
-					data:{
-						pk_parentid:parentid
-					},
-					success:function(data){
-						if(data.success){
-							for(var i=0;i<data.data.length;i++){
-								vm.smallClasses.push(data.data[i]);
+				alert("222");
+					this.type=0;
+					vm.smallClasses.splice(0,vm.smallClasses.length);
+					var parentid=e.currentTarget.parentNode.querySelector('.my_bigid').outerText;
+					if(this.open==false){
+						<!--e.currentTarget.querySelector('.glyphicon').className='glyphicon glyphicon-minus menu_title2';-->
+						this.open=true;
+					}else{
+						<!--e.currentTarget.querySelector('.glyphicon').className='glyphicon glyphicon-plus menu_title2';-->
+						this.open=false;
+					}
+					$.ajax({
+						type:"POST",
+						url:getUrl()+'/Api/OrderStyle/findtype',
+						dataType:'json',
+						data:{
+							pk_parentid:parentid
+						},
+						success:function(data){
+							if(data.success){
+								for(var i=0;i<data.data.length;i++){
+									vm.smallClasses.push(data.data[i]);
+								}
+								this.choice_numbers=0;
+								<!--vm.searchType=1;-->
+								<!--vm.currentPage=1;-->
+								vm.allGoods.splice(0,vm.allGoods.length);
+								this.getStartTimeAndEndTime();
+								$.ajax({
+									type:"POST",
+									url:getUrl()+'/Api/detailAll/queryOrder',
+									dataType:'json',
+									data:{
+										foodname:this.foodname,
+										stypeid:parentid,
+										start_ts:this.startTime,
+										end_ts:this.endTime,
+										pageNo:this.pagination.currentPage,
+										pageSize:this.pagination.pageSize,
+										id:_id
+									},
+									success:function(data){
+										vm.succ = data.success;
+										if(data.data.list != null && data.data.list != '' && data.data.list != 'null'){
+											data.success ?  ((vm.details = data.data.list) && (vm.pagination.total = data.data.total)) : ((vm.waitInfo = '未找到指定条件的数据') && (vm.details = '')&&(vm.pagination.total=0)) ;
+										}else{
+											vm.waitInfo = '未找到指定条件的数据';
+											vm.details = '';
+											vm.pagination.total=0;
+										}
+									},
+									error:function(msg){
+										}
+								});
+							}else{
 							}
-						}else{
-						}
-					},
-					error:function(msg){
-						}
+						},
+						error:function(msg){
+							}
 					});
 					$("#allGoods").children('li').removeClass('active1');
 					e.currentTarget.parentNode.className='active1';
+					alert("111111");
 				},
 				choiceSClass:function(e){
 					this.type=2;

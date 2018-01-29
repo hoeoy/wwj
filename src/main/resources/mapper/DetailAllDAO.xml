@@ -162,6 +162,7 @@
             ogtp.typename AS typename,
             od.foodname AS foodname,
             of.formpeople AS formpeople,
+            of.formstatus AS formstatus,
             od.count AS count,
             of.amount AS amount,
             of.formtime AS formtime,

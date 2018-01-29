@@ -296,7 +296,7 @@
                 if(arr.length > 0){//money_retain
 
                     $.each(arr,function(index,value){
-                        var str = '(arr[index].' + type + '!= undefined || arr[index].' + type + ' != null) && (total += (arr[index].' + type + '))';
+                        var str = '(arr[index].' + type + '!= undefined || arr[index].' + type + ' != null) && (total += Number(arr[index].' + type + '))';
                         eval(str);
                     })
 

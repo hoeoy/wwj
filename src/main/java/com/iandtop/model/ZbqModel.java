@@ -10,6 +10,7 @@ public class ZbqModel {
     private String typename; //商品类别名称
     private String foodname; //商品名称
     private String formpeople; //下单人员
+    private Integer formstatus; //订单状态
     private Integer count; //商品数量
     private Integer amount; //商品金额
     private String formtime; //下单时间
@@ -37,6 +38,14 @@ public class ZbqModel {
 
     public void setFormpeople(String formpeople) {
         this.formpeople = formpeople;
+    }
+
+    public Integer getFormstatus() {
+        return formstatus;
+    }
+
+    public void setFormstatus(Integer formstatus) {
+        this.formstatus = formstatus;
     }
 
     public Integer getCount() {
