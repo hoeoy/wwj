@@ -58,5 +58,26 @@ public class OrderStyleServiceImpl implements OrderStyleService {
     public List<OrderModelVo> findtypeforcondition(OrderModelVo orderModelVo) {
         return orderStyleDao.findtypeforcondition(orderModelVo);
     }
-
+    @Override
+    public List<OrderStyleModel> findStyleAndType() {
+        //获取全部大类
+        List<OrderStyleModel> orderStyleModels = orderStyleDao.findStyle();
+        //获取全部小类
+        List<OrderModelVo> orderModelVos = orderStyleDao.findAllType();
+        //遍历大类  将大类下的小类装到大类集合中
+        if(orderStyleModels != null && orderStyleModels.size() > 0){
+            for(OrderStyleModel orderStyleModel : orderStyleModels){
+                if(orderStyleModel != null){
+                    if(orderModelVos != null && orderModelVos.size() > 0){
+                        for(OrderModelVo orderModelVo : orderModelVos){
+                            if(orderStyleModel.getId() == orderModelVo.getPk_parentid().intValue()){
+                                orderStyleModel.getOrderModelVos().add(orderModelVo);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return orderStyleModels;
+    }
 }

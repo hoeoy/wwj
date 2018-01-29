@@ -29,4 +29,6 @@ public interface OrderStyleService {
     List<OrderStyleModel> findStyleforcondition(OrderStyleModel orderStyleModel);
     //查询有无相同名字的小类
     List<OrderModelVo> findtypeforcondition(OrderModelVo orderModelVo);
+    //查询所有大类及大类下小类
+    List<OrderStyleModel> findStyleAndType();
 }

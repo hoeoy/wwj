@@ -29,4 +29,6 @@ public interface OrderStyleDao {
     List<OrderStyleModel> findStyleforcondition(OrderStyleModel orderStyleModel);
     //查询有无相同名字的小类
     List<OrderModelVo> findtypeforcondition(OrderModelVo orderModelVo);
+    //查询所有小类
+    List<OrderModelVo> findAllType();
 }

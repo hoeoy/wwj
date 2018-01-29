@@ -142,4 +142,17 @@ public class OrderStyleController {
             return ResponseUtils.getFailed("", "查询失败", RestOperateCode.GET_DATA);
     }
     **/
+
+    @ResponseBody
+    @RequestMapping("/findStyleAndType")
+    public APIRestResponse findStyleAndType(HttpServletResponse response)throws ParseException {
+        long start = System.currentTimeMillis();
+        List<OrderStyleModel> resultList = service.findStyleAndType();
+        System.out.println("大类time:"+(System.currentTimeMillis()-start));
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        if (resultList.size()!=0)
+            return ResponseUtils.getSuccess(true, "查询成功", RestOperateCode.GET_DATA, resultList);
+        else
+            return ResponseUtils.getFailed("", "查询失败", RestOperateCode.GET_DATA);
+    }
 }

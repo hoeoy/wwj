@@ -34,4 +34,8 @@
     <select id="findtypeforcondition" resultType="com.iandtop.model.OrderModelVo">
         SELECT * FROM order_goodstype WHERE typename=#{typename}
     </select>
+    <!-- zbq2018 01 28 获取全部小类-->
+    <select id="findAllType" resultType="com.iandtop.model.OrderModelVo">
+        SELECT * FROM order_goodstype
+    </select>
 </mapper>
