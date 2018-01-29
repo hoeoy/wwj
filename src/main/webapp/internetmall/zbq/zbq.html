@@ -337,9 +337,12 @@
 					console.log('查询');
 					vm.waitInfo = '正在查询...';
 					this.getStartTimeAndEndTime();
+					var styid = e.currentTarget.parentNode.querySelector('.my_smallid').outerText;
+					var parentid=e.currentTarget.parentNode.querySelector('.my_bigid').outerText;
 					var data = {
 						foodname:this.foodname,
-						styleid:this.currentId,
+						styleid:styid,
+						stypeid:parentid,
 						start_ts:this.startTime,
 						end_ts:this.endTime,
 						pageNo:this.pagination.currentPage,
