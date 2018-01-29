@@ -125,6 +125,7 @@
 						<td class="text-center" v-text="sum(details,'count')"></td>
 						<td class="text-center" v-text="sum(details,'amount')"></td>
 						<td class="text-center"></td>
+                        <td class="text-center"></td>
 						<td class="text-center"></td>
 					</tr>
 					</tfoot>
@@ -224,7 +225,6 @@
 					this.today = newDay.getFullYear() + '-' + (newDay.getMonth() > 8 ? (newDay.getMonth() + 1) : ('0' + (newDay.getMonth() + 1))) + '-' + newDay.getDate();
 				},
 				choiceBClass:function(e){
-				alert("222");
 					this.type=0;
 					vm.smallClasses.splice(0,vm.smallClasses.length);
 					var parentid=e.currentTarget.parentNode.querySelector('.my_bigid').outerText;
@@ -247,6 +247,7 @@
 								for(var i=0;i<data.data.length;i++){
 									vm.smallClasses.push(data.data[i]);
 								}
+								console.log(parentid);
 								this.choice_numbers=0;
 								<!--vm.searchType=1;-->
 								<!--vm.currentPage=1;-->
@@ -286,7 +287,6 @@
 					});
 					$("#allGoods").children('li').removeClass('active1');
 					e.currentTarget.parentNode.className='active1';
-					alert("111111");
 				},
 				choiceSClass:function(e){
 					this.type=2;
