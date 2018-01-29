@@ -6,27 +6,21 @@ import com.github.pagehelper.PageInfo;
 import com.iandtop.dao.DetailAllDAO;
 import com.iandtop.dao.PublicDAO;
 import com.iandtop.model.DeptModelVO;
-import com.iandtop.model.OrderFormModel;
-import com.iandtop.model.StaffModel;
 import com.iandtop.model.card.CardChangeRecordModel;
 import com.iandtop.model.card.CardChargeRecordModel;
 import com.iandtop.model.card.CardModel;
 import com.iandtop.model.card.CardRefundRecordModel;
-import com.iandtop.model.form.ChargeForSModel;
 import com.iandtop.model.meal.MealRecordModel;
 import com.iandtop.model.system.UserModel;
 import com.iandtop.service.DetailAllService;
 import com.iandtop.utils.BaseUtils;
-import com.iandtop.utils.DateUtils;
-import com.iandtop.utils.MealRecordUtils;
-import oracle.sql.OracleJdbc2SQLInput;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by xss on 2017/5/22.
@@ -123,6 +117,8 @@ public class DetailAllServiceImpl implements DetailAllService
             }
         }
         strSQL+=") c left join db_staff s on c.pk_staff = s.pk_staff " +
+                "left join db_department d on s.def1 = d.department_code " +
+                "left join meal_device m on c.pk_device = m.pk_device " +
                 "where 1=1 ";
         if(staff_code!=null && staff_code.length()>0){
             strSQL+="and s.staff_code = '"+staff_code+"' ";
