@@ -280,7 +280,6 @@
                     });
 				},
 				choiceSClass:function(e){
-					e.currentTarget.parentNode.className='active2';
 					this.type=2;
 					this.choice_numbers=0;
 					vm.currentPage=1;
@@ -292,6 +291,7 @@
 					}else{
 						e.currentTarget.parentNode.parentNode.querySelector('.active2').className='';
 					}
+					e.currentTarget.parentNode.className='active2';
 					//
 					this.getStartTimeAndEndTime();
 					$.ajax({
