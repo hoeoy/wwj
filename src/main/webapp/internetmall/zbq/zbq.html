@@ -232,6 +232,8 @@
 					if(this.open==false){
 					    this.currentId='';
 					}
+					$("#allGoods").children('li').removeClass('active1');
+					e.currentTarget.parentNode.className='active1';
 					var vmTemp = this;
 
 					for(var i=0;i<vm.outClasses.length;i++){
@@ -244,9 +246,6 @@
                             }
                         }
                     }
-
-                    $("#allGoods").children('li').removeClass('active1');
-					e.currentTarget.parentNode.className='active1';
 
                     this.choice_numbers=0;
                     vm.currentPage=1;
