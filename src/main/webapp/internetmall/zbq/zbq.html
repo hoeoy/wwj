@@ -218,6 +218,7 @@
 					this.today = newDay.getFullYear() + '-' + (newDay.getMonth() > 8 ? (newDay.getMonth() + 1) : ('0' + (newDay.getMonth() + 1))) + '-' + newDay.getDate();
 				},
 				choiceBClass:function(e){
+					this.currentId='';
 					this.type=1;
 					vm.smallClasses.splice(0,vm.smallClasses.length);
 					<!--var parentid=e.currentTarget.parentNode.querySelector('.my_bigid').outerText;-->
@@ -229,11 +230,7 @@
 						<!--e.currentTarget.querySelector('.glyphicon').className='glyphicon glyphicon-plus menu_title2';-->
 						this.open=false;
 					}
-					if(this.open==false){
-					    this.currentId='';
-					}
 					$("#allGoods").children('li').removeClass('active1');
-					$("#treeview-menu2").children('li').removeClass('active2');
 					$(".active2").removeClass('active2');
 					e.currentTarget.parentNode.className='active1';
 					var vmTemp = this;
