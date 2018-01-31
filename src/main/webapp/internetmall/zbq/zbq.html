@@ -6,6 +6,10 @@
 	<!--<link href="css/sub/consumer_details.css" rel="stylesheet">-->
 	<link href="css/report.css" rel="stylesheet"><!-- 报表公用的CSS -->
 	<link href="internetmall/zbq/css/zbq.css" rel="stylesheet"/>
+
+	<style>
+		/*#treeview-menu2 li:hover{background: #E6EFF3}*/
+	</style>
 </head>
 <body>
 	<OBJECT ID="AxRead" CLASSID="CLSID:1B83CB21-E01E-4CA4-B54C-356E31448A86" style="display: none;"></OBJECT>
@@ -20,9 +24,10 @@
 								<span class="hide my_bigid">{{outClass.id}}</span>
 							</a>
 							<ul class="treeview-menu treeview-menu2" id="treeview-menu2"  style="display: none;padding-left: 0;">
-								<li v-for='smallClass in smallClasses' class="treeview-menu_li" >
-									<a href="#"  class="menu_title2" @click='choiceSClass($event)'>{{smallClass.typename}}</a>
-									<span class="hide my_smallid">{{smallClass.pk_only}}</span>
+								<li v-for='smallClass in smallClasses' class="treeview-menu_li">
+									<a href="javascript:;" @click='choiceSClass($event)'><span class="menu_title2">{{smallClass.typename}}</span>
+										<span class="hide my_smallid">{{smallClass.pk_only}}</span>
+									</a>
 								</li>
 							</ul>
 						</li>
@@ -172,12 +177,12 @@
 				open:false,
 				myChecked_big:[], //我的大类选中
 				pk_parentid:'',
-				choice_numbers:0,
+//				choice_numbers:0,
 				currentPage:1,
 				my_checked_goods:[],
 				currentId:'',
 				pId:'',
-				currentName:'',
+//				currentName:'',
 				id:'',
 				totalpages:1,
 				pagesArrys:[],
@@ -233,34 +238,31 @@
 					$("#allGoods").children('li').removeClass('active1');
 					$(".active2").removeClass('active2');
 					e.currentTarget.parentNode.className='active1';
-					var vmTemp = this;
 
 					for(var i=0;i<vm.outClasses.length;i++){
 					    //获取大类
                         var styleModel = vm.outClasses[i];
                         //判断大类 和 选中大类  获取大类下小类数据
-                        if(styleModel.id == vmTemp.pId){
+                        if(styleModel.id == this.pId){
                             for(var z=0;z<styleModel.orderModelVos.length;z++){
 								vm.smallClasses.push(styleModel.orderModelVos[z]);
                             }
                         }
                     }
 
-                    this.choice_numbers=0;
-                    vm.currentPage=1;
                     vm.allGoods.splice(0,vm.allGoods.length);
-                    vmTemp.getStartTimeAndEndTime();
+					this.getStartTimeAndEndTime();
                     $.ajax({
                         type:"POST",
                         url:getUrl()+'/Api/detailAll/queryOrder',
                         dataType:'json',
                         data:{
-                            foodname:vmTemp.foodname,
-                            stypeid:vmTemp.pId,
-                            start_ts:vmTemp.startTime,
-                            end_ts:vmTemp.endTime,
-                            pageNo:vmTemp.pagination.currentPage,
-                            pageSize:vmTemp.pagination.pageSize,
+                            foodname:this.foodname,
+                            stypeid:this.pId,
+                            start_ts:this.startTime,
+                            end_ts:this.endTime,
+                            pageNo:this.pagination.currentPage,
+                            pageSize:this.pagination.pageSize,
                             id:_id
                         },
                         success:function(data){
@@ -277,19 +279,12 @@
                     });
 				},
 				choiceSClass:function(e){
-					this.type=2;
-					this.choice_numbers=0;
-					vm.currentPage=1;
+					$(".active2").removeClass('active2');
+					e.target.parentNode.className='active2';
 					vm.allGoods.splice(0,vm.allGoods.length);
-					this.currentId=e.currentTarget.parentNode.querySelector('.my_smallid').outerText;
-					this.currentName=e.currentTarget.parentNode.querySelector('.menu_title2').outerText;
-					if(e.currentTarget.parentNode.parentNode.querySelector('.active2')==null){
+					this.currentId=e.target.parentNode.querySelector('.my_smallid').outerText;
 
-					}else{
-						e.currentTarget.parentNode.parentNode.querySelector('.active2').className='';
-					}
-					e.currentTarget.parentNode.className='active2';
-					//
+
 					this.getStartTimeAndEndTime();
 					$.ajax({
 	                    type:"POST",
@@ -314,8 +309,7 @@
 								vm.pagination.total=0;
 							}
 	                    },
-	                    error:function(msg){
-	                    	}
+	                    error:function(msg){alert(msg);}
                 		});
 				},
 				query:function(){//获取 充值明细报表
@@ -380,6 +374,9 @@
 			}
 		});
 		vm.init();
+		$('.wwj-tab-wrap').on('click',function(e){
+			if ($(e.target).hasClass('dropdown') || $(e.target).hasClass('caret') || $(e.target).hasClass('dropdown-btn')) return;else  $('.dropdown').removeClass('active');
+		});
 		(function(){
 			$('.index_treemenu').css({background:'#f1f1f1'});
 			$('#dept_tree').css({minHeight:deptTreeHeight,background:'#fff'});

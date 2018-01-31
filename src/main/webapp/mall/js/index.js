@@ -91,6 +91,7 @@ $(function(){
                         console.log(msg);
                     }
                 });
+				/*
                 $.ajax({
                     type:"POST",
                     url:getUrl()+'/Api/Order/Find',
@@ -129,7 +130,7 @@ $(function(){
 						console.log(msg);
                     }
                 });
-                
+                */
 
               if($("#fydh").children('a').outerText==1) {
               		$(this).parent().className='active_';
