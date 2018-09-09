@@ -1,5 +1,4 @@
-1 查看procedure_half_monthly
-
+/*1 传入半月记录表名称，将数据全部移动到meal_record查看procedure_half_monthly*/
 
 /*2 将全部本月前的半月表数据导入到meal_record*/
 DELIMITER //
@@ -47,7 +46,7 @@ DELIMITER ;
 
 
 
-/*1 每日将半月表的当天数据移动到meal_record*/
+/*3 每日将半月表的当天数据移动到meal_record*/
 DELIMITER //
 DROP PROCEDURE
 IF EXISTS `ETL_meal_record_daily`//
