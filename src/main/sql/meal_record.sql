@@ -61,6 +61,7 @@ CREATE TABLE `meal_record` (
   `merchant_code` varchar(64) DEFAULT NULL COMMENT '商户编码',
   `merchant_name` varchar(64) DEFAULT NULL COMMENT '商户名称',
   `from_table_pk_meal_record` bigint(20) NOT NULL COMMENT '本条数据来源半月表所在行的pk值',
+  `meal_ts_day` char(10) DEFAULT NULL COMMENT 'meal_ts的日期截取',
   PRIMARY KEY (`pk_meal_record`),
   KEY `meal_ts` (`meal_ts`) USING HASH
 ) ENGINE=InnoDB AUTO_INCREMENT=1542134 DEFAULT CHARSET=utf8;

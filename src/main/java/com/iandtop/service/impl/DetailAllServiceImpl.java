@@ -68,79 +68,92 @@ public class DetailAllServiceImpl implements DetailAllService
     @Override
     public PageInfo<MealRecordModel> queryConsumeDetail(
             String staff_code, String staff_name, String card_code,String device_code,String dept_code,String start_ts, String end_ts, Integer pageNo, Integer pageSize) throws ParseException {
-        List<String> tableNames = gainTableName(start_ts,end_ts);//所有需要查的半月表
+//        List<String> tableNames = gainTableName(start_ts,end_ts);//所有需要查的半月表
+//        String queryMeal = "select " +
+//                "c.card_code,c.serial,c.meal_ts,c.meal_money/100 meal_money,c.meal_type," +
+//                "c.meal_allowance/100 meal_allowance,c.meal_cash_money/100 meal_cash_money,c.cash_retain/100 cash_retain," +
+//                "c.allowance_retain/100 allowance_retain,c.money_retain/100 money_retain," +
+//                "s.staff_code,s.staff_name,d.department_name,m.device_name from (";
+//        for(int i = 0;i<tableNames.size();i++){
+//            queryMeal += "select pk_device,pk_staff,meal_type,card_code,serial,meal_ts,meal_money," +
+//                    "meal_allowance,meal_cash_money,cash_retain,allowance_retain,money_retain from "+tableNames.get(i);
+//            if(i<tableNames.size()-1){
+//                queryMeal+=" UNION ";
+//            }
+//        }
+
+//        queryMeal+=") c left join db_staff s on c.pk_staff = s.pk_staff " +
+//                "left join db_department d on s.def1 = d.department_code " +
+//                "left join meal_device m on c.pk_device = m.pk_device " +
+//                "where 1=1 ";
+
         String queryMeal = "select " +
                 "c.card_code,c.serial,c.meal_ts,c.meal_money/100 meal_money,c.meal_type," +
-                "c.meal_allowance/100 meal_allowance,c.meal_cash_money/100 meal_cash_money,c.cash_retain/100 cash_retain," +
+                "c.meal_allowance/100 meal_allowance,c.meal_cash_money/100 meal_cash_money," +
+                "c.cash_retain/100 cash_retain," +
                 "c.allowance_retain/100 allowance_retain,c.money_retain/100 money_retain," +
-                "s.staff_code,s.staff_name,d.department_name,m.device_name from (";
-        for(int i = 0;i<tableNames.size();i++){
-            queryMeal += "select pk_device,pk_staff,meal_type,card_code,serial,meal_ts,meal_money," +
-                    "meal_allowance,meal_cash_money,cash_retain,allowance_retain,money_retain from "+tableNames.get(i);
-            if(i<tableNames.size()-1){
-                queryMeal+=" UNION ";
-            }
-        }
-        queryMeal+=") c left join db_staff s on c.pk_staff = s.pk_staff " +
-                "left join db_department d on s.def1 = d.department_code " +
-                "left join meal_device m on c.pk_device = m.pk_device " +
-                "where 1=1 ";
-        if(staff_code!=null && staff_code.length()>0){
-            queryMeal+="and s.staff_code = '"+staff_code+"' ";
-        }
-        if(staff_name!=null && staff_name.length()>0){
-            queryMeal+="and s.staff_name = '"+staff_name+"' ";
-        }
-        if(card_code!=null && card_code.length()>0){
-            queryMeal+="and c.card_code = '"+card_code+"' ";
-        }
-        if(device_code!=null && device_code.length()>0){
-            queryMeal+="and m.device_code = '"+device_code+"' ";
-        }
-        if(dept_code!=null && dept_code.length()>0){
-            queryMeal+="and d.department_code like '"+dept_code+"%' ";
-        }
-        if(start_ts!=null && start_ts.length()>0){
-            queryMeal+="and c.meal_ts >= '"+start_ts+"' ";
-        }
-        if(end_ts!=null && end_ts.length()>0){
-            queryMeal+="and c.meal_ts <= '"+end_ts+"' ";
-        }
-        queryMeal+= "order by c.meal_ts desc";
+                "c.staff_code,c.staff_name,c.department_name,c.device_name from meal_record c " ;
 
-        String strSQL = "select count(0) from (";
-        for(int i = 0;i<tableNames.size();i++){
-            strSQL += "select pk_device,pk_staff,meal_type,card_code,serial,meal_ts,meal_money," +
-                    "meal_allowance,meal_cash_money,cash_retain,allowance_retain,money_retain from "+tableNames.get(i) ;
-            if(i<tableNames.size()-1){
-                strSQL+=" UNION ";
-            }
-        }
-        strSQL+=") c left join db_staff s on c.pk_staff = s.pk_staff " +
-                "left join db_department d on s.def1 = d.department_code " +
-                "left join meal_device m on c.pk_device = m.pk_device " +
-                "where 1=1 ";
+        String whereSql = " where 1=1 ";
         if(staff_code!=null && staff_code.length()>0){
-            strSQL+="and s.staff_code = '"+staff_code+"' ";
+            whereSql+="and c.staff_code = '"+staff_code+"' ";
         }
         if(staff_name!=null && staff_name.length()>0){
-            strSQL+="and s.staff_name = '"+staff_name+"' ";
+            whereSql+="and c.staff_name = '"+staff_name+"' ";
         }
         if(card_code!=null && card_code.length()>0){
-            strSQL+="and c.card_code = '"+card_code+"' ";
+            whereSql+="and c.card_code = '"+card_code+"' ";
         }
         if(device_code!=null && device_code.length()>0){
-            strSQL+="and m.device_code = '"+device_code+"' ";
+            whereSql+="and c.device_code = '"+device_code+"' ";
         }
         if(dept_code!=null && dept_code.length()>0){
-            strSQL+="and d.department_code like '"+dept_code+"%' ";
+            whereSql+="and c.department_code like '"+dept_code+"%' ";
         }
         if(start_ts!=null && start_ts.length()>0){
-            strSQL+=" and c.meal_ts >= '"+start_ts+"' ";
+            whereSql+="and c.meal_ts >= '"+start_ts+"' ";
         }
         if(end_ts!=null && end_ts.length()>0){
-            strSQL+=" and c.meal_ts <= '"+end_ts+"' ";
+            whereSql+="and c.meal_ts <= '"+end_ts+"' ";
         }
+
+        queryMeal+= whereSql+"order by c.meal_ts desc";
+
+        String strSQL = "select count(*) from meal_record c " + whereSql;
+
+//        String strSQL = "select count(0) from (";
+//        for(int i = 0;i<tableNames.size();i++){
+//            strSQL += "select pk_device,pk_staff,meal_type,card_code,serial,meal_ts,meal_money," +
+//                    "meal_allowance,meal_cash_money,cash_retain,allowance_retain,money_retain from "+tableNames.get(i) ;
+//            if(i<tableNames.size()-1){
+//                strSQL+=" UNION ";
+//            }
+//        }
+//        strSQL+=") c left join db_staff s on c.pk_staff = s.pk_staff " +
+//                "left join db_department d on s.def1 = d.department_code " +
+//                "left join meal_device m on c.pk_device = m.pk_device " +
+//                "where 1=1 ";
+//        if(staff_code!=null && staff_code.length()>0){
+//            strSQL+="and s.staff_code = '"+staff_code+"' ";
+//        }
+//        if(staff_name!=null && staff_name.length()>0){
+//            strSQL+="and s.staff_name = '"+staff_name+"' ";
+//        }
+//        if(card_code!=null && card_code.length()>0){
+//            strSQL+="and c.card_code = '"+card_code+"' ";
+//        }
+//        if(device_code!=null && device_code.length()>0){
+//            strSQL+="and m.device_code = '"+device_code+"' ";
+//        }
+//        if(dept_code!=null && dept_code.length()>0){
+//            strSQL+="and d.department_code like '"+dept_code+"%' ";
+//        }
+//        if(start_ts!=null && start_ts.length()>0){
+//            strSQL+=" and c.meal_ts >= '"+start_ts+"' ";
+//        }
+//        if(end_ts!=null && end_ts.length()>0){
+//            strSQL+=" and c.meal_ts <= '"+end_ts+"' ";
+//        }
 
         int listTotal = publicDAO.intfindBysql(strSQL);
         pageNo = pageNo == null?1:pageNo;

@@ -51,30 +51,38 @@ $(function(){
 				var startTime=$("#start_time").val();
 				var endTime=$("#end_time").val()+"&nbsp;23:59:59";
 
-				$.ajax({
-					type: 'post',
-					data:{
-						card_code:cardId,
-						start_ts:startTime,
-						end_ts:endTime
-					},
-					dataType:"json",
-					url: getUrl() + '/Api/MealrecordUp/queryorder',
-					success: function (data) {
-						$("#btn_query").removeAttr('disabled');
-						$("#btn_query").text('查询');
-						console.log(data);
-						for(var i=0;i< data.data.length;i++){
-							CorrVue.contents.push(data.data[i]);
+				var st = new Date(startTime);
+				var et = new Date($("#end_time").val());
+				var time = et.getTime() - st.getTime();
+				var days = parseInt(time / (1000 * 60 * 60 * 24));
+				alert(days);
+				if(days>30){
+					alert("时间跨度不能超过一个月")
+				}else{
+					$.ajax({
+						type: 'post',
+						data:{
+							card_code:cardId,
+							start_ts:startTime,
+							end_ts:endTime
+						},
+						dataType:"json",
+						url: getUrl() + '/Api/MealrecordUp/queryorder',
+						success: function (data) {
+							$("#btn_query").removeAttr('disabled');
+							$("#btn_query").text('查询');
+							console.log(data);
+							for(var i=0;i< data.data.length;i++){
+								CorrVue.contents.push(data.data[i]);
+							}
+						},
+						error: function (data) {
+							$("#btn_query").removeAttr('disabled');
+							$("#btn_query").text('查询');
+							Notify('查询失败，请检查卡号与日期', 'top-right', '5000', 'danger', 'fa-times-circle', true);
 						}
-					},
-					error: function (data) {
-						$("#btn_query").removeAttr('disabled');
-						$("#btn_query").text('查询');
-						Notify('查询失败，请检查卡号与日期', 'top-right', '5000', 'danger', 'fa-times-circle', true);
-					}
-				});
-
+					});
+				}
 			},
 			checked:function(e){
 				if(e.currentTarget.checked){

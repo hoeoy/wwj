@@ -8,8 +8,8 @@ import com.iandtop.model.form.MerchantPos;
 import com.iandtop.model.meal.MerchantModel;
 import com.iandtop.service.DetailAllService;
 import com.iandtop.service.TenantPosService;
-import com.iandtop.utils.BigDecimalUtil;
 import com.iandtop.utils.BaseUtils;
+import com.iandtop.utils.BigDecimalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +45,7 @@ public class TenantPosImpl implements TenantPosService{
 
     @Override
     public List<MerchantPOSMondel> queryMerchantDay(String pk_merchant,String pk_device,String start_ts, String end_ts) {
-        String queryMerchantDay = "select substring(r.meal_ts,1,10) sum_date,m.merchant_code,m.merchant_name,d.device_code,d.device_name , " +
+        String queryMerchantDay = "select meal_ts_day sum_date,merchant_code,merchant_name,device_code,device_name , " +
                 "sum(r.dining_code = 0) breakfast_num, " +
                 "sum(CASE r.dining_code WHEN 0 THEN meal_money ELSE 0 END)/100  'breakfast_money', " +
                 "sum(r.dining_code = 1) lunch_num, " +
@@ -62,31 +62,31 @@ public class TenantPosImpl implements TenantPosService{
                 "sum(CASE r.dining_code WHEN 2 THEN meal_money ELSE 0 END)+ " +
                 "sum(CASE r.dining_code WHEN 3 THEN meal_money ELSE 0 END)+ " +
                 "sum(CASE r.dining_code WHEN 4 THEN meal_money ELSE 0 END))/100 'sum_money' " +
-                "from (";
-        List<String> tableNames = detailAllService.gainTableName(start_ts,end_ts);
-        for(int i = 0;i<tableNames.size();i++){
-            queryMerchantDay += "select meal_ts,meal_money,dining_code,pk_device from "+tableNames.get(i);
-            if(i<tableNames.size()-1){
-                queryMerchantDay+=" UNION ALL ";
-            }
-        }
-        queryMerchantDay+=")r left join meal_device  d on r.pk_device = d.pk_device " +
-                "left join meal_merchant m on d.pk_merchant = m.pk_merchant " +
-
+                "from meal_record r ";
+//        List<String> tableNames = detailAllService.gainTableName(start_ts,end_ts);
+//        for(int i = 0;i<tableNames.size();i++){
+//            queryMerchantDay += "select meal_ts,meal_money,dining_code,pk_device from "+tableNames.get(i);
+//            if(i<tableNames.size()-1){
+//                queryMerchantDay+=" UNION ALL ";
+//            }
+//        }
+        queryMerchantDay+=
+//                ")r left join meal_device  d on r.pk_device = d.pk_device " +
+//                "left join meal_merchant m on d.pk_merchant = m.pk_merchant " +
                 "where 1=1 ";
         if(pk_device!=null && pk_device.length()>0){
             queryMerchantDay+="and r.pk_device = '"+pk_device+"' ";
         }
         if(pk_merchant!=null && pk_merchant.length()>0){
-            queryMerchantDay+="and d.pk_merchant = '"+pk_merchant+"' ";
+            queryMerchantDay+="and r.pk_merchant = '"+pk_merchant+"' ";
         }
         if(start_ts!=null && start_ts.length()>0){
-            queryMerchantDay+="and substring(r.meal_ts,1,10) >= '"+start_ts+"' ";
+            queryMerchantDay+="and meal_ts_day >= '"+start_ts+"' ";
         }
         if(end_ts!=null && end_ts.length()>0){
-            queryMerchantDay+="and substring(r.meal_ts,1,10) <= '"+end_ts+"' ";
+            queryMerchantDay+="and meal_ts_day <= '"+end_ts+"' ";
         }
-        queryMerchantDay+="group by substring(r.meal_ts,1,10)";
+        queryMerchantDay+="group by meal_ts_day";
         List<MerchantPOSMondel> merchantPOSMondels =
                 BaseUtils.mapToBean(MerchantPOSMondel.class,publicDAO.retrieveBySql(queryMerchantDay));
         return merchantPOSMondels;
@@ -94,7 +94,8 @@ public class TenantPosImpl implements TenantPosService{
 
     @Override
     public List<MerchantPOSMondel> queryMerchantSum(String pk_merchant,String pk_device, String start_ts, String end_ts) {
-        String queryMerchantDay = "select substring(r.meal_ts,1,10) sum_date,m.merchant_code,m.merchant_name,d.device_code,d.device_name , " +
+        String queryMerchantDay = "select " +
+                "meal_ts_day sum_date,merchant_code,merchant_name,device_code,device_name , " +
                 "sum(r.dining_code = 0) breakfast_num, " +
                 "sum(CASE r.dining_code WHEN 0 THEN meal_money ELSE 0 END)/100  'breakfast_money', " +
                 "sum(r.dining_code = 1) lunch_num, " +
@@ -111,31 +112,30 @@ public class TenantPosImpl implements TenantPosService{
                 "sum(CASE r.dining_code WHEN 2 THEN meal_money ELSE 0 END)+ " +
                 "sum(CASE r.dining_code WHEN 3 THEN meal_money ELSE 0 END)+ " +
                 "sum(CASE r.dining_code WHEN 4 THEN meal_money ELSE 0 END))/100 'sum_money' " +
-                "from (";
-        List<String> tableNames = detailAllService.gainTableName(start_ts,end_ts);
-        for(int i = 0;i<tableNames.size();i++){
-            queryMerchantDay += "select meal_ts,meal_money,dining_code,pk_device from "+tableNames.get(i);
-            if(i<tableNames.size()-1){
-                queryMerchantDay+=" UNION ALL ";
-            }
-        }
-        queryMerchantDay+=")r left join meal_device  d on r.pk_device = d.pk_device " +
-                "left join meal_merchant m on d.pk_merchant = m.pk_merchant " +
-                "left join meal_dining i on r.dining_code = i.dining_code " +
-                "where 1=1 ";
+                "from meal_record r ";
+//        List<String> tableNames = detailAllService.gainTableName(start_ts,end_ts);
+//        for(int i = 0;i<tableNames.size();i++){
+//            queryMerchantDay += "select meal_ts,meal_money,dining_code,pk_device from "+tableNames.get(i);
+//            if(i<tableNames.size()-1){
+//                queryMerchantDay+=" UNION ALL ";
+//            }
+//        }
+        queryMerchantDay+="where 1=1 ";
         if(pk_device!=null && pk_device.length()>0){
             queryMerchantDay+="and r.pk_device = '"+pk_device+"' ";
         }
         if(pk_merchant!=null && pk_merchant.length()>0){
-            queryMerchantDay+="and d.pk_merchant = '"+pk_merchant+"' ";
+            queryMerchantDay+="and r.pk_merchant = '"+pk_merchant+"' ";
         }
         if(start_ts!=null && start_ts.length()>0){
-            queryMerchantDay+="and substring(r.meal_ts,1,10) >= '"+start_ts+"' ";
+            queryMerchantDay+="and meal_ts_day >= '"+start_ts+"' ";
         }
         if(end_ts!=null && end_ts.length()>0){
-            queryMerchantDay+="and substring(r.meal_ts,1,10) <= '"+end_ts+"' ";
+            queryMerchantDay+="and meal_ts_day <= '"+end_ts+"' ";
         }
-        queryMerchantDay+="group by substring(r.meal_ts,1,10),d.device_code";
+        queryMerchantDay+="group by meal_ts_day,r.device_code";
+
+
         List<MerchantPOSMondel> merchantPOSMondels =
                 BaseUtils.mapToBean(MerchantPOSMondel.class,publicDAO.retrieveBySql(queryMerchantDay));
         MerchantPOSMondel merchantPOSMondel;
@@ -176,7 +176,8 @@ public class TenantPosImpl implements TenantPosService{
             }
 
             for(MerchantPOSMondel m : merchantPOSMondelList){
-                if(m.getDevice_code().equals(merchantPOSMondels.get(i).getDevice_code())){
+                if(m.getDevice_code()!=null &&
+                        m.getDevice_code().equals(merchantPOSMondels.get(i).getDevice_code())){
                     mark = true;
                 }
             }
@@ -184,7 +185,8 @@ public class TenantPosImpl implements TenantPosService{
                 continue;
             }
                 for(int j = i+1;j<merchantPOSMondels.size();j++){
-                    if(merchantPOSMondels.get(i).getDevice_code().equals(merchantPOSMondels.get(j).getDevice_code())){
+                    if(merchantPOSMondels.get(i).getDevice_code()!=null
+                            &&merchantPOSMondels.get(i).getDevice_code().equals(merchantPOSMondels.get(j).getDevice_code())){
 
                         breakfast_num += Integer.parseInt( merchantPOSMondels.get(j).getBreakfast_num());
                         breakfast_money = BigDecimalUtil.add(breakfast_money,merchantPOSMondels.get(j).getBreakfast_money());
@@ -918,17 +920,17 @@ public class TenantPosImpl implements TenantPosService{
     }
 
     private String makeTable(String start_ts, String end_ts) {
-        String strTable = "( select * from (";
-        List<String> tableNames = detailAllService.gainTableName(start_ts, end_ts);
-        for (int i = 0; i < tableNames.size(); i++) {
-            strTable += "select meal_ts,meal_money,dining_code,pk_device,pk_staff from " + tableNames.get(i);
-            if (i < tableNames.size() - 1) {
-                strTable += " UNION ALL ";
-            }
-        }
-        strTable += ")r where " +
-                " substring(r.meal_ts,1,10) >= '" + start_ts + "' " +
-                " and substring(r.meal_ts,1,10) <= '" + end_ts + "' " +
+        String strTable = "( select * from meal_record r ";
+//        List<String> tableNames = detailAllService.gainTableName(start_ts, end_ts);
+//        for (int i = 0; i < tableNames.size(); i++) {
+//            strTable += "select meal_ts,meal_money,dining_code,pk_device,pk_staff from " + tableNames.get(i);
+//            if (i < tableNames.size() - 1) {
+//                strTable += " UNION ALL ";
+//            }
+//        }
+        strTable += " where " +
+                " meal_ts_day >= '" + start_ts + "' " +
+                " and meal_ts_day <= '" + end_ts + "' " +
                 ") mlr";
         return strTable;
     }
