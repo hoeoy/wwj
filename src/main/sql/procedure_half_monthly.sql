@@ -49,7 +49,9 @@ SET @sql_etl = CONCAT(
 		pk_merchant ,
 		merchant_code ,
 		merchant_name ,
-		meal_ts_day
+		meal_ts_day ,
+		device_type ,
+		pk_merchant_staff
 	) SELECT
 		r.pk_meal_record ,
 		r.pk_staff ,
@@ -89,7 +91,9 @@ SET @sql_etl = CONCAT(
 		device.pk_merchant ,
 		m.merchant_code ,
 		m.merchant_name,
-	 substring(r.meal_ts,1,10) meal_ts_day
+	  substring(r.meal_ts,1,10) meal_ts_day,
+	  device.device_type,
+	  s.pk_merchant pk_merchant_staff
 	FROM " ,@tbl_name ,
 	" r LEFT JOIN db_staff s ON r.pk_staff = s.pk_staff
 	LEFT JOIN db_company c ON s.company_code = c.company_code

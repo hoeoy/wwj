@@ -57,13 +57,21 @@ CREATE TABLE `meal_record` (
   `department_name` varchar(50) DEFAULT NULL COMMENT '部门名称',
   `card_state` varchar(8) DEFAULT NULL COMMENT '卡状态  10:正常  20:挂失  40:退卡',
   `device_name` varchar(128) DEFAULT NULL,
-  `pk_merchant` bigint(20) DEFAULT NULL COMMENT '关联商户',
+  `pk_merchant` bigint(20) DEFAULT NULL COMMENT '设备关联商户',
   `merchant_code` varchar(64) DEFAULT NULL COMMENT '商户编码',
   `merchant_name` varchar(64) DEFAULT NULL COMMENT '商户名称',
   `from_table_pk_meal_record` bigint(20) NOT NULL COMMENT '本条数据来源半月表所在行的pk值',
   `meal_ts_day` char(10) DEFAULT NULL COMMENT 'meal_ts的日期截取',
-  PRIMARY KEY (`pk_meal_record`),
-  KEY `meal_ts` (`meal_ts`) USING HASH
+  `device_type` bigint(20) DEFAULT NULL COMMENT '设备类型',
+  `pk_merchant_staff` bigint(20) DEFAULT NULL COMMENT '员工关联商户',
+  PRIMARY KEY (`pk_meal_record`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1542134 DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+ALTER  TABLE  `meal_record`  ADD  INDEX meal_ts (  `meal_ts`  )  USING BTREE;
+ALTER  TABLE  `meal_record`  ADD  INDEX meal_ts_day (  `meal_ts_day`  )  USING BTREE;
+ALTER  TABLE  `meal_record`  ADD  INDEX device_type (  `device_type`  )  USING HASH;
+ALTER  TABLE  `meal_record`  ADD  INDEX pk_merchant (  `pk_merchant`  )  USING HASH;
+ALTER  TABLE  `meal_record`  ADD  INDEX pk_merchant_staff (  `pk_merchant_staff`  ) USING HASH;

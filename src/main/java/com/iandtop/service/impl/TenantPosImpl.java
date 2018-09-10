@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by xss on 2017-05-24.
@@ -234,675 +235,101 @@ public class TenantPosImpl implements TenantPosService{
 
     @Override
     public List<MerchantPos> findSumbyMerchant( Long pk_merchant, String start_ts, String end_ts) {
-        String strTable = makeTable(start_ts,end_ts);
         String strFields = getFields();
-        String strSql = strFields +
-                " FROM " +
-                " meal_merchant mm, " +
-                " ( " +
-                "  SELECT " +
-                "   count(0) AS total_amount, " +
-                "   SUM(mlr.meal_money) AS total_price " +
-                "  FROM " + strTable +
-                "  WHERE " +
-                "   mlr.pk_device IN ( " +
-                "    SELECT " +
-                "     mld.pk_device " +
-                "    FROM " +
-                "     meal_device mld " +
-                "    WHERE " +
-                "     mld.pk_merchant = "+ pk_merchant +
-                "    AND mld.pk_device IN ( " +
-                "     SELECT " +
-                "      mlr.pk_device " +
-                "     FROM " + strTable +
-                "     GROUP BY " +
-                "      mlr.pk_device " +
-                "    ) " +
-                "   ) " +
-                " ) mch, " +
-                " ( " +
-                "  SELECT " +
-                "   count(0) AS amount, " +
-                "   SUM(mlr.meal_money) AS price " +
-                "  FROM " + strTable +
-                "  WHERE " +
-                "   mlr.pk_device IN ( " +
-                "    SELECT " +
-                "     b.pk_device " +
-                "    FROM " +
-                "     ( " +
-                "      SELECT " +
-                "       mld.pk_device, " +
-                "       mld.device_type " +
-                "      FROM " +
-                "       meal_device mld " +
-                "      WHERE " +
-                "       mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      AND mld.pk_device IN ( " +
-                "       SELECT " +
-                "        mld.pk_device " +
-                "       FROM " +
-                "        meal_device mld " +
-                "       WHERE " +
-                "        mld.pk_merchant = "+ pk_merchant +
-                "       AND mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      ) " +
-                "     ) b " +
-                "    WHERE " +
-                "     b.device_type = '2' " +
-                "   ) " +
-                " ) cf, " +
-                " ( " +
-                "  SELECT " +
-                "   count(0) AS amount, " +
-                "   SUM(mlr.meal_money) AS price " +
-                "  FROM " + strTable +
-                "  WHERE " +
-                "   mlr.pk_device IN ( " +
-                "    SELECT " +
-                "     b.pk_device " +
-                "    FROM " +
-                "     ( " +
-                "      SELECT " +
-                "       mld.pk_device, " +
-                "       mld.device_type " +
-                "      FROM " +
-                "       meal_device mld " +
-                "      WHERE " +
-                "       mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      AND mld.pk_device IN ( " +
-                "       SELECT " +
-                "        mld.pk_device " +
-                "       FROM " +
-                "        meal_device mld " +
-                "       WHERE " +
-                "        mld.pk_merchant = "+ pk_merchant +
-                "       AND mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      ) " +
-                "     ) b " +
-                "    WHERE " +
-                "     b.device_type = '3' " +
-                "   ) " +
-                " ) mk, " +
-                " ( " +
-                "  SELECT " +
-                "   count(0) AS amount, " +
-                "   SUM(mlr.meal_money) AS price " +
-                "  FROM " + strTable +
-                "  WHERE " +
-                "   mlr.pk_device IN ( " +
-                "    SELECT " +
-                "     b.pk_device " +
-                "    FROM " +
-                "     ( " +
-                "      SELECT " +
-                "       mld.pk_device, " +
-                "       mld.device_type " +
-                "      FROM " +
-                "       meal_device mld " +
-                "      WHERE " +
-                "       mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      AND mld.pk_device IN ( " +
-                "       SELECT " +
-                "        mld.pk_device " +
-                "       FROM " +
-                "        meal_device mld " +
-                "       WHERE " +
-                "        mld.pk_merchant = "+ pk_merchant +
-                "       AND mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      ) " +
-                "     ) b " +
-                "    WHERE " +
-                "     b.device_type = '1' " +
-                "   ) " +
-                "  AND mlr.dining_code = '0' " +
-                " ) brk, " +
-                " ( " +
-                "  SELECT " +
-                "   count(0) AS amount, " +
-                "   SUM(mlr.meal_money) AS price " +
-                "  FROM " + strTable +
-                "  WHERE " +
-                "   mlr.pk_device IN ( " +
-                "    SELECT " +
-                "     b.pk_device " +
-                "    FROM " +
-                "     ( " +
-                "      SELECT " +
-                "       mld.pk_device, " +
-                "       mld.device_type " +
-                "      FROM " +
-                "       meal_device mld " +
-                "      WHERE " +
-                "       mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      AND mld.pk_device IN ( " +
-                "       SELECT " +
-                "        mld.pk_device " +
-                "       FROM " +
-                "        meal_device mld " +
-                "       WHERE " +
-                "        mld.pk_merchant = "+ pk_merchant +
-                "       AND mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      ) " +
-                "     ) b " +
-                "    WHERE " +
-                "     b.device_type = '1' " +
-                "   ) " +
-                "  AND mlr.dining_code = '1' " +
-                " ) lch, " +
-                " ( " +
-                "  SELECT " +
-                "   count(0) AS amount, " +
-                "   SUM(mlr.meal_money) AS price " +
-                "  FROM " + strTable +
-                "  WHERE " +
-                "   mlr.pk_device IN ( " +
-                "    SELECT " +
-                "     b.pk_device " +
-                "    FROM " +
-                "     ( " +
-                "      SELECT " +
-                "       mld.pk_device, " +
-                "       mld.device_type " +
-                "      FROM " +
-                "       meal_device mld " +
-                "      WHERE " +
-                "       mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      AND mld.pk_device IN ( " +
-                "       SELECT " +
-                "        mld.pk_device " +
-                "       FROM " +
-                "        meal_device mld " +
-                "       WHERE " +
-                "        mld.pk_merchant = "+ pk_merchant +
-                "       AND mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      ) " +
-                "     ) b " +
-                "    WHERE " +
-                "     b.device_type = '1' " +
-                "   ) " +
-                "  AND mlr.dining_code = '2' " +
-                " ) oto, " +
-                " ( " +
-                "  SELECT " +
-                "   count(0) AS amount, " +
-                "   SUM(mlr.meal_money) AS price " +
-                "  FROM " + strTable +
-                "  WHERE " +
-                "   mlr.pk_device IN ( " +
-                "    SELECT " +
-                "     b.pk_device " +
-                "    FROM " +
-                "     ( " +
-                "      SELECT " +
-                "       mld.pk_device, " +
-                "       mld.device_type " +
-                "      FROM " +
-                "       meal_device mld " +
-                "      WHERE " +
-                "       mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      AND mld.pk_device IN ( " +
-                "       SELECT " +
-                "        mld.pk_device " +
-                "       FROM " +
-                "        meal_device mld " +
-                "       WHERE " +
-                "        mld.pk_merchant = "+ pk_merchant +
-                "       AND mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      ) " +
-                "     ) b " +
-                "    WHERE " +
-                "     b.device_type = '1' " +
-                "   ) " +
-                "  AND mlr.dining_code = '3' " +
-                " ) dnr " +
-                "WHERE " +
-                " mm.pk_merchant ="+ pk_merchant;
+        String selectSql = "SELECT  " +
+                "  pk_merchant, " +
+                "  merchant_name ," +
+                "  merchant_code , " +
+                "  count(0) AS amount ,  " +
+                "  SUM(meal_money) AS price    " +
+                "FROM  " +
+                "  meal_record r WHERE  " +
+                "  meal_ts_day >= '"+start_ts+"'  " +
+                "AND meal_ts_day <= '"+end_ts+"'  ";
 
-        List<MerchantPos> merchantPos = BaseUtils.mapToBean(MerchantPos.class, publicDAO.retrieveBySql(strSql));
+        String whereSql = "" ;
+        String groupBySql = " GROUP BY pk_merchant  HAVING pk_merchant = "+pk_merchant;
 
+        String mchSql = selectSql+whereSql+groupBySql;
+        whereSql = " and device_type = '2' ";
+        String cfSql =   selectSql+whereSql+groupBySql;
+        whereSql = " and device_type = '3' ";
+        String mkSql =   selectSql+whereSql+groupBySql;
+        whereSql = " and device_type = '1' and dining_code = '0' ";
+        String brkSql =   selectSql+whereSql+groupBySql;
+        whereSql = " and device_type = '1' and dining_code = '1' ";
+        String lchSql =   selectSql+whereSql+groupBySql;
+        whereSql = " and device_type = '1' and dining_code = '2' ";
+        String otoSql =   selectSql+whereSql+groupBySql;
+        whereSql = " and device_type = '1' and dining_code = '3' ";
+        String dnrSql =   selectSql+whereSql+groupBySql;
+
+        String strSql = strFields + " from " +
+                " ( "+cfSql+" ) cf, " +
+                " ( "+mkSql+" ) mk, " +
+                " ( "+brkSql+" ) brk, " +
+                " ( "+lchSql+" ) lch, " +
+                " ( "+otoSql+" ) oto, " +
+                " ( "+dnrSql+" ) dnr, " +
+                " ( "+mchSql+" ) mch " ;
+
+        List<Map> mPos = publicDAO.retrieveBySql(strSql);
+        List<MerchantPos> merchantPos = BaseUtils.mapToBean(MerchantPos.class, mPos);
         return merchantPos;
     }
 
     @Override
     public List<MerchantPos> findSumbyMerchantExtend(Long pk_merchant, String start_ts, String end_ts) {
-        String strTable = makeTable(start_ts, end_ts);
         String strFields = getFields();
-        String strSql = strFields +
-                " FROM " +
-                " meal_merchant mm, " +
-                " ( " +
-                "  SELECT " +
-                "   count(0) AS total_amount, " +
-                "   SUM(mlr.meal_money) AS total_price " +
-                "  FROM " + strTable +
-                "  WHERE " +
-                "   mlr.pk_device IN ( " +
-                "    SELECT " +
-                "     mld.pk_device " +
-                "    FROM " +
-                "     meal_device mld " +
-                "    WHERE " +
-                "     mld.pk_merchant = " + pk_merchant +
-                "    AND mld.pk_device IN ( " +
-                "     SELECT " +
-                "      mlr.pk_device " +
-                "     FROM " + strTable +
-                "     GROUP BY " +
-                "      mlr.pk_device " +
-                "    ) " +
-                "   ) " +
-                "  AND mlr.pk_staff NOT IN ( " +
-                "   SELECT " +
-                "    ds.pk_staff " +
-                "   FROM " +
-                "    db_staff ds " +
-                "   WHERE " +
-                "    ds.pk_merchant = " + pk_merchant +
-                "  ) " +
-                " ) mch, " +
-                " ( " +
-                "  SELECT " +
-                "   count(0) AS amount, " +
-                "   SUM(mlr.meal_money) AS price " +
-                "  FROM " + strTable +
-                "  WHERE " +
-                "   mlr.pk_device IN ( " +
-                "    SELECT " +
-                "     b.pk_device " +
-                "    FROM " +
-                "     ( " +
-                "      SELECT " +
-                "       mld.pk_device, " +
-                "       mld.device_type " +
-                "      FROM " +
-                "       meal_device mld " +
-                "      WHERE " +
-                "       mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      AND mld.pk_device IN ( " +
-                "       SELECT " +
-                "        mld.pk_device " +
-                "       FROM " +
-                "        meal_device mld " +
-                "       WHERE " +
-                "        mld.pk_merchant = " + pk_merchant +
-                "       AND mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      ) " +
-                "     ) b " +
-                "    WHERE " +
-                "     b.device_type = '2' " +
-                "   ) " +
-                "  AND mlr.pk_staff NOT IN ( " +
-                "   SELECT " +
-                "    ds.pk_staff " +
-                "   FROM " +
-                "    db_staff ds " +
-                "   WHERE " +
-                "    ds.pk_merchant = " + pk_merchant +
-                "  ) " +
-                " ) cf, " +
-                " ( " +
-                "  SELECT " +
-                "   count(0) AS amount, " +
-                "   SUM(mlr.meal_money) AS price " +
-                "  FROM " + strTable +
-                "  WHERE " +
-                "   mlr.pk_device IN ( " +
-                "    SELECT " +
-                "     b.pk_device " +
-                "    FROM " +
-                "     ( " +
-                "      SELECT " +
-                "       mld.pk_device, " +
-                "       mld.device_type " +
-                "      FROM " +
-                "       meal_device mld " +
-                "      WHERE " +
-                "       mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      AND mld.pk_device IN ( " +
-                "       SELECT " +
-                "        mld.pk_device " +
-                "       FROM " +
-                "        meal_device mld " +
-                "       WHERE " +
-                "        mld.pk_merchant = " + pk_merchant +
-                "       AND mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      ) " +
-                "     ) b " +
-                "    WHERE " +
-                "     b.device_type = '3' " +
-                "   ) " +
-                "  AND mlr.pk_staff NOT IN ( " +
-                "   SELECT " +
-                "    ds.pk_staff " +
-                "   FROM " +
-                "    db_staff ds " +
-                "   WHERE " +
-                "    ds.pk_merchant = " + pk_merchant +
-                "  ) " +
-                " ) mk, " +
-                " ( " +
-                "  SELECT " +
-                "   count(0) AS amount, " +
-                "   SUM(mlr.meal_money) AS price " +
-                "  FROM " + strTable +
-                "  WHERE " +
-                "   mlr.pk_device IN ( " +
-                "    SELECT " +
-                "     b.pk_device " +
-                "    FROM " +
-                "     ( " +
-                "      SELECT " +
-                "       mld.pk_device, " +
-                "       mld.device_type " +
-                "      FROM " +
-                "       meal_device mld " +
-                "      WHERE " +
-                "       mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      AND mld.pk_device IN ( " +
-                "       SELECT " +
-                "        mld.pk_device " +
-                "       FROM " +
-                "        meal_device mld " +
-                "       WHERE " +
-                "        mld.pk_merchant = " + pk_merchant +
-                "       AND mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      ) " +
-                "     ) b " +
-                "    WHERE " +
-                "     b.device_type = '1' " +
-                "   ) " +
-                "  AND mlr.pk_staff NOT IN ( " +
-                "   SELECT " +
-                "    ds.pk_staff " +
-                "   FROM " +
-                "    db_staff ds " +
-                "   WHERE " +
-                "    ds.pk_merchant = " + pk_merchant +
-                "  ) " +
-                "  AND mlr.dining_code = '0' " +
-                " ) brk, " +
-                " ( " +
-                "  SELECT " +
-                "   count(0) AS amount, " +
-                "   SUM(mlr.meal_money) AS price " +
-                "  FROM " + strTable +
-                "  WHERE " +
-                "   mlr.pk_device IN ( " +
-                "    SELECT " +
-                "     b.pk_device " +
-                "    FROM " +
-                "     ( " +
-                "      SELECT " +
-                "       mld.pk_device, " +
-                "       mld.device_type " +
-                "      FROM " +
-                "       meal_device mld " +
-                "      WHERE " +
-                "       mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      AND mld.pk_device IN ( " +
-                "       SELECT " +
-                "        mld.pk_device " +
-                "       FROM " +
-                "        meal_device mld " +
-                "       WHERE " +
-                "        mld.pk_merchant = " + pk_merchant +
-                "       AND mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      ) " +
-                "     ) b " +
-                "    WHERE " +
-                "     b.device_type = '1' " +
-                "   ) " +
-                "  AND mlr.pk_staff NOT IN ( " +
-                "   SELECT " +
-                "    ds.pk_staff " +
-                "   FROM " +
-                "    db_staff ds " +
-                "   WHERE " +
-                "    ds.pk_merchant = " + pk_merchant +
-                "  ) " +
-                "  AND mlr.dining_code = '1' " +
-                " ) lch, " +
-                " ( " +
-                "  SELECT " +
-                "   count(0) AS amount, " +
-                "   SUM(mlr.meal_money) AS price " +
-                "  FROM " + strTable +
-                "  WHERE " +
-                "   mlr.pk_device IN ( " +
-                "    SELECT " +
-                "     b.pk_device " +
-                "    FROM " +
-                "     ( " +
-                "      SELECT " +
-                "       mld.pk_device, " +
-                "       mld.device_type " +
-                "      FROM " +
-                "       meal_device mld " +
-                "      WHERE " +
-                "       mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      AND mld.pk_device IN ( " +
-                "       SELECT " +
-                "        mld.pk_device " +
-                "       FROM " +
-                "        meal_device mld " +
-                "       WHERE " +
-                "        mld.pk_merchant = " + pk_merchant +
-                "       AND mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      ) " +
-                "     ) b " +
-                "    WHERE " +
-                "     b.device_type = '1' " +
-                "   ) " +
-                "  AND mlr.pk_staff NOT IN ( " +
-                "   SELECT " +
-                "    ds.pk_staff " +
-                "   FROM " +
-                "    db_staff ds " +
-                "   WHERE " +
-                "    ds.pk_merchant = " + pk_merchant +
-                "  ) " +
-                "  AND mlr.dining_code = '2' " +
-                " ) oto, " +
-                " ( " +
-                "  SELECT " +
-                "   count(0) AS amount, " +
-                "   SUM(mlr.meal_money) AS price " +
-                "  FROM " + strTable +
-                "  WHERE " +
-                "   mlr.pk_device IN ( " +
-                "    SELECT " +
-                "     b.pk_device " +
-                "    FROM " +
-                "     ( " +
-                "      SELECT " +
-                "       mld.pk_device, " +
-                "       mld.device_type " +
-                "      FROM " +
-                "       meal_device mld " +
-                "      WHERE " +
-                "       mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      AND mld.pk_device IN ( " +
-                "       SELECT " +
-                "        mld.pk_device " +
-                "       FROM " +
-                "        meal_device mld " +
-                "       WHERE " +
-                "        mld.pk_merchant = " + pk_merchant +
-                "       AND mld.pk_device IN ( " +
-                "        SELECT " +
-                "         mlr.pk_device " +
-                "        FROM " + strTable +
-                "        GROUP BY " +
-                "         mlr.pk_device " +
-                "       ) " +
-                "      ) " +
-                "     ) b " +
-                "    WHERE " +
-                "     b.device_type = '1' " +
-                "   ) " +
-                "  AND mlr.pk_staff NOT IN ( " +
-                "   SELECT " +
-                "    ds.pk_staff " +
-                "   FROM " +
-                "    db_staff ds " +
-                "   WHERE " +
-                "    ds.pk_merchant = " + pk_merchant +
-                "  ) " +
-                "  AND mlr.dining_code = '3' " +
-                " ) dnr " +
-                "WHERE " +
-                "mm.pk_merchant = " + pk_merchant;
+        String selectSql = "SELECT  " +
+                "  pk_merchant, " +
+                "  merchant_name ," +
+                "  merchant_code , " +
+                "  count(0) AS amount ,  " +
+                "  SUM(meal_money) AS price    " +
+                "FROM  " +
+                "  meal_record r " +
+                "WHERE  " +
+                "  meal_ts_day >= '"+start_ts+"'  " +
+                "AND pk_merchant_staff <> "+pk_merchant+"  " +
+                "AND meal_ts_day <= '"+end_ts+"'  ";
 
-        List<MerchantPos> merchantPos = BaseUtils.mapToBean(MerchantPos.class, publicDAO.retrieveBySql(strSql));
+        String whereSql = "" ;
+        String groupBySql = " GROUP BY pk_merchant  HAVING pk_merchant = "+pk_merchant;
 
+        String mchSql = selectSql+whereSql+groupBySql;
+        whereSql = " and device_type = '2' ";
+        String cfSql =   selectSql+whereSql+groupBySql;
+        whereSql = " and device_type = '3' ";
+        String mkSql =   selectSql+whereSql+groupBySql;
+        whereSql = " and device_type = '1' and dining_code = '0' ";
+        String brkSql =   selectSql+whereSql+groupBySql;
+        whereSql = " and device_type = '1' and dining_code = '1' ";
+        String lchSql =   selectSql+whereSql+groupBySql;
+        whereSql = " and device_type = '1' and dining_code = '2' ";
+        String otoSql =   selectSql+whereSql+groupBySql;
+        whereSql = " and device_type = '1' and dining_code = '3' ";
+        String dnrSql =   selectSql+whereSql+groupBySql;
+
+        String strSql = strFields + " from " +
+                " ( "+cfSql+" ) cf, " +
+                " ( "+mkSql+" ) mk, " +
+                " ( "+brkSql+" ) brk, " +
+                " ( "+lchSql+" ) lch, " +
+                " ( "+otoSql+" ) oto, " +
+                " ( "+dnrSql+" ) dnr, " +
+                " ( "+mchSql+" ) mch " ;
+
+        List<Map> mPos = publicDAO.retrieveBySql(strSql);
+        List<MerchantPos> merchantPos = BaseUtils.mapToBean(MerchantPos.class, mPos);
         return merchantPos;
     }
 
     private String getFields() {
         return "SELECT " +
-                    " mm.pk_merchant as pkMerchant , " +
-                    " mm.merchant_code as merchantCode, " +
-                    " mm.merchant_name as merchantName, " +
+                    " mch.pk_merchant as pkMerchant , " +
+                    " mch.merchant_code as merchantCode, " +
+                    " mch.merchant_name as merchantName, " +
                     " cf.amount AS cofferAmount, " +
                     " cf.price  / 100 AS cofferPrice, " +
                     " mk.amount AS marketAmout, " +
@@ -915,8 +342,8 @@ public class TenantPosImpl implements TenantPosService{
                     " oto.price / 100 AS oderPrice , " +
                     " dnr.amount AS dinnerAmount, " +
                     " dnr.price / 100 AS dinnerPrice, " +
-                    " mch.total_amount as totalAmount, " +
-                    " mch.total_price / 100   as totalPrice";
+                    " mch.amount as totalAmount, " +
+                    " mch.price / 100   as totalPrice";
     }
 
     private String makeTable(String start_ts, String end_ts) {

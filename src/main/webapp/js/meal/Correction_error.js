@@ -55,9 +55,14 @@ $(function(){
 				var et = new Date($("#end_time").val());
 				var time = et.getTime() - st.getTime();
 				var days = parseInt(time / (1000 * 60 * 60 * 24));
-				alert(days);
-				if(days>30){
-					alert("时间跨度不能超过一个月")
+				if(cardId==""){
+					alert("必须输入卡号");
+					$("#btn_query").removeAttr('disabled');
+					$("#btn_query").text('查询');
+				}else if(days>30){
+					alert("时间跨度不能超过一个月");
+					$("#btn_query").removeAttr('disabled');
+					$("#btn_query").text('查询');
 				}else{
 					$.ajax({
 						type: 'post',
