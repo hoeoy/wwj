@@ -13,10 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Administrator on 2017/6/12.
@@ -59,8 +56,8 @@ public class MealrecordUpServiceImpl implements MealrecordUpService {
                 queryMeal+="and c.meal_ts <= '"+end_ts+"' ";
             }
             queryMeal+= "order by c.meal_ts desc";
-            List<MealRecordModel> mealRecordModels =
-                    BaseUtils.mapToBean(MealRecordModel.class,publicDAO.retrieveBySql(queryMeal));
+            List<Map> maps = publicDAO.retrieveBySql(queryMeal);
+            List<MealRecordModel> mealRecordModels = BaseUtils.mapToBean(MealRecordModel.class,maps);
 
             return mealRecordModels;
     }
