@@ -72,6 +72,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 ALTER  TABLE  `meal_record`  ADD  INDEX meal_ts (  `meal_ts`  )  USING BTREE;
 ALTER  TABLE  `meal_record`  ADD  INDEX meal_ts_day (  `meal_ts_day`  )  USING BTREE;
+ALTER  TABLE  `meal_record`  ADD  INDEX device_code (  `device_code`  )  USING BTREE;
 ALTER  TABLE  `meal_record`  ADD  INDEX device_type (  `device_type`  )  USING HASH;
 ALTER  TABLE  `meal_record`  ADD  INDEX pk_merchant (  `pk_merchant`  )  USING HASH;
 ALTER  TABLE  `meal_record`  ADD  INDEX pk_merchant_staff (  `pk_merchant_staff`  ) USING HASH;

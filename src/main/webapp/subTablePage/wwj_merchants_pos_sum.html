@@ -128,6 +128,15 @@
 	</div>
 
 </div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-spanledby="myModalspan" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" >正在为您计算数据，请稍等......</h4>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
 <script src="js/jquery/jquery.jqprint-0.3.js" type="text/javascript"></script>
 <link rel="stylesheet" href="../js/bootstrap/dist/css/bootstrap.css" />
 <!-- 编辑时 少了上面的引用 BS 不提示    没什么 用   生产前  删除-->
@@ -199,6 +208,7 @@
 				});
 			},
 			query:function(){//获取 充值明细报表
+				$("#myModal").modal('show');
 				this.details = '';_id ++;
 				this.waitInfo = '正在查询...';
 				vm.getStartTimeAndEndTime();
@@ -213,13 +223,16 @@
 					type:'GET',
 					dataType: "json",
 					data:data,
-					success: function (data) {vm.waitInfo = '未找到指定条件的数据'
+					success: function (data) {
+						$("#myModal").modal('hide');
+						vm.waitInfo = '未找到指定条件的数据'
 						console.log(data);
 						vm.succ = data.success;
 						//console.log('vm.succ '+vm.succ)
  						data.success == true ?  (vm.details = data.data) : ((vm.waitInfo = '未找到指定条件的数据') && (vm.details = '')) ;
 					},
 					error:function(){
+						$("#myModal").modal('hide');
 						vm.waitInfo = '不能连接服务器,请检查您的网络';
 					}
 				});

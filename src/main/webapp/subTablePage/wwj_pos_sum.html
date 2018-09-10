@@ -125,6 +125,15 @@
 	</div>
 
 </div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-spanledby="myModalspan" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" >正在为您计算数据，请稍等......</h4>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
 <script src="js/jquery/jquery.jqprint-0.3.js" type="text/javascript"></script>
 <link rel="stylesheet" href="../js/bootstrap/dist/css/bootstrap.css" />
 <!-- 编辑时 少了上面的引用 BS 不提示    没什么 用   生产前  删除-->
@@ -200,7 +209,8 @@
                     end_ts:this.endTime,
                     pageNo:this.pagination.currentPage,
                     pageSize:this.pagination.pageSize
-                }
+                };
+				$("#myModal").modal('show');
                 $.ajax({
                     url:getUrl()+'/Api/tenantPos/findSumbyMerchant' + "?" + Math.random(),
                     type:'GET',
@@ -212,9 +222,11 @@
                         //console.log('vm.succ '+vm.succ)
                         data.success  ?  ((vm.details = data.data) && (vm.pagination.total = data.data.total)) : ((vm.waitInfo = '未找到指定条件的数据') && (vm.details = '')) ;
 						console.log(vm.details,data)
+						$("#myModal").modal('hide');
                     },
                     error:function(){
                         vm.waitInfo = '不能连接服务器,请检查您的网络';
+						$("#myModal").modal('hide');
                     }
                 });
             },
