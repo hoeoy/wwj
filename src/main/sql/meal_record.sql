@@ -65,7 +65,7 @@ CREATE TABLE `meal_record` (
   `device_type` bigint(20) DEFAULT NULL COMMENT '设备类型',
   `pk_merchant_staff` bigint(20) DEFAULT NULL COMMENT '员工关联商户',
   PRIMARY KEY (`pk_meal_record`)
-) ENGINE=InnoDB AUTO_INCREMENT=1542134 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
