@@ -6,16 +6,13 @@ import com.iandtop.model.device.DeviceModel;
 import com.iandtop.model.form.MerchantPOSMondel;
 import com.iandtop.model.form.MerchantPos;
 import com.iandtop.model.meal.MerchantModel;
-import com.iandtop.service.DetailAllService;
 import com.iandtop.service.TenantPosService;
 import com.iandtop.utils.BaseUtils;
-import com.iandtop.utils.BigDecimalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by xss on 2017-05-24.
@@ -29,9 +26,6 @@ public class TenantPosImpl implements TenantPosService {
 
     @Autowired
     private PublicDAO publicDAO;
-
-    @Autowired
-    private DetailAllService detailAllService;
 
     @Override
     public List<MerchantModel> queryMerchant() {
@@ -128,65 +122,29 @@ public class TenantPosImpl implements TenantPosService {
 
     @Override
     public List<MerchantPos> findSumbyMerchant(Long pk_merchant, String start_ts, String end_ts) {
-        String strFields = getFields();
-        String selectSql = "SELECT  " +
-                "  pk_merchant, " +
-                "  merchant_name ," +
-                "  merchant_code , " +
-                "  count(0) AS amount ,  " +
-                "  SUM(meal_money) AS price    " +
-                "FROM  " +
-                "  meal_record r WHERE  " +
-                "  meal_ts_day >= '" + start_ts + "'  " +
-                "AND meal_ts_day <= '" + end_ts + "'  ";
-
-        String whereSql = "";
-        String groupBySql = " GROUP BY pk_merchant  HAVING pk_merchant = " + pk_merchant;
-
-        String mchSql = selectSql + whereSql + groupBySql;
-        whereSql = " and device_type = '2' ";
-        String cfSql = selectSql + whereSql + groupBySql;
-        whereSql = " and device_type = '3' ";
-        String mkSql = selectSql + whereSql + groupBySql;
-        whereSql = " and device_type = '1' and dining_code = '0' ";
-        String brkSql = selectSql + whereSql + groupBySql;
-        whereSql = " and device_type = '1' and dining_code = '1' ";
-        String lchSql = selectSql + whereSql + groupBySql;
-        whereSql = " and device_type = '1' and dining_code = '2' ";
-        String otoSql = selectSql + whereSql + groupBySql;
-        whereSql = " and device_type = '1' and dining_code = '3' ";
-        String dnrSql = selectSql + whereSql + groupBySql;
-
-        String strSql = strFields + " from " +
-                " ( " + cfSql + " ) cf, " +
-                " ( " + mkSql + " ) mk, " +
-                " ( " + brkSql + " ) brk, " +
-                " ( " + lchSql + " ) lch, " +
-                " ( " + otoSql + " ) oto, " +
-                " ( " + dnrSql + " ) dnr, " +
-                " ( " + mchSql + " ) mch ";
-
-        List<Map> mPos = publicDAO.retrieveBySql(strSql);
-        List<MerchantPos> merchantPos = BaseUtils.mapToBean(MerchantPos.class, mPos);
-        return merchantPos;
+        return resultForSumMerchant(pk_merchant, start_ts, end_ts, false);
     }
 
     @Override
     public List<MerchantPos> findSumbyMerchantExtend(Long pk_merchant, String start_ts, String end_ts) {
-        String strFields = getFields();
+        return resultForSumMerchant(pk_merchant, start_ts, end_ts, true);
+    }
+
+    private List<MerchantPos> resultForSumMerchant(Long pk_merchant, String start_ts, String end_ts, Boolean isExtend) {
         String selectSql = "SELECT  " +
                 "  pk_merchant, " +
                 "  merchant_name ," +
                 "  merchant_code , " +
                 "  count(0) AS amount ,  " +
-                "  SUM(meal_money) AS price    " +
+                "  SUM(meal_money)/100 AS price    " +
                 "FROM  " +
                 "  meal_record r " +
                 "WHERE  " +
                 "  meal_ts_day >= '" + start_ts + "'  " +
-                "AND pk_merchant_staff <> " + pk_merchant + "  " +
                 "AND meal_ts_day <= '" + end_ts + "'  ";
-
+        if (isExtend) {
+            selectSql += "AND pk_merchant_staff <> " + pk_merchant + "  ";
+        }
         String whereSql = "";
         String groupBySql = " GROUP BY pk_merchant  HAVING pk_merchant = " + pk_merchant;
 
@@ -199,67 +157,53 @@ public class TenantPosImpl implements TenantPosService {
         String brkSql = selectSql + whereSql + groupBySql;
         whereSql = " and device_type = '1' and dining_code = '1' ";
         String lchSql = selectSql + whereSql + groupBySql;
-        whereSql = " and device_type = '1' and dining_code = '2' ";
-        String otoSql = selectSql + whereSql + groupBySql;
         whereSql = " and device_type = '1' and dining_code = '3' ";
         String dnrSql = selectSql + whereSql + groupBySql;
+        whereSql = " and device_type = '1' and dining_code = '2' ";
+        String otoSql = selectSql + whereSql + groupBySql;
 
-        String strSql = strFields + " from " +
-                " ( " + cfSql + " ) cf, " +
-                " ( " + mkSql + " ) mk, " +
-                " ( " + brkSql + " ) brk, " +
-                " ( " + lchSql + " ) lch, " +
-                " ( " + otoSql + " ) oto, " +
-                " ( " + dnrSql + " ) dnr, " +
-                " ( " + mchSql + " ) mch ";
+        List<Map> mchPos = publicDAO.retrieveBySql(mchSql);
+        List<Map> cfPos = publicDAO.retrieveBySql(cfSql);
+        List<Map> mkPos = publicDAO.retrieveBySql(mkSql);
+        List<Map> brkPos = publicDAO.retrieveBySql(brkSql);
+        List<Map> lchPos = publicDAO.retrieveBySql(lchSql);
+        List<Map> dnrPos = publicDAO.retrieveBySql(dnrSql);
+        List<Map> otoPos = publicDAO.retrieveBySql(otoSql);
 
-        List<Map> mPos = publicDAO.retrieveBySql(strSql);
-        List<MerchantPos> merchantPos = BaseUtils.mapToBean(MerchantPos.class, mPos);
+        Map mPosMap = new HashMap();
+        mchPos.forEach(mch -> {
+            mPosMap.put("pkMerchant", mch.get("pk_merchant"));
+            mPosMap.put("merchantCode", mch.get("merchant_code"));
+            mPosMap.put("merchantName", mch.get("merchant_name"));
+            mPosMap.put("totalAmount", mch.get("amount"));
+            mPosMap.put("totalPrice", mch.get("price"));
+        });
+        cfPos.forEach(cf -> {
+            mPosMap.put("cofferAmount", cf.get("amount"));
+            mPosMap.put("cofferPrice", cf.get("price"));
+        });
+        mkPos.forEach(mk -> {
+            mPosMap.put("marketAmout", mk.get("amount"));
+            mPosMap.put("marketPrice", mk.get("price"));
+        });
+        brkPos.forEach(brk -> {
+            mPosMap.put("breakfastAmount", brk.get("amount"));
+            mPosMap.put("breakfastPrice", brk.get("price"));
+        });
+        lchPos.forEach(lch -> {
+            mPosMap.put("lunchAmount", lch.get("amount"));
+            mPosMap.put("lunchPrice", lch.get("price"));
+        });
+        dnrPos.forEach(dnr -> {
+            mPosMap.put("dinnerAmount", dnr.get("amount"));
+            mPosMap.put("dinnerPrice", dnr.get("price"));
+        });
+        otoPos.forEach(oto -> {
+            mPosMap.put("oderAmount", oto.get("amount"));
+            mPosMap.put("oderPrice", oto.get("price"));
+        });
+
+        List<MerchantPos> merchantPos = BaseUtils.mapToBean(MerchantPos.class, Arrays.asList(mPosMap));
         return merchantPos;
-    }
-
-    private String getFields() {
-        return "SELECT " +
-                " mch.pk_merchant as pkMerchant , " +
-                " mch.merchant_code as merchantCode, " +
-                " mch.merchant_name as merchantName, " +
-                " cf.amount AS cofferAmount, " +
-                " cf.price  / 100 AS cofferPrice, " +
-                " mk.amount AS marketAmout, " +
-                " mk.price / 100 AS marketPrice, " +
-                " brk.amount AS breakfastAmount, " +
-                " brk.price / 100 AS breakfastPrice , " +
-                " lch.amount AS lunchAmount, " +
-                " lch.price / 100 AS lunchPrice , " +
-                " oto.amount AS oderAmount, " +
-                " oto.price / 100 AS oderPrice , " +
-                " dnr.amount AS dinnerAmount, " +
-                " dnr.price / 100 AS dinnerPrice, " +
-                " mch.amount as totalAmount, " +
-                " mch.price / 100   as totalPrice";
-    }
-
-    private String makeTable(String start_ts, String end_ts) {
-        String strTable = "( select * from meal_record r ";
-//        List<String> tableNames = detailAllService.gainTableName(start_ts, end_ts);
-//        for (int i = 0; i < tableNames.size(); i++) {
-//            strTable += "select meal_ts,meal_money,dining_code,pk_device,pk_staff from " + tableNames.get(i);
-//            if (i < tableNames.size() - 1) {
-//                strTable += " UNION ALL ";
-//            }
-//        }
-        strTable += " where " +
-                " meal_ts_day >= '" + start_ts + "' " +
-                " and meal_ts_day <= '" + end_ts + "' " +
-                ") mlr";
-        return strTable;
-    }
-
-    public static void main(String[] args) {
-        Double d1 = 163.299;
-
-        double mt = BigDecimalUtil.add(d1, 2.05);
-        System.out.println(mt);
-        System.out.println(BigDecimalUtil.round(mt, 2));
     }
 }
